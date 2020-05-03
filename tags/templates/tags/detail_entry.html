@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ entry.name }}{% endblock %}
+
+{% block content %}
+  <h1>{{ entry.name }}</h1>
+  <p>{{ entry.text }}</p>
+  <p>
+    {% for tag in entry.tags.all %}
+    #{{ tag }}
+    {% endfor %}
+  </p>
+  <p>
+  <a href={% url "tags:edit_entry" entry.id %}>Edit</a>
+  </p>
+{% endblock %}

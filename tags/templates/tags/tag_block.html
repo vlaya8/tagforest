@@ -1,0 +1,7 @@
+<div class="tagBlock">
+  {% if url_args == "" %}
+  <a href="{% url 'tags:index' %}">{{ tag_name }} ({{ tag_count }})</a>
+  {% else %}
+  <a href="{% url 'tags:index' %}?selected_tags={{ url_args }}">{{ tag_name }} ({{ tag_count }})</a>
+  {% endif %}
+</div>

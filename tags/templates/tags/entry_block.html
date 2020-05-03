@@ -1,0 +1,10 @@
+<article>
+  <a href="{% url 'tags:detail_entry' entry.id %}" >{{ entry.name }}</a>
+
+  <form class="entryDeleteForm" action="{% url 'tags:delete_entry' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="entry_id" value="{{ entry.id }}">
+    <input class="entryDeleteButton" type="submit" value="x">
+  </form>
+    
+</article>

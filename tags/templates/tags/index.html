@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block content %}
+
+  {% for tag_count, tag_name, selected_tags in tags_list %}
+    {% include "tags/tag_block.html" with url_args=selected_tags %}
+  {% endfor %}
+  <br/><br/>
+
+  {% for entry in entry_list %}
+    {% include "tags/entry_block.html" %}
+  {% endfor %}
+
+  <br/><br/>
+  <a href="{% url 'tags:add_entry' %}" >Add</a>
+
+{% endblock %}

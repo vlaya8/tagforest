@@ -1,0 +1,27 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Tagforest - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'tags/style.css' %}">
+  </head>
+  
+  <header>
+    <h1><a href="{% url "tags:index" %}">Tagforest</a></h1>
+  </header>
+  
+  <body>
+    {% block content %}
+    {% endblock %}
+  </body>
+  
+  <footer>
+    <br/><br/>
+    :)
+    <br/><br/>
+  </footer>
+
+</html>

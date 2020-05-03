@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Add entry{% endblock %}
+
+{% block content %}
+
+<form action="{% url "tags:process_entry" %}" method="post">
+  {% csrf_token %}
+  <ul>
+  {{ form.as_ul }}
+  <li><input type="submit" value="Submit"></li>
+  </ul>
+</form>
+
+{% endblock %}
