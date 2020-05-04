@@ -78,6 +78,7 @@ def parse_tags(tags_string):
 
     return tags_list
 
+# Process an entry which got added or edited
 def process_entry(request):
 
     if request.method == 'POST':
@@ -87,13 +88,16 @@ def process_entry(request):
         if form.is_valid():
 
             entry_name = form.cleaned_data['name']
+            entry_text = form.cleaned_data['text']
 
+            # If the entry has been edited
             if form.cleaned_data['entry_id'] != -1:
                 entry = get_object_or_404(Entry, pk=form.cleaned_data['entry_id'])
                 entry.name = entry_name
+                entry.text = entry_text
                 entry.tags.clear()
             else:
-                entry = Entry(name=entry_name, added_date=timezone.now())
+                entry = Entry(name=entry_name, text=entry_text, added_date=timezone.now())
                 entry.save()
 
             tags_name = parse_tags(form.cleaned_data['tags'])
@@ -114,7 +118,7 @@ def add_entry(request):
 
     form = EntryForm(initial={"entry_id": -1})
 
-    return render(request, 'tags/add_entry.html', {'form': form})
+    return render(request, 'tags/upsert_entry.html', {'form': form})
 
 def edit_entry(request, entry_id):
 
@@ -125,7 +129,7 @@ def edit_entry(request, entry_id):
 
     form = EntryForm(initial=data)
 
-    return render(request, 'tags/add_entry.html', {'form': form})
+    return render(request, 'tags/upsert_entry.html', {'form': form})
 
 def delete_entry(request):
 
