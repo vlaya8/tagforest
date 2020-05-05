@@ -1,67 +1,74 @@
+@use 'base';
 @use "sass:color";
 
-$font-stack: "Nimbus Sans", Arial, Helvetica, sans-serif;
-
-$background-color: #202040; // Dark purple
-$header-color: #543864;     // Lighter purple
-$font-color: #DDDDDD;       // Gray
-$highlight-color: #FF6363;  // Red
-$light-highlight-color: color.adjust($background-color, $lightness: 10);
-
-body {
-  width: 70%;
-}
-@media screen and (max-width: 1000px) {
-  body {
-    width: 90%;
+nav {
+  background-color: base.$header-color;
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+  margin-bottom: 1rem;
+  a {
+    display: inline-block;
+    border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+    border-width: 0px 1px 0px 0px;
+    padding:0.9rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    margin: 0rem;
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.95);
+  }
+  a:hover {
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.73);
   }
 }
-@media screen and (max-width: 800px) {
-  body {
-    width: 100%;
-  }
+
+footer {
+  float: bottom;
 }
 
-body {
-  color: $font-color;
-  font-family: $font-stack;
-  background-color: $background-color;
-  margin: auto;
+a {
+  font-family: base.$font-stack;
+  color: base.$font-color;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 %link-block {
-  font-family: $font-stack;
-  color: $font-color;
+  font-family: base.$font-stack;
+  color: base.$font-color;
   text-decoration: none;
   padding: 0.5rem;
   font-weight: bold;
   font-size: 100%;
   line-height: 1em;
-  background-color: color.adjust($background-color, $lightness: 5);
+  background-color: color.adjust(base.$background-color, $lightness: 5);
 }
 
 %link-block:hover {
-  background-color: $highlight-color;
+  background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
 }
 
-a {
+%link-block.selected {
+  background-color: color.adjust(base.$background-color, $lightness: 20);
+}
+
+.buttonLink {
   @extend %link-block;
 }
 
-a:visited {
+.buttonLink:visited {
 }
 
-a:active {
-  background-color: color.adjust($highlight-color, $hue: 10);
+.buttonLink:active {
+  background-color: color.adjust(base.$highlight-color, $hue: 10);
 }
 
 @for $i from 1 through 6 {
 
   h#{$i} {
-    background-color: $header-color;
-    padding: 0.5em;
+    background-color: base.$header-color;
+    padding: 1rem;
     //line-height: 30px;
-    border: 1px solid color.adjust($header-color, $lightness: 10);
+    border: 1px solid color.adjust(base.$header-color, $lightness: 10);
     border-width: 1px 1px 3px;
   }
 
@@ -104,74 +111,5 @@ article {
 .tagBlock {
   display: inline-block;
   margin: 0.5em;
-}
-
-
-
-form ul {
-	margin:1rem;
-	max-width: 70%;
-	padding: 0.5rem 0.3rem 0.25rem 0.5rem;
-}
-form ul li {
-	padding: 0;
-	display: block;
-	list-style: none;
-	margin: 0.3rem 0 0 0;
-}
-form ul label{
-	margin:0 0 0.1rem 0;
-	padding: 0rem;
-	display: block;
-	font-weight: bold;
-}
-
-form ul input[type=submit], form ul input[type=button]{
-
-  background: $header-color;
-  color: $font-color;
-  font-weight: bold;
-  font-size: 1.2rem;
-
-  cursor: pointer;
-
-  position: relative;
-  display: block;
-  padding: .5rem;
-  margin: 0 auto;
-  text-align: center;
-  width: 100%;
-  border: 1px solid color.adjust($header-color, $lightness: 10);
-  border-width: 1px 1px 3px;
-  margin-bottom: 1rem;
-}
-
-form ul input[type=text], form ul textarea {
-
-  color: $font-color;
-  background: rgba(255,255,255,.1);
-
-  width: 100%;
-  padding: .5rem;
-
-  border: none;
-  border-radius: 4px;
-  margin: 0;
-  outline: 0;
-
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-
-  -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
-  margin-bottom: 30px;
-}
-
-form ul input[type=text]:focus, form ul textarea:focus {
-  -moz-box-shadow: 0 0 5px $light-highlight-color;
-  -webkit-box-shadow: 0 0 5px $light-highlight-color;
-  box-shadow: 0 0 5px $light-highlight-color;
-  border: 1px solid $light-highlight-color;
 }
 

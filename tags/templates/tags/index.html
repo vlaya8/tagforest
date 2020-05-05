@@ -1,12 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Index{% endblock %}
 
 {% block content %}
 
+  <div id="app">
   {% for tag_count, tag_name, selected_tags in tags_list %}
     {% include "tags/tag_block.html" with url_args=selected_tags %}
   {% endfor %}
+  </div>
+
   <br/><br/>
 
   {% for entry in entry_list %}
@@ -14,6 +18,14 @@
   {% endfor %}
 
   <br/><br/>
-  <a href="{% url 'tags:add_entry' %}" >Add</a>
+  <a href="{% url 'tags:add_entry' %}" class="buttonLink" >Add</a>
+
+  <script src="{% static 'tags/vue.js' %}"></script>
+  
+  <script type='text/javascript'>
+  </script>
+
+  <script src="{% static 'tags/tag_select.js' %}"></script>
 
 {% endblock %}
+

@@ -1,5 +1,5 @@
 <article>
-  <a href="{% url 'tags:detail_entry' entry.id %}" >{{ entry.name }}</a>
+  <a href="{% url 'tags:detail_entry' entry.id %}" class="buttonLink" >{{ entry.name }}</a>
 
   <form class="entryDeleteForm" action="{% url 'tags:delete_entry' %}" method="post">
     {% csrf_token %}

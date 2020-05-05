@@ -1,0 +1,38 @@
+@use "sass:color";
+
+$font-stack: "Nimbus Sans", Arial, Helvetica, sans-serif;
+
+$background-color: #202040; // Dark purple
+$header-color: #543864;     // Lighter purple
+$font-color: #DDDDDD;       // Gray
+$highlight-color: #FF6363;  // Red
+$light-highlight-color: color.adjust($background-color, $lightness: 10);
+
+html, body {
+  height: 100%;
+}
+
+body {
+  width: 70%;
+}
+@media screen and (max-width: 1000px) {
+  body {
+    width: 90%;
+  }
+}
+@media screen and (max-width: 800px) {
+  body {
+    width: 100%;
+  }
+}
+
+body {
+  color: $font-color;
+  font-family: $font-stack;
+  background-color: $background-color;
+  margin: auto;
+}
+
+.bodyBlock {
+  display: block;
+}

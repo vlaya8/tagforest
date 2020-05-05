@@ -4,20 +4,19 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Entry, Tag
-from .forms import EntryForm
+from ..models import Entry, Tag
+from ..forms import EntryForm
+from .utilities import *
 
-# Should be moved client side
-def toggle_tag(selected_tags, tag):
-    tag_list = [tag for tag in selected_tags]
+import json
 
-    if tag in selected_tags:
-        tag_list.remove(tag)
-    else:
-        tag_list.append(tag)
+class DetailEntryView(generic.DetailView):
 
-    tag_list.sort()
-    return ",".join(tag_list)
+  model = Entry
+  template_name = 'tags/detail_entry.html'
+
+class AboutView(generic.TemplateView):
+    template_name = 'tags/about.html'
 
 def index(request):
 
@@ -60,23 +59,6 @@ def index(request):
               }
 
     return render(request, 'tags/index.html', context)
-
-class DetailEntryView(generic.DetailView):
-
-  model = Entry
-  template_name = 'tags/detail_entry.html'
-
-# Parse the tags added in an entry
-def parse_tags(tags_string):
-
-    tags_list = []
-
-    tags_string = tags_string.strip() # Remove useless spaces
-    tags_string = tags_string.split(",") # Split by commas
-
-    tags_list = filter(lambda s: len(s) > 0, tags_string)
-
-    return tags_list
 
 # Process an entry which got added or edited
 def process_entry(request):
@@ -143,4 +125,10 @@ def delete_entry(request):
         entry.delete()
 
     return HttpResponseRedirect(reverse('tags:index'))
+
+def manage_tags(request):
+
+    context = {}
+
+    return render(request, 'tags/manage_tags.html', context)
 

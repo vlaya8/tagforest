@@ -7,21 +7,30 @@
     <meta charset="utf-8">
     <title>Tagforest - {% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'tags/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'tags/forms.css' %}">
   </head>
-  
+
   <header>
     <h1><a href="{% url "tags:index" %}">Tagforest</a></h1>
   </header>
   
+  <nav>
+	<a href="{% url "tags:index" %}">Index</a
+	><a href="{% url "tags:manage_tags" %}">Tags</a
+	><a href="{% url "tags:index" %}">Entries</a>
+  </nav>
+  
   <body>
+    <div class="bodyBlock">
     {% block content %}
     {% endblock %}
+    </div>
   </body>
   
   <footer>
-    <br/><br/>
-    :)
-    <br/><br/>
+    <h4>
+    <a href="{%url "tags:about" %}">About</a>
+    </h4>
   </footer>
 
 </html>
