@@ -1,10 +1,16 @@
 from django.db import models
 
-class Tag(models.Model):
+from django_dag.models import *
+
+
+class Tag(node_factory('TagEdge')):
     def __str__(self):
         return self.name
 
     name = models.CharField('name', max_length=255, unique=True)
+
+class TagEdge(edge_factory(Tag, concrete = False)):
+    pass
 
 class Entry(models.Model):
     def __str__(self):
