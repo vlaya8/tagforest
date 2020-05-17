@@ -14,7 +14,8 @@ class Tag(node_factory('TagEdge')):
 
     name = models.CharField('name', max_length=255, unique=True)
 
-    tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
+    # This needs to be added after Tree model has been migrated
+    # tree = models.ForeignKey(Tree, on_delete=models.CASCADE, default='default_tree')
 
 class TagEdge(edge_factory(Tag, concrete = False)):
     pass
