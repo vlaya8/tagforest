@@ -20,27 +20,11 @@ class AboutView(generic.TemplateView):
 
 def index(request):
 
-    tags_list = []
-
     # Get selected tags from GET url parameters
-    selected_tags = []
-    if request.method == 'GET':
-        selected_tags = request.GET.get( 'selected_tags', '' ).split(",")
-        # Filter out empty tags
-        selected_tags = list(filter(lambda s:s, selected_tags))
+    selected_tags = get_selected_tag_list(request)
 
     # Generate all the elements to be displayed in the tag list
-    for tag in Tag.objects.all():
-
-        tag_name = tag.name
-        tag_count = tag.entry_set.count()
-        tag_selected_tags = toggle_tag(selected_tags, tag_name)
-
-        if tag_count > 0:
-            tags_list.append((tag_count, tag_name, tag_selected_tags))
-
-    tags_list.sort()
-    tags_list.reverse()
+    tag_list = get_tag_list(selected_tags)
 
     # Generate the entries to be displayed
     if len(selected_tags) > 0:
@@ -55,7 +39,8 @@ def index(request):
 
     context = {
                 'entry_list': entry_list,
-                'tags_list': tags_list,
+                'tag_list': tag_list,
+                'tree_list': get_tree_list(),
               }
 
     return render(request, 'tags/index.html', context)
@@ -100,7 +85,12 @@ def add_entry(request):
 
     form = EntryForm(initial={"entry_id": -1})
 
-    return render(request, 'tags/upsert_entry.html', {'form': form})
+    context = {
+                'form': form,
+                'tree_list': get_tree_list(),
+              }
+
+    return render(request, 'tags/upsert_entry.html', context)
 
 def edit_entry(request, entry_id):
 
@@ -111,7 +101,12 @@ def edit_entry(request, entry_id):
 
     form = EntryForm(initial=data)
 
-    return render(request, 'tags/upsert_entry.html', {'form': form})
+    context = {
+                'form': form,
+                'tree_list': get_tree_list(),
+              }
+
+    return render(request, 'tags/upsert_entry.html', context)
 
 def delete_entry(request):
 
@@ -128,7 +123,9 @@ def delete_entry(request):
 
 def manage_tags(request):
 
-    context = {}
+    context = {
+                'tree_list': get_tree_list(),
+              }
 
     return render(request, 'tags/manage_tags.html', context)
 

@@ -6,7 +6,7 @@
 {% block content %}
 
   <div id="app">
-  {% for tag_count, tag_name, selected_tags in tags_list %}
+  {% for tag_count, tag_name, selected_tags in tag_list %}
     {% include "tags/tag_block.html" with url_args=selected_tags %}
   {% endfor %}
   </div>

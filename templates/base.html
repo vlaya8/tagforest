@@ -18,6 +18,11 @@
 	<a href="{% url "tags:index" %}">Index</a
 	><a href="{% url "tags:manage_tags" %}">Tags</a>
   </nav>
+  <nav>
+    {% for (tree_name, tree_id) in tree_list %}
+      <a href="{% url "tags:index" %}">{{ tree_name }}</a>
+    {% endfor %}
+  </nav>
   
   <body>
     <div class="bodyBlock">
