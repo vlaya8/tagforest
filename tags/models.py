@@ -14,7 +14,7 @@ class Tag(node_factory('TagEdge')):
 
     name = models.CharField('name', max_length=255, unique=True)
 
-    tree = models.ForeignKey(Tree, on_delete=models.CASCADE, null=True)
+    tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
 
 class TagEdge(edge_factory(Tag, concrete = False)):
     pass
