@@ -2,12 +2,19 @@ from django.db import models
 
 from django_dag.models import *
 
+class Tree(models.Model):
+    def __str__(self):
+        return self.name
+
+    name = models.CharField('name', max_length=255, unique=True)
 
 class Tag(node_factory('TagEdge')):
     def __str__(self):
         return self.name
 
     name = models.CharField('name', max_length=255, unique=True)
+
+    tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
 
 class TagEdge(edge_factory(Tag, concrete = False)):
     pass
