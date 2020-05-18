@@ -21,7 +21,7 @@ def get_selected_tag_list(request):
     return selected_tags
 
 # Generate all the elements to be displayed in the tag list
-def get_tag_list(selected_tags):
+def get_tag_list(tree_id, selected_tags):
     tag_list = []
 
     for tag in Tag.objects.all():

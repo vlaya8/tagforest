@@ -20,6 +20,12 @@ class AboutView(generic.TemplateView):
 
 def index(request):
 
+    default_tree = Tree.objects.first()
+
+    return HttpResponseRedirect(reverse('view_tree/' + str(default_tree.id)))
+
+def view_tree(request, tree_id):
+
     # Get selected tags from GET url parameters
     selected_tags = get_selected_tag_list(request)
 
@@ -37,10 +43,12 @@ def index(request):
     else:
         entry_list = Entry.objects.all()
 
+    tree_list = get_tree_list()
+
     context = {
                 'entry_list': entry_list,
                 'tag_list': tag_list,
-                'tree_list': get_tree_list(),
+                'tree_list': tree_list,
               }
 
     return render(request, 'tags/index.html', context)
