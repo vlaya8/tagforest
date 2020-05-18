@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form action="{% url "tags:process_entry" %}" method="post">
+<form action="{% url 'tags:process_entry' tree_id=current_tree_id %}" method="post">
   {% csrf_token %}
   <ul>
   {{ form.as_ul }}

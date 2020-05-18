@@ -7,8 +7,14 @@ from django.utils import timezone
 from ..models import Entry, Tag, Tree
 from ..forms import EntryForm
 from .utilities import *
+from urllib.parse import urlencode
 
 import json
+
+def redirect_with_get_params(url_name, get_params, kwargs):
+    url = reverse(url_name, kwargs=kwargs)
+    params = urlencode(get_params)
+    return HttpResponseRedirect(url + "?%s" % params)
 
 # Get selected tags from GET url parameters
 def get_selected_tag_list(request):
@@ -24,7 +30,7 @@ def get_selected_tag_list(request):
 def get_tag_list(tree_id, selected_tags):
     tag_list = []
 
-    for tag in Tag.objects.all():
+    for tag in Tag.objects.filter(tree__id=tree_id):
 
         tag_name = tag.name
         tag_count = tag.entry_set.count()

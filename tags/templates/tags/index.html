@@ -18,7 +18,7 @@
   {% endfor %}
 
   <br/><br/>
-  <a href="{% url 'tags:add_entry' %}" class="buttonLink" >Add</a>
+  <a href="{% url 'tags:add_entry' tree_id=current_tree_id %}" class="buttonLink" >Add</a>
 
   <script src="{% static 'tags/vue.js' %}"></script>
   

@@ -1,7 +1,7 @@
 <article>
-  <a href="{% url 'tags:detail_entry' entry.id %}" class="buttonLink" >{{ entry.name }}</a>
+  <a href="{% url 'tags:detail_entry' tree_id=current_tree_id entry_id=entry.id %}" class="buttonLink" >{{ entry.name }}</a>
 
-  <form class="entryDeleteForm" action="{% url 'tags:delete_entry' %}" method="post">
+  <form class="entryDeleteForm" action="{% url 'tags:delete_entry' tree_id=current_tree_id %}" method="post">
     {% csrf_token %}
     <input type="hidden" name="entry_id" value="{{ entry.id }}">
     <input class="entryDeleteButton" type="submit" value="x">

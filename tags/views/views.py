@@ -10,19 +10,27 @@ from .utilities import *
 
 import json
 
-class DetailEntryView(generic.DetailView):
+def detail_entry(request, tree_id, entry_id):
 
-  model = Entry
-  template_name = 'tags/detail_entry.html'
+    entry = get_object_or_404(Entry, pk=entry_id)
+    
+    context = {
+                'entry': entry,
+                'tree_list': get_tree_list(),
+                'current_tree_id': tree_id,
+              }
+
+    return render(request, 'tags/detail_entry.html', context)
 
 class AboutView(generic.TemplateView):
     template_name = 'tags/about.html'
+    context = {'tree_list': get_tree_list(),}
 
 def index(request):
 
     default_tree = Tree.objects.first()
 
-    return HttpResponseRedirect(reverse('view_tree/' + str(default_tree.id)))
+    return redirect_with_get_params('tags:view_tree', get_params={'selected_tags': request.GET.get('selected_tags', '')}, kwargs={'tree_id': default_tree.id})
 
 def view_tree(request, tree_id):
 
@@ -30,7 +38,7 @@ def view_tree(request, tree_id):
     selected_tags = get_selected_tag_list(request)
 
     # Generate all the elements to be displayed in the tag list
-    tag_list = get_tag_list(selected_tags)
+    tag_list = get_tag_list(tree_id, selected_tags)
 
     # Generate the entries to be displayed
     if len(selected_tags) > 0:
@@ -49,12 +57,13 @@ def view_tree(request, tree_id):
                 'entry_list': entry_list,
                 'tag_list': tag_list,
                 'tree_list': tree_list,
+                'current_tree_id': tree_id,
               }
 
     return render(request, 'tags/index.html', context)
 
 # Process an entry which got added or edited
-def process_entry(request):
+def process_entry(request, tree_id):
 
     if request.method == 'POST':
 
@@ -86,21 +95,22 @@ def process_entry(request):
 
             entry.save()
 
-            return HttpResponseRedirect(reverse('tags:index'))
+            return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree_id}))
 
 
-def add_entry(request):
+def add_entry(request, tree_id):
 
     form = EntryForm(initial={"entry_id": -1})
 
     context = {
                 'form': form,
                 'tree_list': get_tree_list(),
+                'current_tree_id': tree_id,
               }
 
     return render(request, 'tags/upsert_entry.html', context)
 
-def edit_entry(request, entry_id):
+def edit_entry(request, tree_id, entry_id):
 
     entry = get_object_or_404(Entry, pk=entry_id)
 
@@ -112,11 +122,12 @@ def edit_entry(request, entry_id):
     context = {
                 'form': form,
                 'tree_list': get_tree_list(),
+                'current_tree_id': tree_id,
               }
 
     return render(request, 'tags/upsert_entry.html', context)
 
-def delete_entry(request):
+def delete_entry(request, tree_id):
 
     try:
         entry_id = int(request.POST['entry_id'])
@@ -127,12 +138,13 @@ def delete_entry(request):
         entry = get_object_or_404(Entry, pk=entry_id)
         entry.delete()
 
-    return HttpResponseRedirect(reverse('tags:index'))
+    return HttpResponseRedirect(reverse('tags:view_tree', kwargs={tree_id: tree_id}))
 
-def manage_tags(request):
+def manage_tags(request, tree_id):
 
     context = {
                 'tree_list': get_tree_list(),
+                'current_tree_id': tree_id,
               }
 
     return render(request, 'tags/manage_tags.html', context)
