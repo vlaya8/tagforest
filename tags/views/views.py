@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ..models import Entry, Tag
-from ..forms import EntryForm
+from ..forms import EntryForm, TreeForm
 from .utilities import *
 
 import json
@@ -53,14 +53,27 @@ def view_tree(request, tree_id):
 
     tree_list = get_tree_list()
 
+    tree_form = TreeForm()
+
     context = {
                 'entry_list': entry_list,
                 'tag_list': tag_list,
                 'tree_list': tree_list,
                 'current_tree_id': tree_id,
+                'tree_form': tree_form,
               }
 
     return render(request, 'tags/index.html', context)
+
+def process_tree(request):
+
+    form = TreeForm(request.POST)
+
+    if form.is_valid():
+        tree_name = form.cleaned_data['name']
+        new_tree = Tree.objects.create(name=tree_name)
+
+    return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': new_tree.id}))
 
 # Process an entry which got added or edited
 def process_entry(request, tree_id):
@@ -95,7 +108,7 @@ def process_entry(request, tree_id):
 
             entry.save()
 
-            return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree_id}))
+    return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree_id}))
 
 
 def add_entry(request, tree_id):

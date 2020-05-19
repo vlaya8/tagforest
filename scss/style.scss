@@ -1,12 +1,16 @@
 @use 'base';
 @use "sass:color";
 
+a:hover {
+  cursor: pointer;
+}
+
 nav {
   background-color: base.$header-color;
   border: 1px solid color.adjust(base.$header-color, $lightness: 10);
   border-width: 1px 1px 3px;
   margin-bottom: 1rem;
-  a {
+  a, input {
     display: inline-block;
     border: 1px solid color.adjust(base.$header-color, $lightness: 10);
     border-width: 0px 1px 0px 0px;
@@ -15,9 +19,15 @@ nav {
     padding-left: 1.5rem;
     margin: 0rem;
     background-color: color.adjust(base.$highlight-color, $alpha: -0.95);
+    line-height: 1.7rem;
+    vertical-align: top;
   }
-  a:hover {
+  a:hover, input[type=submit]:hover {
     background-color: color.adjust(base.$highlight-color, $alpha: -0.73);
+  }
+  .thinButton {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
   }
 }
 
@@ -91,7 +101,7 @@ article {
   display: inline-block;
 }
 
-.entryDeleteButton {
+.backgroundButton {
   display:inline-block;
 
   box-shadow: none;
@@ -103,7 +113,7 @@ article {
 
   @extend %link-block;
 }
-.entryDeleteButton:active {
+.backgroundButton:active {
   position:relative;
   top:1px;
 }

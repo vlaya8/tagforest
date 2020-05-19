@@ -5,14 +5,16 @@
 
 {% block content %}
 
-  <div id="app">
-  {% for tag_count, tag_name, selected_tags in tag_list %}
-    {% include "tags/tag_block.html" with url_args=selected_tags %}
-  {% endfor %}
+  <!-- VueJS tag select app -->
+  <div id="tag_select_app">
+    {% for tag_count, tag_name, selected_tags in tag_list %}
+      {% include "tags/tag_block.html" with url_args=selected_tags %}
+    {% endfor %}
   </div>
 
   <br/><br/>
 
+  <!-- Entries -->
   {% for entry in entry_list %}
     {% include "tags/entry_block.html" %}
   {% endfor %}
@@ -20,11 +22,8 @@
   <br/><br/>
   <a href="{% url 'tags:add_entry' tree_id=current_tree_id %}" class="buttonLink" >Add</a>
 
+  <!-- VueJS Script include -->
   <script src="{% static 'tags/vue.js' %}"></script>
-  
-  <script type='text/javascript'>
-  </script>
-
   <script src="{% static 'tags/tag_select.js' %}"></script>
 
 {% endblock %}

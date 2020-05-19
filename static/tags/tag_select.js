@@ -11,10 +11,9 @@ else {
   selected_tags = selected_tags.split(",")
 }
 
-
-var app = new Vue({
+var tag_select_app = new Vue({
   delimiters: ['[[', ']]'],
-  el: '#app',
+  el: '#tag_select_app',
   data: {
     message: 'Hello !',
     selected_tags: selected_tags

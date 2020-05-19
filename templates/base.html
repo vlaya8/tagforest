@@ -18,8 +18,30 @@
 	<a href="{% url 'tags:index' %}">Index</a
 	><a href="{% url 'tags:manage_tags' tree_id=current_tree_id %}">Tags</a>
   </nav>
-  <nav>
-    {% for tree_name, tree_id in tree_list %}<a href="{% url 'tags:view_tree' tree_id=tree_id %}">{{ tree_name }}</a>{% endfor %}<a href="{%url 'tags:index' %}">+</a>
+  <nav><!--
+
+    -->{% for tree_name, tree_id in tree_list %}<!--
+          --><a href="{% url 'tags:view_tree' tree_id=tree_id %}">{{ tree_name }}</a><!--
+    -->{% endfor %}<!--
+
+    Vue js add tree app
+    --><span id="add_tree_app" ><!--
+
+      --><a v-if="hideTreeForm" v-on:click="hideTreeForm = false" >+</a><!-- 
+
+      --><form v-if="!hideTreeForm" class="headerForm" action="{% url 'tags:process_tree' %}" method="post"><!--
+            -->{% csrf_token %}<!--
+            -->{{ tree_form.non_field_errors}}<!--
+            -->{{ tree_form.name.errors}}<!--
+            -->{{ tree_form.name}}<!--
+            --><input class="thinButton" type="submit" value="&check;" ><!--
+      --></form><!--
+
+      --><a class="thinButton" v-if="!hideTreeForm" v-on:click="hideTreeForm = true" >x</a><!-- 
+
+    --></span><!--
+
+    -->
   </nav>
   
   <body>
@@ -27,6 +49,9 @@
     {% block content %}
     {% endblock %}
     </div>
+    <!-- VueJS scripts include !-->
+    <script src="{% static 'tags/vue.js' %}"></script>
+    <script src="{% static 'tags/add_tree.js' %}"></script>
   </body>
   
   <footer>
@@ -34,5 +59,6 @@
     <a href="{%url 'tags:about' %}">About</a>
     </h4>
   </footer>
+
 
 </html>

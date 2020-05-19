@@ -1,0 +1,14 @@
+console.log("??????????? ?")
+
+var add_tree_app = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#add_tree_app',
+  data: {
+    hideTreeForm: true,
+  },
+  methods: {
+    showTreeForm: function() {
+      console.log("Um... ??????????????")
+    }
+  }
+});

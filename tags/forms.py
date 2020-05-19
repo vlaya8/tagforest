@@ -30,3 +30,7 @@ class EntryForm(forms.Form):
     tags = forms.CharField(label = "Tags", max_length=255)
 
     entry_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class TreeForm(forms.Form):
+
+    name = forms.CharField(label = "Name", max_length=255)

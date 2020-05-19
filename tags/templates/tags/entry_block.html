@@ -4,7 +4,7 @@
   <form class="entryDeleteForm" action="{% url 'tags:delete_entry' tree_id=current_tree_id %}" method="post">
     {% csrf_token %}
     <input type="hidden" name="entry_id" value="{{ entry.id }}">
-    <input class="entryDeleteButton" type="submit" value="x">
+    <input class="backgroundButton" type="submit" value="x">
   </form>
     
 </article>
