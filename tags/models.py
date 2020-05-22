@@ -29,5 +29,5 @@ class Entry(models.Model):
 
     tags = models.ManyToManyField(Tag, blank=True)
 
-    tree = models.ForeignKey(Tree, on_delete=models.CASCADE, null=True)
+    tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
 
