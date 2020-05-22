@@ -20,7 +20,7 @@
   {% endfor %}
 
   <br/><br/>
-  <a href="{% url 'tags:add_entry' tree_id=current_tree_id %}" class="buttonLink" >Add</a>
+  <a href="{% url 'tags:add_entry' tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
 
   <!-- VueJS Script include -->
   <script src="{% static 'tags/vue.js' %}"></script>

@@ -19,7 +19,7 @@ form ul label{
 	font-weight: bold;
 }
 
-form ul input[type=submit], form ul input[type=button]{
+form ul input[type=submit], form ul button, form ul input[type=button]{
 
   position: relative;
   display: block;
@@ -39,7 +39,7 @@ form ul input[type=text], form ul textarea {
   margin-bottom: 30px;
 }
 
-form.contentForm input[type=submit], form input[type=button]{
+form.contentForm input[type=submit], form.contentForm button, form input[type=button]{
 
   background-color: base.$header-color;
   color: base.$font-color;
@@ -90,9 +90,5 @@ form.headerForm input[type=text] {
   margin-left: 1rem;
   margin-top: 0.65rem;
   line-height: 1.15rem;
-}
-
-form.headerForm input[type=submit] {
-  font-weight: normal;
 }
 
