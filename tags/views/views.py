@@ -31,11 +31,11 @@ def view_tree(request, tree_id):
         entry_list = Entry.objects.none()
         
         for tag in selected_tags:
-            entry_list |= Entry.objects.filter(tags__name__exact=tag)
+            entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=tree_id)
 
         entry_list = entry_list.distinct()
     else:
-        entry_list = Entry.objects.all()
+        entry_list = Entry.objects.all().filter(tree__id=tree_id)
 
     context = {
                 'entry_list': entry_list,
@@ -93,13 +93,13 @@ def process_entry(request, tree_id):
                 entry.text = entry_text
                 entry.tags.clear()
             else:
-                entry = Entry.objects.create(name=entry_name, text=entry_text, added_date=timezone.now())
+                entry = Entry.objects.create(name=entry_name, text=entry_text, tree_id=tree_id, added_date=timezone.now())
 
             tags_name = parse_tags(form.cleaned_data['tags'])
 
             for tag_name in tags_name:
 
-                tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name)
+                tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree_id=tree_id)
                 tag_obj.save()
 
                 entry.tags.add(tag_obj)
@@ -160,7 +160,7 @@ def delete_entry(request, tree_id):
         entry = get_object_or_404(Entry, pk=entry_id)
         entry.delete()
 
-    return HttpResponseRedirect(reverse('tags:view_tree', kwargs={tree_id: tree_id}))
+    return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree_id}))
 
 ## Tags
 
