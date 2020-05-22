@@ -173,10 +173,15 @@ def manage_tags(request, tree_id):
 
     return render(request, 'tags/manage_tags.html', context)
 
+def manage_tags_default(request):
+
+    default_tree = Tree.objects.first()
+
+    return HttpResponseRedirect(reverse('tags:manage_tags', kwargs={'tree_id': default_tree.id}))
+
 ## About
 
 class AboutView(generic.TemplateView):
     template_name = 'tags/about.html'
     context = {}
-    context.update(get_tree_bar_context())
 

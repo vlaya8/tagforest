@@ -5,6 +5,7 @@ app_name = 'tags'
 urlpatterns = [
         path('', views.index, name="index"),
         path('about', views.AboutView.as_view(), name="about"),
+
         path('tree/<int:tree_id>/view', views.view_tree, name="view_tree"),
 
         path('tree/<int:tree_id>/entry/<int:entry_id>/', views.detail_entry, name="detail_entry"),
@@ -16,4 +17,5 @@ urlpatterns = [
         path('tree/process', views.process_tree, name="process_tree"),
 
         path('tree/<int:tree_id>/tags', views.manage_tags, name="manage_tags"),
+        path('manage_tags', views.manage_tags_default, name="manage_tags_default"),
 ]
