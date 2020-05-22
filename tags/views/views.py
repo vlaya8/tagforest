@@ -10,21 +10,7 @@ from .utilities import *
 
 import json
 
-def detail_entry(request, tree_id, entry_id):
-
-    entry = get_object_or_404(Entry, pk=entry_id)
-    
-    context = {
-                'entry': entry,
-                'tree_list': get_tree_list(),
-                'current_tree_id': tree_id,
-              }
-
-    return render(request, 'tags/detail_entry.html', context)
-
-class AboutView(generic.TemplateView):
-    template_name = 'tags/about.html'
-    context = {'tree_list': get_tree_list(),}
+## Index
 
 def index(request):
 
@@ -51,17 +37,13 @@ def view_tree(request, tree_id):
     else:
         entry_list = Entry.objects.all()
 
-    tree_list = get_tree_list()
-
-    tree_form = TreeForm()
-
     context = {
                 'entry_list': entry_list,
                 'tag_list': tag_list,
-                'tree_list': tree_list,
                 'current_tree_id': tree_id,
-                'tree_form': tree_form,
               }
+
+    context.update(get_tree_bar_context())
 
     return render(request, 'tags/index.html', context)
 
@@ -70,10 +52,27 @@ def process_tree(request):
     form = TreeForm(request.POST)
 
     if form.is_valid():
-        tree_name = form.cleaned_data['name']
-        new_tree = Tree.objects.create(name=tree_name)
 
-    return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': new_tree.id}))
+        tree_name = form.cleaned_data['name']
+        delete_tree = form.cleaned_data['delete_tree']
+
+        # If the tree has been edited
+        if form.cleaned_data['tree_id'] != -1:
+            tree = get_object_or_404(Tree, pk=form.cleaned_data['tree_id'])
+            if delete_tree:
+                tree.delete()
+                return HttpResponseRedirect(reverse('tags:index'))
+            else:
+                tree.name = tree_name
+                tree.save()
+        else:
+            tree = Tree.objects.create(name=tree_name)
+
+        return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree.id}))
+    else:
+        return HttpResponseRedirect(reverse('tags:index'))
+
+## Entries
 
 # Process an entry which got added or edited
 def process_entry(request, tree_id):
@@ -94,8 +93,7 @@ def process_entry(request, tree_id):
                 entry.text = entry_text
                 entry.tags.clear()
             else:
-                entry = Entry(name=entry_name, text=entry_text, added_date=timezone.now())
-                entry.save()
+                entry = Entry.objects.create(name=entry_name, text=entry_text, added_date=timezone.now())
 
             tags_name = parse_tags(form.cleaned_data['tags'])
 
@@ -110,6 +108,17 @@ def process_entry(request, tree_id):
 
     return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree_id}))
 
+def detail_entry(request, tree_id, entry_id):
+
+    entry = get_object_or_404(Entry, pk=entry_id)
+    
+    context = {
+                'entry': entry,
+                'current_tree_id': tree_id,
+              }
+    context.update(get_tree_bar_context())
+
+    return render(request, 'tags/detail_entry.html', context)
 
 def add_entry(request, tree_id):
 
@@ -117,9 +126,9 @@ def add_entry(request, tree_id):
 
     context = {
                 'form': form,
-                'tree_list': get_tree_list(),
                 'current_tree_id': tree_id,
               }
+    context.update(get_tree_bar_context())
 
     return render(request, 'tags/upsert_entry.html', context)
 
@@ -134,9 +143,9 @@ def edit_entry(request, tree_id, entry_id):
 
     context = {
                 'form': form,
-                'tree_list': get_tree_list(),
                 'current_tree_id': tree_id,
               }
+    context.update(get_tree_bar_context())
 
     return render(request, 'tags/upsert_entry.html', context)
 
@@ -153,12 +162,21 @@ def delete_entry(request, tree_id):
 
     return HttpResponseRedirect(reverse('tags:view_tree', kwargs={tree_id: tree_id}))
 
+## Tags
+
 def manage_tags(request, tree_id):
 
     context = {
-                'tree_list': get_tree_list(),
                 'current_tree_id': tree_id,
               }
+    context.update(get_tree_bar_context())
 
     return render(request, 'tags/manage_tags.html', context)
+
+## About
+
+class AboutView(generic.TemplateView):
+    template_name = 'tags/about.html'
+    context = {}
+    context.update(get_tree_bar_context())
 

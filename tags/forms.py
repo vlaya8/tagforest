@@ -34,3 +34,6 @@ class EntryForm(forms.Form):
 class TreeForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
+
+    delete_tree = forms.BooleanField(required=False, widget=forms.HiddenInput())
+    tree_id = forms.IntegerField(widget=forms.HiddenInput())

@@ -3,9 +3,10 @@ from django.views import generic
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django import forms
 
 from ..models import Entry, Tag, Tree
-from ..forms import EntryForm
+from ..forms import EntryForm, TreeForm
 from .utilities import *
 from urllib.parse import urlencode
 
@@ -15,6 +16,29 @@ def redirect_with_get_params(url_name, get_params, kwargs):
     url = reverse(url_name, kwargs=kwargs)
     params = urlencode(get_params)
     return HttpResponseRedirect(url + "?%s" % params)
+
+def get_tree_bar_context():
+
+    tree_list = []
+    tree_add_form = TreeForm(initial={'tree_id': -1, 'delete_tree': False})
+    tree_ids = []
+
+    for tree in Tree.objects.all():
+        add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
+        delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
+        delete_form = TreeForm(initial=delete_data)
+        delete_form.fields['name'].widget = forms.HiddenInput()
+        tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form))
+        tree_ids.append(tree.id)
+
+    context = {
+                'tree_list': tree_list,
+                'tree_add_form': tree_add_form,
+                'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
+              }
+
+    return context
+
 
 # Get selected tags from GET url parameters
 def get_selected_tag_list(request):

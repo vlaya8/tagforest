@@ -96,19 +96,3 @@ form.headerForm input[type=submit] {
   font-weight: normal;
 }
 
-form.headerForm input[type=submit], form input[type=button]{
-
-  //background-color: color.adjust(base.$highlight-color, $alpha: -0.95);
-  color: base.$font-color;
-  //font-weight: bold;
-  //font-size: 1rem;
-
-  cursor: pointer;
-
-  //border: 1px solid color.adjust(base.$header-color, $lightness: 5);
-  //border-width: 1px 1px 2px;
-
-  //padding-right: 0.8rem;
-  //padding-left: 0.8rem;
-}
-

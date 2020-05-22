@@ -8,6 +8,7 @@
     <title>Tagforest - {% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'tags/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'tags/forms.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
 
   <header>
@@ -18,40 +19,72 @@
 	<a href="{% url 'tags:index' %}">Index</a
 	><a href="{% url 'tags:manage_tags' tree_id=current_tree_id %}">Tags</a>
   </nav>
-  <nav><!--
 
-    -->{% for tree_name, tree_id in tree_list %}<!--
-          --><a href="{% url 'tags:view_tree' tree_id=tree_id %}">{{ tree_name }}</a><!--
+  <!-- Vue js tree bar app -->
+  <nav id="tree_bar_app" ><!--
+
+    Tree list
+    -->{% for tree_name, tree_id, tree_edit_form, tree_delete_form in tree_list %}<!--
+
+          Tree name link
+	  --><a v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' tree_id=tree_id %}"><!--
+		-->{{ tree_name }}<!--
+	  --></a><!--
+	  Tree name edit icons
+	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' tree_id=tree_id %}"><!--
+	        --><span class="treeName" >{{ tree_name }}</span><!--
+		--><a v-if="editMode & !editTree[{{ tree_id }}]" v-on:click="enterEditTree({{ tree_id }})" class="innerButton" ><i class="fa fa-edit"></i></a><!--
+		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:process_tree' %}" method="post"><!--
+		      -->{% csrf_token %}<!--
+		      -->{{ tree_delete_form.name}}<!--
+		      -->{{ tree_delete_form.delete_tree}}<!--
+		      -->{{ tree_delete_form.tree_id}}<!--
+		      --><button class="innerButton" type="submit"><i class="fa fa-trash"></i></button><!--
+		--></form><!--
+	  --></div><!--
+
+	  Tree form
+	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:process_tree' %}" method="post"><!--
+		-->{% csrf_token %}<!--
+		-->{{ tree_edit_form.non_field_errors}}<!--
+		-->{{ tree_edit_form.name.errors}}<!--
+		-->{{ tree_edit_form.name}}<!--
+		-->{{ tree_edit_form.delete_tree}}<!--
+		-->{{ tree_edit_form.tree_id}}<!--
+		--><button class="thinButton" type="submit"><i class="fa fa-check" ></i></button><!--
+	  --></form><!--
+	  --><a v-if="editTree[{{ tree_id }}]" v-on:click="exitEditTree({{ tree_id }})" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+
     -->{% endfor %}<!--
+    --><a v-if="editMode" v-on:click="exitEditMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
 
-    Vue js add tree app
-    --><span id="add_tree_app" ><!--
+    Mode selectors
+    --><a v-if="viewMode" v-on:click="enterAddMode()" class="mediumButton" ><i class="fa fa-plus"></i></a><!-- 
+    --><a v-if="viewMode" v-on:click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></a><!-- 
 
-      --><a v-if="hideTreeForm" v-on:click="hideTreeForm = false" >+</a><!-- 
-
-      --><form v-if="!hideTreeForm" class="headerForm" action="{% url 'tags:process_tree' %}" method="post"><!--
-            -->{% csrf_token %}<!--
-            -->{{ tree_form.non_field_errors}}<!--
-            -->{{ tree_form.name.errors}}<!--
-            -->{{ tree_form.name}}<!--
-            --><input class="thinButton" type="submit" value="&check;" ><!--
-      --></form><!--
-
-      --><a class="thinButton" v-if="!hideTreeForm" v-on:click="hideTreeForm = true" >x</a><!-- 
-
-    --></span><!--
+    Add form
+    --><form v-if="addMode" class="headerForm" action="{% url 'tags:process_tree' %}" method="post"><!--
+	  -->{% csrf_token %}<!--
+	  -->{{ tree_add_form.non_field_errors}}<!--
+	  -->{{ tree_add_form.name.errors}}<!--
+	  -->{{ tree_add_form.name}}<!--
+	  -->{{ tree_add_form.delete_tree}}<!--
+	  -->{{ tree_add_form.tree_id}}<!--
+	  --><button class="thinButton" type="submit"><i class="fa fa-check" ></i></button><!--
+    --></form><!--
+    --><a v-if="addMode" v-on:click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
 
     -->
   </nav>
   
-  <body>
+  <body tree_bar_data="{{ tree_bar_data }}" >
     <div class="bodyBlock">
     {% block content %}
     {% endblock %}
     </div>
     <!-- VueJS scripts include !-->
     <script src="{% static 'tags/vue.js' %}"></script>
-    <script src="{% static 'tags/add_tree.js' %}"></script>
+    <script src="{% static 'tags/tree_bar.js' %}"></script>
   </body>
   
   <footer>
