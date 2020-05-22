@@ -1,10 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = 'tags'
 urlpatterns = [
         path('', views.index, name="index"),
-        path('about', views.AboutView.as_view(), name="about"),
 
         path('tree/<int:tree_id>/view', views.view_tree, name="view_tree"),
 
@@ -18,4 +17,8 @@ urlpatterns = [
 
         path('tree/<int:tree_id>/tags', views.manage_tags, name="manage_tags"),
         path('manage_tags', views.manage_tags_default, name="manage_tags_default"),
+
+        path('accounts/', include('django.contrib.auth.urls')),
+
+        path('about', views.AboutView.as_view(), name="about"),
 ]

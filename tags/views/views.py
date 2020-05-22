@@ -3,6 +3,7 @@ from django.views import generic
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 from ..models import Entry, Tag
 from ..forms import EntryForm, TreeForm
@@ -18,7 +19,12 @@ def index(request):
 
     return redirect_with_get_params('tags:view_tree', get_params={'selected_tags': request.GET.get('selected_tags', '')}, kwargs={'tree_id': default_tree.id})
 
+@login_required
 def view_tree(request, tree_id):
+
+    if request.user.is_authenticated:
+        print("User is authenticated")
+        print(request.user)
 
     # Get selected tags from GET url parameters
     selected_tags = get_selected_tag_list(request)
@@ -47,6 +53,7 @@ def view_tree(request, tree_id):
 
     return render(request, 'tags/index.html', context)
 
+@login_required
 def process_tree(request):
 
     form = TreeForm(request.POST)
@@ -75,6 +82,7 @@ def process_tree(request):
 ## Entries
 
 # Process an entry which got added or edited
+@login_required
 def process_entry(request, tree_id):
 
     if request.method == 'POST':
@@ -108,6 +116,7 @@ def process_entry(request, tree_id):
 
     return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree_id}))
 
+@login_required
 def detail_entry(request, tree_id, entry_id):
 
     entry = get_object_or_404(Entry, pk=entry_id)
@@ -120,6 +129,7 @@ def detail_entry(request, tree_id, entry_id):
 
     return render(request, 'tags/detail_entry.html', context)
 
+@login_required
 def add_entry(request, tree_id):
 
     form = EntryForm(initial={"entry_id": -1})
@@ -132,6 +142,7 @@ def add_entry(request, tree_id):
 
     return render(request, 'tags/upsert_entry.html', context)
 
+@login_required
 def edit_entry(request, tree_id, entry_id):
 
     entry = get_object_or_404(Entry, pk=entry_id)
@@ -149,6 +160,7 @@ def edit_entry(request, tree_id, entry_id):
 
     return render(request, 'tags/upsert_entry.html', context)
 
+@login_required
 def delete_entry(request, tree_id):
 
     try:
@@ -164,6 +176,7 @@ def delete_entry(request, tree_id):
 
 ## Tags
 
+@login_required
 def manage_tags(request, tree_id):
 
     context = {
@@ -173,6 +186,7 @@ def manage_tags(request, tree_id):
 
     return render(request, 'tags/manage_tags.html', context)
 
+@login_required
 def manage_tags_default(request):
 
     default_tree = Tree.objects.first()
