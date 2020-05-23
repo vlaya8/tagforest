@@ -20,6 +20,15 @@ def index(request):
     return redirect_with_get_params('tags:view_tree', get_params={'selected_tags': request.GET.get('selected_tags', '')}, kwargs={'tree_id': default_tree.id})
 
 @login_required
+def profile(request):
+
+    user = request.user
+
+    context = { "username": user.username }
+
+    return render(request, 'tags/registration/profile.html', context)
+
+@login_required
 def view_tree(request, tree_id):
 
     if request.user.is_authenticated:

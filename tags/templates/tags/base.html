@@ -15,8 +15,9 @@
     <h1><a href="{% url 'tags:index' %}">Tagforest</a></h1>
   </header>
   
-  <nav>
-    <a href="{% url 'tags:index' %}">Index</a><!--
+  <nav><!--
+    --><a href="{% url 'tags:index' %}">Index</a><!--
+    --><a href="{% url 'tags:profile' %}">Profile</a><!--
     -->{% block nav_menu_tree_links %}<!--
         --><a href="{% url 'tags:manage_tags_default' %}">Tags</a><!--
     -->{% endblock %}
