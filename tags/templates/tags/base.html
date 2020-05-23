@@ -17,10 +17,13 @@
   
   <nav><!--
     --><a href="{% url 'tags:index' %}">Index</a><!--
-    --><a href="{% url 'tags:profile' %}">Profile</a><!--
     -->{% block nav_menu_tree_links %}<!--
-        --><a href="{% url 'tags:manage_tags_default' %}">Tags</a><!--
-    -->{% endblock %}
+	--><a href="{% url 'tags:manage_tags_default' %}">Tags</a><!--
+    -->{% endblock %}<!--
+    -->{% if logged_in %}<!--
+      --><a href="{% url 'tags:profile' %}">Profile</a><!--
+      --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a><!--
+    -->{% endif %}
   </nav>
 
   {% block nav_content %}

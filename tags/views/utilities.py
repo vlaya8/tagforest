@@ -17,6 +17,18 @@ def redirect_with_get_params(url_name, get_params, kwargs):
     params = urlencode(get_params)
     return HttpResponseRedirect(url + "?%s" % params)
 
+def get_base_context(request):
+
+    logged_in = request.user.is_authenticated
+    logout_next = reverse('tags:index')
+
+    context = {
+                'logged_in': logged_in,
+                'logout_next': {"next": logout_next},
+              }
+
+    return context
+
 def get_tree_bar_context():
 
     tree_list = []

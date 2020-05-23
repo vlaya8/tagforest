@@ -25,6 +25,7 @@ def profile(request):
     user = request.user
 
     context = { "username": user.username }
+    context.update(get_base_context(request))
 
     return render(request, 'tags/registration/profile.html', context)
 
@@ -59,6 +60,7 @@ def view_tree(request, tree_id):
               }
 
     context.update(get_tree_bar_context())
+    context.update(get_base_context(request))
 
     return render(request, 'tags/index.html', context)
 
@@ -135,6 +137,7 @@ def detail_entry(request, tree_id, entry_id):
                 'current_tree_id': tree_id,
               }
     context.update(get_tree_bar_context())
+    context.update(get_base_context(request))
 
     return render(request, 'tags/detail_entry.html', context)
 
@@ -148,6 +151,7 @@ def add_entry(request, tree_id):
                 'current_tree_id': tree_id,
               }
     context.update(get_tree_bar_context())
+    context.update(get_base_context(request))
 
     return render(request, 'tags/upsert_entry.html', context)
 
@@ -166,6 +170,7 @@ def edit_entry(request, tree_id, entry_id):
                 'current_tree_id': tree_id,
               }
     context.update(get_tree_bar_context())
+    context.update(get_base_context(request))
 
     return render(request, 'tags/upsert_entry.html', context)
 
@@ -192,6 +197,7 @@ def manage_tags(request, tree_id):
                 'current_tree_id': tree_id,
               }
     context.update(get_tree_bar_context())
+    context.update(get_base_context(request))
 
     return render(request, 'tags/manage_tags.html', context)
 
