@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 from django_dag.models import *
 
@@ -15,6 +16,7 @@ class Tag(node_factory('TagEdge')):
     name = models.CharField('name', max_length=255, unique=True)
 
     tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class TagEdge(edge_factory(Tag, concrete = False)):
     pass
@@ -30,4 +32,5 @@ class Entry(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
 
     tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
