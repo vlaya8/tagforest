@@ -34,7 +34,6 @@ class ProfileView(auth_views.PasswordChangeView):
 
         context = super().get_context_data(**kwargs)
 
-        context["username"] = user.username
         context.update(get_base_context(self.request))
 
         return context

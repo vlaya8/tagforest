@@ -21,7 +21,7 @@
 	--><a href="{% url 'tags:manage_tags_default' %}">Tags</a><!--
     -->{% endblock %}<!--
     -->{% if logged_in %}<!--
-      --><a href="{% url 'tags:profile' %}">Profile</a><!--
+    --><a href="{% url 'tags:profile' %}">{{ username }}</a><!--
       --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a><!--
     -->{% endif %}
   </nav>

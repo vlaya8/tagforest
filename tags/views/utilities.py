@@ -25,6 +25,7 @@ def get_base_context(request):
     context = {
                 'logged_in': logged_in,
                 'logout_next': {"next": logout_next},
+                'username': request.user.username,
               }
 
     return context
