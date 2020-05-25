@@ -12,6 +12,8 @@
 
 ## Unordered
 
+- Improve the README
+- Add a default database generator for people who clone the git projet
 - Cleanup CSS
 - Add multiple color schemes
 - Add translation system, and add french translation
