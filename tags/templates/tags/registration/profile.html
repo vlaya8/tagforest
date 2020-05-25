@@ -4,4 +4,22 @@
 
 <p><b>Username: </b>{{ username }}</p>
 
+<p><b>Change password:</b></p>
+
+<form method="post" class="contentForm">
+  <ul>
+    {% csrf_token %}
+
+    {% for field in form %}
+	{{ field.label_tag }}<br>
+	{{ field }}
+	{% for error in field.errors %}
+	  <p style="color: red">{{ error }}</p>
+	{% endfor %}
+    {% endfor %}
+
+    <input type="submit" value="Submit"/>
+  </ul>
+</form>
+
 {% endblock %}

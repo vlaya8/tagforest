@@ -1,15 +1,33 @@
 from django.http import HttpResponseRedirect
 from django.views import generic
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth import views as auth_views
 
 from ..models import Entry, Tag
 from ..forms import EntryForm, TreeForm
 from .utilities import *
 
 import json
+
+class ProfileView(auth_views.PasswordChangeView):
+
+    success_url = reverse_lazy('tags:index')
+
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+
+        context = super().get_context_data(**kwargs)
+
+        context["username"] = user.username
+        context.update(get_base_context(self.request))
+
+        return context
+
+    template_name = 'tags/registration/profile.html'
 
 ## Index
 
@@ -18,16 +36,6 @@ def index(request):
     default_tree = Tree.objects.first()
 
     return redirect_with_get_params('tags:view_tree', get_params={'selected_tags': request.GET.get('selected_tags', '')}, kwargs={'tree_id': default_tree.id})
-
-@login_required
-def profile(request):
-
-    user = request.user
-
-    context = { "username": user.username }
-    context.update(get_base_context(request))
-
-    return render(request, 'tags/registration/profile.html', context)
 
 @login_required
 def view_tree(request, tree_id):

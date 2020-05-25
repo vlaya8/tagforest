@@ -20,7 +20,9 @@ urlpatterns = [
         path('manage_tags/', views.manage_tags_default, name="manage_tags_default"),
 
         path('accounts/login/', auth_views.LoginView.as_view(template_name='tags/registration/login.html')),
-        path('accounts/profile/', views.profile, name="profile"),
+        path('accounts/password_change/', auth_views.PasswordChangeView.as_view(template_name='tags/registration/password_change_form.html')),
+
+        path('accounts/profile/', views.ProfileView.as_view(), name="profile"),
         path('accounts/', include('django.contrib.auth.urls')),
 
         path('about/', views.AboutView.as_view(), name="about"),
