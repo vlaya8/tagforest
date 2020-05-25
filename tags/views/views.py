@@ -70,7 +70,7 @@ def view_tree(request, tree_id):
 
         entry_list = entry_list.distinct()
     else:
-        entry_list = Entry.objects.all().filter(tree__id=tree_id).filter(user__id=request.user.id)
+        entry_list = Entry.objects.filter(tree__id=tree_id).filter(user__id=request.user.id)
 
     context = {
                 'entry_list': entry_list,
@@ -179,7 +179,7 @@ def edit_entry(request, tree_id, entry_id):
 
     entry = get_object_or_404(Entry, pk=entry_id)
 
-    tags = ",".join([tag.name for tag in entry.tags.all()])
+    tags = ",".join([tag.name for tag in entry.tags.filter(user__id=request.user.id)])
     data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
 
     form = EntryForm(initial=data)

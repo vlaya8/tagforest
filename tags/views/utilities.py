@@ -36,7 +36,7 @@ def get_tree_bar_context(user):
     tree_add_form = TreeForm(initial={'tree_id': -1, 'delete_tree': False})
     tree_ids = []
 
-    for tree in Tree.objects.all():
+    for tree in Tree.objects.filter(user__id=user.id):
         add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
         delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
         delete_form = TreeForm(initial=delete_data)
@@ -80,10 +80,6 @@ def get_tag_list(user, tree_id, selected_tags):
     tag_list.reverse()
 
     return tag_list
-
-def get_tree_list():
-    tree_list = [(tree.name, tree.id) for tree in Tree.objects.all()]
-    return tree_list
 
 # Should be moved client side
 def toggle_tag(selected_tags, tag):
