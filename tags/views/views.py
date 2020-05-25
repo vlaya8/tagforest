@@ -103,7 +103,7 @@ def process_tree(request):
                 tree.name = tree_name
                 tree.save()
         else:
-            tree = Tree.objects.create(name=tree_name)
+            tree = Tree.objects.create(name=tree_name, user=request.user)
 
         return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree.id}))
     else:
@@ -131,13 +131,13 @@ def process_entry(request, tree_id):
                 entry.text = entry_text
                 entry.tags.clear()
             else:
-                entry = Entry.objects.create(name=entry_name, text=entry_text, tree_id=tree_id, added_date=timezone.now())
+                entry = Entry.objects.create(name=entry_name, text=entry_text, tree_id=tree_id, added_date=timezone.now(), user=request.user)
 
             tags_name = parse_tags(form.cleaned_data['tags'])
 
             for tag_name in tags_name:
 
-                tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree_id=tree_id)
+                tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree_id=tree_id, user=request.user)
                 tag_obj.save()
 
                 entry.tags.add(tag_obj)
