@@ -19,7 +19,8 @@ class Tag(node_factory('TagEdge')):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class TagEdge(edge_factory(Tag, concrete = False)):
-    pass
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Entry(models.Model):
     def __str__(self):
