@@ -59,18 +59,18 @@ def view_tree(request, tree_id):
     selected_tags = get_selected_tag_list(request)
 
     # Generate all the elements to be displayed in the tag list
-    tag_list = get_tag_list(tree_id, selected_tags)
+    tag_list = get_tag_list(request.user, tree_id, selected_tags)
 
     # Generate the entries to be displayed
     if len(selected_tags) > 0:
         entry_list = Entry.objects.none()
         
         for tag in selected_tags:
-            entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=tree_id)
+            entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=tree_id).filter(user__id=request.user.id)
 
         entry_list = entry_list.distinct()
     else:
-        entry_list = Entry.objects.all().filter(tree__id=tree_id)
+        entry_list = Entry.objects.all().filter(tree__id=tree_id).filter(user__id=request.user.id)
 
     context = {
                 'entry_list': entry_list,
@@ -78,7 +78,7 @@ def view_tree(request, tree_id):
                 'current_tree_id': tree_id,
               }
 
-    context.update(get_tree_bar_context())
+    context.update(get_tree_bar_context(request.user))
     context.update(get_base_context(request))
 
     return render(request, 'tags/index.html', context)
@@ -155,7 +155,7 @@ def detail_entry(request, tree_id, entry_id):
                 'entry': entry,
                 'current_tree_id': tree_id,
               }
-    context.update(get_tree_bar_context())
+    context.update(get_tree_bar_context(request.user))
     context.update(get_base_context(request))
 
     return render(request, 'tags/detail_entry.html', context)
@@ -169,7 +169,7 @@ def add_entry(request, tree_id):
                 'form': form,
                 'current_tree_id': tree_id,
               }
-    context.update(get_tree_bar_context())
+    context.update(get_tree_bar_context(request.user))
     context.update(get_base_context(request))
 
     return render(request, 'tags/upsert_entry.html', context)
@@ -188,7 +188,7 @@ def edit_entry(request, tree_id, entry_id):
                 'form': form,
                 'current_tree_id': tree_id,
               }
-    context.update(get_tree_bar_context())
+    context.update(get_tree_bar_context(request.user))
     context.update(get_base_context(request))
 
     return render(request, 'tags/upsert_entry.html', context)
@@ -215,7 +215,7 @@ def manage_tags(request, tree_id):
     context = {
                 'current_tree_id': tree_id,
               }
-    context.update(get_tree_bar_context())
+    context.update(get_tree_bar_context(request.user))
     context.update(get_base_context(request))
 
     return render(request, 'tags/manage_tags.html', context)

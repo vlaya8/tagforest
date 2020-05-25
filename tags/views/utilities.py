@@ -30,7 +30,7 @@ def get_base_context(request):
 
     return context
 
-def get_tree_bar_context():
+def get_tree_bar_context(user):
 
     tree_list = []
     tree_add_form = TreeForm(initial={'tree_id': -1, 'delete_tree': False})
@@ -64,10 +64,10 @@ def get_selected_tag_list(request):
     return selected_tags
 
 # Generate all the elements to be displayed in the tag list
-def get_tag_list(tree_id, selected_tags):
+def get_tag_list(user, tree_id, selected_tags):
     tag_list = []
 
-    for tag in Tag.objects.filter(tree__id=tree_id):
+    for tag in Tag.objects.filter(tree__id=tree_id).filter(user__id=user.id):
 
         tag_name = tag.name
         tag_count = tag.entry_set.count()
