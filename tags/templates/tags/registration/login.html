@@ -1,5 +1,7 @@
 {% extends "tags/base.html" %}
 
+{% block title %}Login{% endblock %}
+
 {% block content %}
 
 {% if form.errors %}
@@ -24,7 +26,6 @@
   <input type="hidden" name="next" value="{{ next }}">
 </form>
 
-{# Assumes you setup the password_reset view in your URLconf #}
-<p><a href="{% url 'tags:password_reset' %}">Lost password?</a></p>
+<p><a href="{% url 'tags:signup' %}">Sign Up</a></p>
 
 {% endblock %}

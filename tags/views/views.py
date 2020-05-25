@@ -3,8 +3,10 @@ from django.views import generic
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import views as auth_views
 
 from ..models import Entry, Tag
@@ -12,6 +14,16 @@ from ..forms import EntryForm, TreeForm
 from .utilities import *
 
 import json
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('tags:index'))
+    else:
+        form = UserCreationForm()
+    return render(request, 'tags/registration/signup.html', {'form': form})
 
 class ProfileView(auth_views.PasswordChangeView):
 

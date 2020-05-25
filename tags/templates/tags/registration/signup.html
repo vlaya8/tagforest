@@ -1,0 +1,17 @@
+{% extends 'tags/base.html' %}
+
+{% block title %}Sign-up{% endblock %}
+
+{% block content %}
+
+<p><b>Sign-up</b></p>
+
+<form method="post" class="contentForm" >
+  {% csrf_token %}
+  <ul>
+    {{ form.as_ul }}
+    <li><input type="submit" value="Sign-up"></li>
+  </ul>
+</form>
+
+{% endblock %}
