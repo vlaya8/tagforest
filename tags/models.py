@@ -8,6 +8,7 @@ class Tree(models.Model):
         return self.name
 
     name = models.CharField('name', max_length=255, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Tag(node_factory('TagEdge')):
     def __str__(self):
