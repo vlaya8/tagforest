@@ -1,0 +1,55 @@
+@use 'base';
+@use "sass:color";
+
+.markdown {
+        
+  padding-top:0rem;
+  padding-bottom:0rem;
+
+  @for $i from 1 through 6 {
+  h#{$i} {
+    background-color: Transparent;
+    border: None;
+    padding: 0rem;
+    margin-top: 0em;
+    margin-bottom: 1em;
+  }}
+
+  p {
+    padding-left: 0rem;
+  }
+
+  code, blockquote {
+    display: block;
+    border-radius: 0.3rem;
+    padding: 0.7rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin: 0rem;
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    p {
+      display: inline;
+      padding: 0rem;
+    }
+  }
+  code {
+    background-color: color.adjust(base.$highlight-color, $saturation: -100, $alpha: -0.9);
+  }
+  blockquote {
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.92);
+  }
+  table {
+    border-collapse: collapse;
+  }
+  table, th, td {
+    border: 1px solid color.adjust(base.$background-color, $lightness: 0);
+    background-color: color.adjust(base.$background-color, $lightness: 4);
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}

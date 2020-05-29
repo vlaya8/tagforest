@@ -1,10 +1,13 @@
 {% extends "tags/base_tree.html" %}
+{% load static %}
 
 {% block title %}{{ entry.name }}{% endblock %}
 
 {% block content %}
   <h1>{{ entry.name }}</h1>
-  <p>{{ entry.text }}</p>
+  <p id="entry_display_app" class="markdown" >
+    <vue-markdown>{{ entry.text }}</vue-markdown>
+  </p>
   <p>
     {% for tag in entry.tags.all %}
     #{{ tag }}
@@ -13,4 +16,11 @@
   <p>
   <a href="{% url 'tags:edit_entry' tree_id=current_tree_id entry_id=entry.id %}" class="buttonLink" >Edit</a>
   </p>
+{% endblock %}
+
+{% block script_includes %}
+{{ block.super }}
+  <!-- VueJS Script include -->
+  <script src="{% static 'tags/vue-markdown.js' %}"></script>
+  <script src="{% static 'tags/entry_display.js' %}"></script>
 {% endblock %}
