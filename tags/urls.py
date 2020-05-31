@@ -23,7 +23,6 @@ user_urlpatterns = [
 urlpatterns = [
         path('', views.index, name="index"),
         path('<str:username>/', include(user_urlpatterns)),
-        path('', include(user_urlpatterns)),
         path('about/', views.AboutView.as_view(), name="about"),
         path('accounts/', include([
             path('login/', auth_views.LoginView.as_view(template_name='tags/registration/login.html')),

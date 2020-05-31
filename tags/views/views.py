@@ -43,81 +43,155 @@ class ProfileView(auth_views.PasswordChangeView):
 
 ## Index
 
+@login_required
 def index(request):
 
     default_tree = Tree.objects.first()
 
-    return redirect_with_get_params('tags:view_tree', get_params={'selected_tags': request.GET.get('selected_tags', '')}, kwargs={'tree_id': default_tree.id})
+    return redirect_with_get_params(
+                'tags:view_tree',
+                get_params={'selected_tags': request.GET.get('selected_tags', '')},
+                kwargs={'tree_id': default_tree.id, 'username': request.user.username}
+            )
 
-@login_required
-def view_tree(request, tree_id, username=""):
+@method_decorator(login_required, name='dispatch')
+class UserDataView(View):
 
-    user = get_user(request, username)
+    template_name = 'tags/index.html'
+    redirect_url = 'tags/index.html'
+    redirect_get_params = {}
+    redirect_kwargs = {}
 
-    # Get selected tags from GET url parameters
-    selected_tags = get_selected_tag_list(request)
+    def setup(self, request, username, **kwargs):
 
-    # Generate all the elements to be displayed in the tag list
-    tag_list = get_tag_list(user, tree_id, selected_tags)
+        super().setup(request, username, **kwargs)
+        self.kwargs['user'] = get_object_or_404(User, username=username)
 
-    # Generate the entries to be displayed
-    if len(selected_tags) > 0:
-        entry_list = Entry.objects.none()
-        
-        for tag in selected_tags:
-            entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=tree_id).filter(user__id=user.id)
+    def get_context_data(self, request, user, **kwargs):
 
-        entry_list = entry_list.distinct()
-    else:
-        entry_list = Entry.objects.filter(tree__id=tree_id).filter(user__id=user.id)
+        logged_in = user.is_authenticated
+        logout_next = reverse('tags:index')
 
-    context = {
-                'entry_list': entry_list,
-                'tag_list': tag_list,
-                'current_tree_id': tree_id,
-              }
+        context = {
+                    'logged_in': logged_in,
+                    'logout_next': {"next": logout_next},
+                    'username': user.username,
+                  }
 
-    context.update(get_tree_bar_context(user))
-    context.update(get_base_context(request))
+        return context
 
-    return render(request, 'tags/index.html', context)
+    def process_post(self, request, user, **kwargs):
+        pass
 
-@login_required
-def process_tree(request, username=""):
+    def get(self, request, user, **kwargs):
 
-    user = get_user(request, username)
-    form = TreeForm(request.POST)
+        context = self.get_context_data(request, user, **kwargs)
 
-    if form.is_valid():
+        return render(request, template_name, context)
 
-        tree_name = form.cleaned_data['name']
-        delete_tree = form.cleaned_data['delete_tree']
+    def post(self, request, user, **kwargs):
 
-        # If the tree has been edited
-        if form.cleaned_data['tree_id'] != -1:
-            tree = get_object_or_404(Tree, pk=form.cleaned_data['tree_id'])
-            if delete_tree:
-                tree.delete()
-                return HttpResponseRedirect(reverse('tags:index'))
+        self.process_post(request, user, **kwargs)
+
+        return redirect_with_get_params(
+                    self.redirect_url,
+                    get_params=self.redirect_get_params,
+                    kwargs=self.redirect_kwargs,
+                )
+
+def TreeView(UserDataView):
+
+    def setup(self, request, username, tree_id, **kwargs):
+
+        super().setup(request, username, **kwargs)
+        self.kwargs['current_tree'] = get_object_or_404(Tree, pk=tree_id)
+
+    def get_context_data(self, request, user, current_tree, *kwargs):
+
+        context = super().get_context_data(self, user, *kwargs)
+
+        tree_list = []
+        tree_add_form = TreeForm(initial={'tree_id': -1, 'delete_tree': False})
+        tree_ids = []
+
+        for tree in Tree.objects.filter(user__id=user.id):
+            add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
+            delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
+            delete_form = TreeForm(initial=delete_data)
+            delete_form.fields['name'].widget = forms.HiddenInput()
+            tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form))
+            tree_ids.append(tree.id)
+
+        context.update({
+                    'tree_list': tree_list,
+                    'tree_add_form': tree_add_form,
+                    'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
+                    'current_tree_id': current_tree.id,
+                  })
+        return context
+
+    def process_post(self, request, user, current_tree, **kwargs):
+
+        form = TreeForm(request.POST)
+
+        if form.is_valid():
+
+            tree_name = form.cleaned_data['name']
+            delete_tree = form.cleaned_data['delete_tree']
+
+            # If the tree has been edited
+            if form.cleaned_data['tree_id'] != -1:
+                tree = get_object_or_404(Tree, pk=form.cleaned_data['tree_id'])
+                if delete_tree:
+                    tree.delete()
+                    self.redirect_url = 'tags:index'
+                else:
+                    tree.name = tree_name
+                    tree.save()
             else:
-                tree.name = tree_name
-                tree.save()
+                tree = Tree.objects.create(name=tree_name, user=user)
+
+            self.redirect_kwargs['tree_id'] = tree.id
+            self.redirect_url = 'tags:view_tree'
         else:
-            tree = Tree.objects.create(name=tree_name, user=user)
+            self.redirect_url = 'tags:index'
 
-        return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree.id}))
-    else:
-        return HttpResponseRedirect(reverse('tags:index'))
+class ViewTreeView(TreeView):
 
-## Entries
+    template_name = 'tags/index.html'
 
-# Process an entry which got added or edited
-@login_required
-def process_entry(request, tree_id, username=""):
+    def get_context_data(self, request, user, current_tree, **kwargs):
 
-    user = get_user(request, username)
+        context = super().get_context_data(self, request, user, current_tree, **kwargs)
 
-    if request.method == 'POST':
+        # Get selected tags from GET url parameters
+        selected_tags = get_selected_tag_list(request)
+        # Generate all the elements to be displayed in the tag list
+        tag_list = get_tag_list(user, current_tree.id, selected_tags)
+
+        # Generate the entries to be displayed
+        if len(selected_tags) > 0:
+            entry_list = Entry.objects.none()
+            
+            for tag in selected_tags:
+                entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=current_tree.id).filter(user__id=user.id)
+
+            entry_list = entry_list.distinct()
+        else:
+            entry_list = Entry.objects.filter(tree__id=current_tree.id).filter(user__id=user.id)
+
+        context.update({
+                    'entry_list': entry_list,
+                    'tag_list': tag_list,
+                    'current_tree_id': current_tree.id,
+                  }
+
+        return context
+
+    # Process an entry which got added or edited
+    def process_post(self, request, user, current_tree, **kwargs):
+
+        super().process_post(self, request, user, current_tree, **kwargs)
 
         form = EntryForm(request.POST)
 
@@ -133,20 +207,21 @@ def process_entry(request, tree_id, username=""):
                 entry.text = entry_text
                 entry.tags.clear()
             else:
-                entry = Entry.objects.create(name=entry_name, text=entry_text, tree_id=tree_id, added_date=timezone.now(), user=user)
+                entry = Entry.objects.create(name=entry_name, text=entry_text, tree=current_tree, added_date=timezone.now(), user=user)
 
             tags_name = parse_tags(form.cleaned_data['tags'])
 
             for tag_name in tags_name:
 
-                tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree_id=tree_id, user=user)
+                tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree=current_tree, user=user)
                 tag_obj.save()
 
                 entry.tags.add(tag_obj)
 
             entry.save()
 
-    return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'tree_id': tree_id}))
+            self.redirect_url = 'tags:view_tree'
+            self.redirect_kwargs['tree_id'] = current_tree.id
 
 @login_required
 def detail_entry(request, tree_id, entry_id, username=""):

@@ -18,48 +18,6 @@ def redirect_with_get_params(url_name, get_params, kwargs):
     params = urlencode(get_params)
     return HttpResponseRedirect(url + "?%s" % params)
 
-def get_user(request, username):
-    if username == "":
-        return request.user
-    else:
-        return User.objects.get(username=username)
-
-def get_base_context(request):
-
-    logged_in = request.user.is_authenticated
-    logout_next = reverse('tags:index')
-
-    context = {
-                'logged_in': logged_in,
-                'logout_next': {"next": logout_next},
-                'username': request.user.username,
-              }
-
-    return context
-
-def get_tree_bar_context(user):
-
-    tree_list = []
-    tree_add_form = TreeForm(initial={'tree_id': -1, 'delete_tree': False})
-    tree_ids = []
-
-    for tree in Tree.objects.filter(user__id=user.id):
-        add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
-        delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
-        delete_form = TreeForm(initial=delete_data)
-        delete_form.fields['name'].widget = forms.HiddenInput()
-        tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form))
-        tree_ids.append(tree.id)
-
-    context = {
-                'tree_list': tree_list,
-                'tree_add_form': tree_add_form,
-                'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
-              }
-
-    return context
-
-
 # Get selected tags from GET url parameters
 def get_selected_tag_list(request):
     selected_tags = []
