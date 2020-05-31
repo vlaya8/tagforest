@@ -4,11 +4,11 @@
 
 {% block content %}
 
-<form class="contentForm" action="{% url 'tags:process_entry' tree_id=current_tree_id %}" method="post">
+<form class="contentForm" action="{% url 'tags:view_entry' username=username tree_id=current_tree_id entry_id=1 %}" method="post">
   {% csrf_token %}
   <ul>
   {{ form.as_ul }}
-  <li><input type="submit" value="Submit"></li>
+  <li><input type="submit" name="upsert_entry" value="Submit"></li>
   </ul>
 </form>
 

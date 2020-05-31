@@ -19,7 +19,6 @@
   <nav><!--
     --><a href="{% url 'tags:index' %}">Index</a><!--
     -->{% block nav_menu_tree_links %}<!--
-	--><a href="{% url 'tags:manage_tags_default' %}">Tags</a><!--
     -->{% endblock %}<!--
     -->{% if logged_in %}<!--
     --><a href="{% url 'tags:profile' %}">{{ username }}</a><!--

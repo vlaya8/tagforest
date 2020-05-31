@@ -6,18 +6,14 @@ app_name = 'tags'
 
 user_urlpatterns = [
     path('tree/<int:tree_id>/', include([
-        path('view/', views.view_tree, name="view_tree"),
-        path('tags/', views.manage_tags, name="manage_tags"),
+        path('view/', views.ViewTreeView.as_view(), name="view_tree"),
+        path('tags/', views.ManageTagsView.as_view(), name="manage_tags"),
         path('entry/', include([
-            path('<int:entry_id>/', views.detail_entry, name="detail_entry"),
-            path('add/', views.add_entry, name="add_entry"),
-            path('edit/<int:entry_id>/', views.edit_entry, name="edit_entry"),
-            path('process/', views.process_entry, name="process_entry"),
-            path('delete/', views.delete_entry, name="delete_entry"),
+            path('<int:entry_id>/', views.ViewEntryView.as_view(), name="view_entry"),
+            path('add/', views.UpsertEntryView.as_view(), name="upsert_entry"),
+            path('<int:entry_id>/edit/', views.UpsertEntryView.as_view(), name="upsert_entry"),
         ])),
     ])),
-    path('tree/process', views.process_tree, name="process_tree"),
-    path('manage_tags/', views.manage_tags_default, name="manage_tags_default"),
 ]
 
 urlpatterns = [
