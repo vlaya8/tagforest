@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django import forms
+from django.contrib.auth.models import User
 
 from ..models import Entry, Tag, Tree
 from ..forms import EntryForm, TreeForm
@@ -16,6 +17,12 @@ def redirect_with_get_params(url_name, get_params, kwargs):
     url = reverse(url_name, kwargs=kwargs)
     params = urlencode(get_params)
     return HttpResponseRedirect(url + "?%s" % params)
+
+def get_user(request, username):
+    if username == "":
+        return request.user
+    else:
+        return User.objects.get(username=username)
 
 def get_base_context(request):
 
