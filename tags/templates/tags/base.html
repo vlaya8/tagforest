@@ -12,11 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
 
-  <header>
-    <h1><a href="{% url 'tags:index' %}">Tagforest</a></h1>
-  </header>
-  
   <nav><!--
+    --><h1><a href="{% url 'tags:index' %}">Tagforest</a></h1><!--
     --><a href="{% url 'tags:index' %}">Index</a><!--
     -->{% block nav_menu_tree_links %}<!--
     -->{% endblock %}<!--

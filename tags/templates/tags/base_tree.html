@@ -10,6 +10,8 @@
   <!-- Vue js tree bar app -->
   <nav id="tree_bar_app" ><!--
 
+    --><a href="{% url 'tags:view_tree' tree_username %}">{{ tree_username }}></a><!--
+
     Tree list
     -->{% for tree_name, tree_id, tree_edit_form, tree_delete_form in tree_list %}<!--
 

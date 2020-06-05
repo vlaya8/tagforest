@@ -5,7 +5,7 @@ from . import views
 app_name = 'tags'
 
 user_urlpatterns = [
-    path('', views.ViewTreeView.as_view()),
+    path('', views.ViewTreeView.as_view(), name="view_tree"),
     path('profile/', views.ProfileView.as_view(), name="profile"),
     path('tree/<int:tree_id>/', include([
         path('view/', views.ViewTreeView.as_view(), name="view_tree"),
