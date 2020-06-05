@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block nav_menu_tree_links %}<!--
-    --><a href="{% url 'tags:manage_tags' username=username tree_id=current_tree_id %}">Tags</a><!--
+    --><a href="{% url 'tags:manage_tags' username=tree_username tree_id=current_tree_id %}">Tags</a><!--
 -->{% endblock %}
 
 {% block nav_content %}
@@ -14,14 +14,14 @@
     -->{% for tree_name, tree_id, tree_edit_form, tree_delete_form in tree_list %}<!--
 
           Tree name link
-	  --><a v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' username=username tree_id=tree_id %}"><!--
+	  --><a v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}"><!--
 		-->{{ tree_name }}<!--
 	  --></a><!--
 	  Tree name edit icons
-	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' username=username tree_id=tree_id %}"><!--
+	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}"><!--
 	        --><span class="treeName" >{{ tree_name }}</span><!--
 		--><a v-if="editMode & !editTree[{{ tree_id }}]" v-on:click="enterEditTree({{ tree_id }})" class="innerButton" ><i class="fa fa-edit"></i></a><!--
-		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' username=username tree_id=tree_id %}" method="post"><!--
+		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}" method="post"><!--
 		      -->{% csrf_token %}<!--
 		      -->{{ tree_delete_form.name}}<!--
 		      -->{{ tree_delete_form.delete_tree}}<!--
@@ -31,7 +31,7 @@
 	  --></div><!--
 
 	  Tree form
-	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' username=username tree_id=tree_id %}" method="post"><!--
+	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}" method="post"><!--
 		-->{% csrf_token %}<!--
 		-->{{ tree_edit_form.non_field_errors}}<!--
 		-->{{ tree_edit_form.name.errors}}<!--
@@ -50,7 +50,7 @@
     --><a v-if="viewMode" v-on:click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></a><!-- 
 
     Add form
-    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' username=username tree_id=current_tree_id %}" method="post"><!--
+    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' username=tree_username tree_id=current_tree_id %}" method="post"><!--
 	  -->{% csrf_token %}<!--
 	  -->{{ tree_add_form.non_field_errors}}<!--
 	  -->{{ tree_add_form.name.errors}}<!--
