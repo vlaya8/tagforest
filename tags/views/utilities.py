@@ -14,8 +14,10 @@ from urllib.parse import urlencode
 import json
 
 def redirect_with_get_params(url_name, get_params, kwargs):
+
     url = reverse(url_name, kwargs=kwargs)
     params = urlencode(get_params)
+
     return HttpResponseRedirect(url + "?%s" % params)
 
 # Get selected tags from GET url parameters

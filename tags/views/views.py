@@ -28,21 +28,6 @@ def signup(request):
         form = UserCreationForm()
     return render(request, 'tags/registration/signup.html', {'form': form})
 
-class ProfileView(auth_views.PasswordChangeView):
-
-    success_url = reverse_lazy('tags:index')
-
-    def get_context_data(self, **kwargs):
-        user = self.request.user
-
-        context = super().get_context_data(**kwargs)
-
-        context.update(get_base_context(self.request))
-
-        return context
-
-    template_name = 'tags/registration/profile.html'
-
 ## Index
 
 @login_required
@@ -60,11 +45,12 @@ def index(request):
 class UserDataView(View):
 
     template_name = 'tags/index.html'
-    redirect_url = 'tags/index.html'
-    redirect_get_params = {}
-    redirect_kwargs = {}
+    redirect_url = 'tags:index'
 
     def setup(self, request, username, **kwargs):
+
+        self.redirect_get_params = {}
+        self.redirect_kwargs = {}
 
         super().setup(request, username=username, **kwargs)
         self.kwargs['user'] = get_object_or_404(User, username=username)
@@ -106,6 +92,10 @@ class UserDataView(View):
                     get_params=self.redirect_get_params,
                     kwargs=self.redirect_kwargs,
                 )
+
+class ProfileView(UserDataView):
+
+    template_name = 'tags/registration/profile.html'
 
 class TreeView(UserDataView):
 
@@ -159,14 +149,16 @@ class TreeView(UserDataView):
                     if delete_tree:
                         tree.delete()
                         self.redirect_url = 'tags:index'
+                        self.redirect_kwargs = {}
                     else:
                         tree.name = tree_name
                         tree.save()
                 else:
                     tree = Tree.objects.create(name=tree_name, user=user)
 
-                self.redirect_kwargs['tree_id'] = tree.id
-                self.redirect_url = 'tags:view_tree'
+                if not delete_tree:
+                    self.redirect_kwargs['tree_id'] = tree.id
+                    self.redirect_url = 'tags:view_tree'
             else:
                 self.redirect_url = 'tags:index'
 
@@ -212,8 +204,6 @@ class ViewTreeView(TreeView):
 
             entry = get_object_or_404(Entry, pk=entry_id)
             entry.delete()
-
-            print("redirect url is ::::::::::::: " + str(self.redirect_url))
 
 class ViewEntryView(TreeView):
 

@@ -21,7 +21,7 @@
     -->{% block nav_menu_tree_links %}<!--
     -->{% endblock %}<!--
     -->{% if logged_in %}<!--
-    --><a href="{% url 'tags:profile' %}">{{ username }}</a><!--
+    --><a href="{% url 'tags:profile' username=username %}">{{ username }}</a><!--
       --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a><!--
     -->{% endif %}
   </nav>
