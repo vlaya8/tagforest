@@ -33,7 +33,7 @@ def signup(request):
 @login_required
 def index(request):
 
-    default_tree = Tree.objects.first()
+    default_tree = Tree.objects.filter(user__id=request.user.id).first()
 
     return redirect_with_get_params(
                 'tags:view_tree',
