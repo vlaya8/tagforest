@@ -110,9 +110,16 @@ class ChangePasswordView(auth_views.PasswordChangeView):
 
 class TreeView(UserDataView):
 
-    def setup(self, request, username, tree_id, **kwargs):
+    def setup(self, request, username, tree_id=-1, **kwargs):
 
         super().setup(request, username=username, **kwargs)
+
+        user = self.kwargs['user']
+
+        if tree_id == -1:
+            default_tree = Tree.objects.filter(user__id=request.user.id).first()
+            tree_id = default_tree.id
+
         self.kwargs['current_tree'] = get_object_or_404(Tree, pk=tree_id)
 
     def get_context_data(self, request, user, current_tree, **kwargs):
