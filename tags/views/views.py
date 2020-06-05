@@ -97,6 +97,17 @@ class ProfileView(UserDataView):
 
     template_name = 'tags/registration/profile.html'
 
+class ChangePasswordView(auth_views.PasswordChangeView):
+
+    success_url = reverse_lazy('tags:index')
+    template_name = 'tags/registration/password_change.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        return context
+
 class TreeView(UserDataView):
 
     def setup(self, request, username, tree_id, **kwargs):
