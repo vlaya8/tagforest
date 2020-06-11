@@ -7,17 +7,23 @@ class Tree(models.Model):
     def __str__(self):
         return self.name
 
-    name = models.CharField('name', max_length=255, unique=True)
+    name = models.CharField('name', max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('name', 'user')
 
 class Tag(node_factory('TagEdge')):
     def __str__(self):
         return self.name
 
-    name = models.CharField('name', max_length=255, unique=True)
+    name = models.CharField('name', max_length=255)
 
     tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('name', 'user', 'tree')
 
 class TagEdge(edge_factory(Tag, concrete = False)):
     pass
@@ -34,4 +40,7 @@ class Entry(models.Model):
 
     tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('name', 'user', 'tree')
 
