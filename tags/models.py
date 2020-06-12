@@ -3,6 +3,32 @@ from django.contrib.auth.models import User
 
 from django_dag.models import *
 
+## Groups
+
+# The role of a member in a group dictates its permissions in the group
+class GroupRole(models.Model):
+
+    manage_users = models.BoolanField(default=False)
+    manage_entries = models.BoolanField(default=False)
+
+# A user which is part of a group
+class Member(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    role = models.ForeignKey(GroupRole, on_delete=models.CASCADE, none=False)
+
+# Can represent a group of users or a single user
+# Can own trees
+class Group(models.Model):
+
+    name = models.CharField('name', max_length=255)
+
+    members = models.ManyToManyField(Member, blank=False)
+
+## Trees, Entries, Tags
+
+# A tree contains entries and tags
 class Tree(models.Model):
     def __str__(self):
         return self.name
