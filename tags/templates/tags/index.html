@@ -20,7 +20,7 @@
   {% endfor %}
 
   <br/><br/>
-  <a href="{% url 'tags:upsert_entry' username=tree_username tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+  <a href="{% url 'tags:upsert_entry' groupname=groupname tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
 
 {% endblock %}
 

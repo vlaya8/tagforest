@@ -4,9 +4,8 @@ from . import views
 
 app_name = 'tags'
 
-user_urlpatterns = [
+tree_urlpatterns = [
     path('', views.ViewTreeView.as_view(), name="view_tree"),
-    path('profile/', views.ProfileView.as_view(), name="profile"),
     path('tree/<int:tree_id>/', include([
         path('view/', views.ViewTreeView.as_view(), name="view_tree"),
         path('tags/', views.ManageTagsView.as_view(), name="manage_tags"),
@@ -20,7 +19,8 @@ user_urlpatterns = [
 
 urlpatterns = [
         path('', views.index, name="index"),
-        path('user/<str:username>/', include(user_urlpatterns)),
+        path('group/<str:groupname>/', include(tree_urlpatterns)),
+        path('user/<str:username>/profile/', views.ProfileView.as_view(), name="profile"),
         path('about/', views.AboutView.as_view(), name="about"),
         path('accounts/', include([
             path('password_change/', views.ChangePasswordView.as_view()),

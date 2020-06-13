@@ -24,6 +24,9 @@ class TreeUserGroup(models.Model):
     name = models.CharField('name', max_length=255)
     single_member = models.BooleanField()
 
+    def get_user_group(user):
+        return TreeUserGroup.objects.filter(name=user.username).filter(single_member=True).first()
+
 # A user which is part of a group
 class Member(models.Model):
     def __str__(self):

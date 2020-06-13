@@ -13,6 +13,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from ..models import Entry,Tag,Tree
+from ..models import TreeUserGroup
 from ..forms import EntryForm, TreeForm
 from .utilities import *
 
@@ -33,12 +34,13 @@ def signup(request):
 @login_required
 def index(request):
 
-    default_tree = Tree.objects.filter(user__id=request.user.id).first()
+    group = TreeUserGroup.get_user_group(request.user)
+    default_tree = Tree.objects.filter(group__id=group.id).first()
 
     return redirect_with_get_params(
                 'tags:view_tree',
                 get_params={'selected_tags': request.GET.get('selected_tags', '')},
-                kwargs={'tree_id': default_tree.id, 'username': request.user.username}
+                kwargs={'tree_id': default_tree.id, 'groupname': group.name}
             )
 
 @method_decorator(login_required, name='dispatch')
@@ -75,7 +77,7 @@ class UserDataView(View):
     def get(self, request, **kwargs):
 
         kwargs.update(self.kwargs)
-        del kwargs['username']
+        #del kwargs['username']
 
         context = self.get_context_data(request, **kwargs)
 
@@ -84,7 +86,7 @@ class UserDataView(View):
     def post(self, request, **kwargs):
 
         kwargs.update(self.kwargs)
-        del kwargs['username']
+        #del kwargs['username']
 
         self.process_post(request, **kwargs)
 
@@ -111,20 +113,20 @@ class ChangePasswordView(auth_views.PasswordChangeView):
 
 class TreeView(UserDataView):
 
-    def setup(self, request, username, tree_id=-1, **kwargs):
+    def setup(self, request, groupname, tree_id=-1, **kwargs):
 
         super().setup(request, **kwargs)
 
-        tree_user = get_object_or_404(User, username=username)
-        self.kwargs['tree_user'] = tree_user
+        group = get_object_or_404(TreeUserGroup, name=groupname)
+        self.kwargs['group'] = group
 
         if tree_id == -1:
-            default_tree = Tree.objects.filter(user__id=tree_user.id).first()
+            default_tree = Tree.objects.filter(group__id=group.id).first()
             tree_id = default_tree.id
 
         self.kwargs['current_tree'] = get_object_or_404(Tree, pk=tree_id)
 
-    def get_context_data(self, request, user, tree_user, current_tree, **kwargs):
+    def get_context_data(self, request, user, group, current_tree, **kwargs):
 
         context = super().get_context_data(request, user=user, **kwargs)
 
@@ -132,7 +134,7 @@ class TreeView(UserDataView):
         tree_add_form = TreeForm(initial={'tree_id': -1, 'delete_tree': False})
         tree_ids = []
 
-        for tree in Tree.objects.filter(user__id=tree_user.id):
+        for tree in Tree.objects.filter(group__id=group.id):
             add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
             delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
             delete_form = TreeForm(initial=delete_data)
@@ -144,15 +146,15 @@ class TreeView(UserDataView):
                     'tree_list': tree_list,
                     'tree_add_form': tree_add_form,
                     'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
-                    'tree_username': tree_user.username,
+                    'groupname': group.name,
                     'current_tree_id': current_tree.id,
                   })
         return context
 
-    def process_post(self, request, user, tree_user, current_tree, **kwargs):
+    def process_post(self, request, user, group, current_tree, **kwargs):
 
         # Default redirect
-        self.redirect_kwargs['username'] = tree_user.username
+        self.redirect_kwargs['groupname'] = group.name
         self.redirect_kwargs['tree_id'] = current_tree.id
         self.redirect_url = 'tags:view_tree'
 
@@ -175,7 +177,7 @@ class TreeView(UserDataView):
                         tree.name = tree_name
                         tree.save()
                 else:
-                    tree = Tree.objects.create(name=tree_name, user=tree_user)
+                    tree = Tree.objects.create(name=tree_name, group=group)
 
                 if not delete_tree:
                     self.redirect_kwargs['tree_id'] = tree.id
@@ -187,25 +189,25 @@ class ViewTreeView(TreeView):
 
     template_name = 'tags/index.html'
 
-    def get_context_data(self, request, user, tree_user, current_tree, **kwargs):
+    def get_context_data(self, request, user, group, current_tree, **kwargs):
 
-        context = super().get_context_data(request, user=user, tree_user=tree_user, current_tree=current_tree, **kwargs)
+        context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
 
         # Get selected tags from GET url parameters
         selected_tags = get_selected_tag_list(request)
         # Generate all the elements to be displayed in the tag list
-        tag_list = get_tag_list(tree_user, current_tree.id, selected_tags)
+        tag_list = get_tag_list(group, current_tree.id, selected_tags)
 
         # Generate the entries to be displayed
         if len(selected_tags) > 0:
             entry_list = Entry.objects.none()
             
             for tag in selected_tags:
-                entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=current_tree.id).filter(user__id=tree_user.id)
+                entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=current_tree.id).filter(group__id=group.id)
 
             entry_list = entry_list.distinct()
         else:
-            entry_list = Entry.objects.filter(tree__id=current_tree.id).filter(user__id=tree_user.id)
+            entry_list = Entry.objects.filter(tree__id=current_tree.id).filter(group__id=group.id)
 
         context.update({
                     'entry_list': entry_list,
@@ -215,9 +217,9 @@ class ViewTreeView(TreeView):
 
         return context
 
-    def process_post(self, request, user, tree_user, current_tree, **kwargs):
+    def process_post(self, request, user, group, current_tree, **kwargs):
 
-        super().process_post(request, user=user, tree_user=tree_user, current_tree=current_tree, **kwargs)
+        super().process_post(request, user=user, group=group, current_tree=current_tree, **kwargs)
 
         # Process an entry which got deleted
         if 'delete_entry_id' in request.POST:
@@ -230,8 +232,8 @@ class ViewEntryView(TreeView):
 
     template_name = 'tags/detail_entry.html'
 
-    def get_context_data(self, request, user, tree_user, current_tree, entry_id, **kwargs):
-        context = super().get_context_data(request, user=user, tree_user=tree_user, current_tree=current_tree, **kwargs)
+    def get_context_data(self, request, user, group, current_tree, entry_id, **kwargs):
+        context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
 
         entry = get_object_or_404(Entry, pk=entry_id)
         context.update({
@@ -240,9 +242,9 @@ class ViewEntryView(TreeView):
 
         return context
 
-    def process_post(self, request, user, tree_user, current_tree, **kwargs):
+    def process_post(self, request, user, group, current_tree, **kwargs):
 
-        super().process_post(request, user=user, tree_user=tree_user, current_tree=current_tree, **kwargs)
+        super().process_post(request, user=user, group=group, current_tree=current_tree, **kwargs)
 
         # Process an entry which got added or edited
         if 'upsert_entry' in request.POST:
@@ -261,13 +263,13 @@ class ViewEntryView(TreeView):
                     entry.text = entry_text
                     entry.tags.clear()
                 else:
-                    entry = Entry.objects.create(name=entry_name, text=entry_text, tree=current_tree, added_date=timezone.now(), user=tree_user)
+                    entry = Entry.objects.create(name=entry_name, text=entry_text, tree=current_tree, added_date=timezone.now(), group=group)
 
                 tags_name = parse_tags(form.cleaned_data['tags'])
 
                 for tag_name in tags_name:
 
-                    tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree=current_tree, user=tree_user)
+                    tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree=current_tree, group=group)
                     tag_obj.save()
 
                     entry.tags.add(tag_obj)
@@ -281,14 +283,14 @@ class UpsertEntryView(TreeView):
 
     template_name = 'tags/upsert_entry.html'
 
-    def get_context_data(self, request, user, tree_user, current_tree, **kwargs):
-        context = super().get_context_data(request, user=user, tree_user=tree_user, current_tree=current_tree, **kwargs)
+    def get_context_data(self, request, user, group, current_tree, **kwargs):
+        context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
 
         if 'entry_id' in kwargs:
             entry_id = kwargs['entry_id']
             entry = get_object_or_404(Entry, pk=entry_id)
 
-            tags = ",".join([tag.name for tag in entry.tags.filter(user__id=tree_user.id)])
+            tags = ",".join([tag.name for tag in entry.tags.filter(group__id=group.id)])
             data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
         else:
             data = {"entry_id": -1}
