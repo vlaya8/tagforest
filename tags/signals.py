@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from tags.models import Group
+from tags.models import Group, GroupRole
 
 # Each user must have a group with only them in it
 @receiver(post_save, sender=User)
