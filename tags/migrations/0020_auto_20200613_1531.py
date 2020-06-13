@@ -1,26 +1,27 @@
 from django.db import migrations
 from django.db import models
-from tags.models import Role
 
 def add_roles(apps, schema_editor):
 
-    Role.objects.create(name="admin",
+    GroupRole = apps.get_model('tags', 'GroupRole')
+    GroupRole.objects.create(name="admin",
                          manage_users=True,
                          manage_entries=True)
 
-    Role.objects.create(name="writer",
+    GroupRole.objects.create(name="writer",
                          manage_users=False,
                          manage_entries=True)
 
-    Role.objects.create(name="reader",
+    GroupRole.objects.create(name="reader",
                          manage_users=False,
                          manage_entries=False)
 
 def rev_add_roles(apps, schema_editor):
 
-    Role.objects.filter(name="admin").delete()
-    Role.objects.filter(name="writer").delete()
-    Role.objects.filter(name="reader").delete()
+    GroupRole = apps.get_model('tags', 'GroupRole')
+    GroupRole.objects.filter(name="admin").delete()
+    GroupRole.objects.filter(name="writer").delete()
+    GroupRole.objects.filter(name="reader").delete()
 
 class Migration(migrations.Migration):
 

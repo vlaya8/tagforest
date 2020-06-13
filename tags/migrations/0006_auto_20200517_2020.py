@@ -2,7 +2,6 @@
 
 from django.db import migrations
 from django.db import models
-from tags.models import Tree,Tag
 
 def set_default_tree(apps, schema_editor):
     Tag = apps.get_model('tags', 'Tag')
