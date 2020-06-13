@@ -6,7 +6,7 @@ from django_dag.models import *
 ## Groups
 
 # The role of a member in a group dictates its permissions in the group
-class GroupRole(models.Model):
+class Role(models.Model):
 
     name = models.CharField('name', max_length=255)
 
@@ -18,7 +18,7 @@ class Member(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    role = models.ForeignKey(GroupRole, on_delete=models.CASCADE, null=False)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, null=False)
 
 # Can represent a group of users or a single user
 # Can own trees
