@@ -8,6 +8,8 @@ from django_dag.models import *
 # The role of a member in a group dictates its permissions in the group
 class GroupRole(models.Model):
 
+    name = models.CharField('name', max_length=255)
+
     manage_users = models.BooleanField(default=False)
     manage_entries = models.BooleanField(default=False)
 
