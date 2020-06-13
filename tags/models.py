@@ -7,6 +7,8 @@ from django_dag.models import *
 
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
+    def __str__(self):
+        return self.name
 
     name = models.CharField('name', max_length=255)
 
@@ -15,6 +17,8 @@ class Role(models.Model):
 
 # A user which is part of a group
 class Member(models.Model):
+    def __str__(self):
+        return self.name
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -23,6 +27,8 @@ class Member(models.Model):
 # Can represent a group of users or a single user
 # Can own trees
 class TreeUserGroup(models.Model):
+    def __str__(self):
+        return self.name
 
     name = models.CharField('name', max_length=255)
 
