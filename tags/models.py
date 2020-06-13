@@ -15,6 +15,15 @@ class Role(models.Model):
     manage_users = models.BooleanField(default=False)
     manage_entries = models.BooleanField(default=False)
 
+# Can represent a group of users or a single user
+# Can own trees
+class TreeUserGroup(models.Model):
+    def __str__(self):
+        return self.name
+
+    name = models.CharField('name', max_length=255)
+    single_member = models.BooleanField()
+
 # A user which is part of a group
 class Member(models.Model):
     def __str__(self):
@@ -24,16 +33,7 @@ class Member(models.Model):
 
     role = models.ForeignKey(Role, on_delete=models.CASCADE, null=False)
 
-# Can represent a group of users or a single user
-# Can own trees
-class TreeUserGroup(models.Model):
-    def __str__(self):
-        return self.name
-
-    name = models.CharField('name', max_length=255)
-
-    members = models.ManyToManyField(Member, blank=False)
-    single_member = models.BooleanField()
+    group = models.ForeignKey(TreeUserGroup, on_delete=models.CASCADE, null=True)
 
 ## Trees, Entries, Tags
 
