@@ -18,7 +18,7 @@ class Role(models.Model):
 # A user which is part of a group
 class Member(models.Model):
     def __str__(self):
-        return self.name
+        return "({})".format(",".join([self.role.name, self.user.username]))
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
