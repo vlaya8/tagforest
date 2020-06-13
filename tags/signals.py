@@ -9,9 +9,8 @@ from tags.models import TreeUserGroup, Role, Member
 def create_group(sender, instance, created, **kwargs):
     if created:
         admin_role = Role.objects.filter(name="admin")
-        member = Member.objects.create(user=instance, role=admin_role)
         group = TreeUserGroup.objects.create(name=instance.name,
                                      single_member=True)
-        group.members.add(member)
+        member = Member.objects.create(user=instance, role=admin_role, group=group)
 
 
