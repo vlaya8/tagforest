@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block nav_menu_tree_links %}<!--
+    {% if has_tree %}
     --><a href="{% url 'tags:manage_tags' groupname=groupname tree_id=current_tree_id %}">Tags</a><!--
+    {% endif %}
 -->{% endblock %}
 
 {% block nav_content %}
@@ -13,7 +15,8 @@
     --><a href="{% url 'tags:view_tree' groupname %}">{{ groupname }}></a><!--
 
     Tree list
-    -->{% for tree_name, tree_id, tree_edit_form, tree_delete_form in tree_list %}<!--
+    {% if has_tree %}
+    {% for tree_name, tree_id, tree_edit_form, tree_delete_form in tree_list %}
 
           Tree name link
 	  --><a v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' groupname=groupname tree_id=tree_id %}"><!--
@@ -44,7 +47,8 @@
 	  --></form><!--
 	  --><a v-if="editTree[{{ tree_id }}]" v-on:click="exitEditTree({{ tree_id }})" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
 
-    -->{% endfor %}<!--
+    {% endfor %}
+    {% endif %}
     --><a v-if="editMode" v-on:click="exitEditMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
 
     Mode selectors
@@ -52,7 +56,7 @@
     --><a v-if="viewMode" v-on:click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></a><!-- 
 
     Add form
-    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' groupname=groupname tree_id=current_tree_id %}" method="post"><!--
+    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' groupname=groupname %}" method="post"><!--
 	  -->{% csrf_token %}<!--
 	  -->{{ tree_add_form.non_field_errors}}<!--
 	  -->{{ tree_add_form.name.errors}}<!--

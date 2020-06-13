@@ -8,8 +8,8 @@ from tags.models import TreeUserGroup, Role, Member
 @receiver(post_save, sender=User)
 def create_group(sender, instance, created, **kwargs):
     if created:
-        admin_role = Role.objects.filter(name="admin")
-        group = TreeUserGroup.objects.create(name=instance.name,
+        admin_role = Role.objects.filter(name="admin").first()
+        group = TreeUserGroup.objects.create(name=instance.username,
                                      single_member=True)
         member = Member.objects.create(user=instance, role=admin_role, group=group)
 

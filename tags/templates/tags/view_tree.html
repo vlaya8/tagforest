@@ -19,8 +19,10 @@
     {% include "tags/entry_block.html" %}
   {% endfor %}
 
+  {% if has_tree %}
   <br/><br/>
   <a href="{% url 'tags:upsert_entry' groupname=groupname tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+  {% endif %}
 
 {% endblock %}
 
