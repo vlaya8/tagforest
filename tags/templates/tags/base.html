@@ -15,12 +15,13 @@
   <nav><!--
     --><h1><a href="{% url 'tags:index' %}">Tagforest</a></h1><!--
     --><a href="{% url 'tags:index' %}">Index</a><!--
-    -->{% block nav_menu_tree_links %}<!--
-    -->{% endblock %}<!--
     -->{% if logged_in %}<!--
+    --><a href="{% url 'tags:manage_groups' username=username %}">Groups</a><!--
     --><a href="{% url 'tags:profile' username=username %}">{{ username }}</a><!--
       --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a><!--
-    -->{% endif %}
+    -->{% endif %}<!--
+    -->{% block nav_menu_tree_links %}<!--
+    -->{% endblock %}
   </nav>
 
   {% block nav_content %}

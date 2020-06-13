@@ -20,7 +20,10 @@ tree_urlpatterns = [
 urlpatterns = [
         path('', views.index, name="index"),
         path('group/<str:groupname>/', include(tree_urlpatterns)),
-        path('user/<str:username>/profile/', views.ProfileView.as_view(), name="profile"),
+        path('user/<str:username>/', include([
+            path('profile/', views.ProfileView.as_view(), name="profile"),
+            path('groups/', views.ManageGroupsView.as_view(), name="manage_groups"),
+        ])),
         path('about/', views.AboutView.as_view(), name="about"),
         path('accounts/', include([
             path('password_change/', views.ChangePasswordView.as_view()),

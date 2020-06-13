@@ -111,6 +111,10 @@ class ChangePasswordView(auth_views.PasswordChangeView):
 
         return context
 
+class ManageGroupsView(UserDataView):
+
+    template_name = 'tags/manage_groups.html'
+
 class TreeView(UserDataView):
 
     def setup(self, request, groupname, tree_id=-1, **kwargs):

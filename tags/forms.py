@@ -37,3 +37,7 @@ class TreeForm(forms.Form):
 
     delete_tree = forms.BooleanField(required=False, widget=forms.HiddenInput())
     tree_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class GroupForm(forms.Form):
+
+    name = forms.CharField(label = "Name", max_length=255)
