@@ -20,7 +20,7 @@ user_urlpatterns = [
 
 urlpatterns = [
         path('', views.index, name="index"),
-        path('<str:username>/', include(user_urlpatterns)),
+        path('user/<str:username>/', include(user_urlpatterns)),
         path('about/', views.AboutView.as_view(), name="about"),
         path('accounts/', include([
             path('password_change/', views.ChangePasswordView.as_view()),
