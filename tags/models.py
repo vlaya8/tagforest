@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 from django_dag.models import *
 
-## TreeUserGroups
+## Groups
 
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
