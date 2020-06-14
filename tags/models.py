@@ -14,6 +14,7 @@ class TreeUserGroup(models.Model):
     name = models.CharField('name', max_length=255, unique=True)
     single_member = models.BooleanField()
     public_group = models.BooleanField(default=False)
+    listed_group = models.BooleanField(default=False)
 
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
