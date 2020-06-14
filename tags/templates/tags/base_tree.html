@@ -67,6 +67,11 @@
     --></form><!--
     --><a v-if="addMode" v-on:click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
 
+    --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group_name %}" method="post" ><!--
+	  -->{% csrf_token %}<!--
+         --><button class="thinButton" name="save_group" type="submit">Save Group</button><!--
+    --></form><!--
+
     -->
   </nav>
 

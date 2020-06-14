@@ -84,6 +84,9 @@ class Entry(models.Model):
 ## User
 
 class Profile(models.Model):
+    def __str__(self):
+        return "{}'s profile".format(self.user)
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
     public_user = models.BooleanField(default=False)

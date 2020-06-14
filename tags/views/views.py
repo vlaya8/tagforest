@@ -342,6 +342,11 @@ class TreeView(UserDataView):
             else:
                 self.redirect_url = 'tags:index'
 
+        elif 'save_group' in request.POST:
+
+            user.profile.saved_groups.add(group)
+            user.save()
+
 class ViewTreeView(TreeView):
 
     template_name = 'tags/view_tree.html'

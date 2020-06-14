@@ -10,6 +10,16 @@ nav {
   border: 1px solid color.adjust(base.$header-color, $lightness: 10);
   border-width: 1px 1px 3px;
   margin-bottom: 1rem;
+  //text-align: justify;
+
+  //&:after {
+  //  content: '';
+  //  display: inline-block;
+  //  width: 100%;
+  //  height: 0;
+  //  font-size:0;
+  //  line-height:0;
+  //}
 
   h1, a, input, button, .linkLike {
     color: base.$font-color;
@@ -73,6 +83,10 @@ nav {
     padding: 0rem;
     padding-left: 0.4rem;
     padding-right: 0.4rem;
+  }
+
+  .alignRight {
+    float: right;
   }
 }
 
