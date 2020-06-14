@@ -47,7 +47,7 @@ def index(request):
     return redirect_with_get_params(
                 'tags:view_tree',
                 get_params={'selected_tags': request.GET.get('selected_tags', '')},
-                kwargs={'groupname': group.name}
+                kwargs={'group_name': group.name}
             )
 
 @method_decorator(login_required, name='dispatch')
@@ -124,24 +124,29 @@ class ManageGroupsView(UserDataView):
 
 class TreeView(UserDataView):
 
-    def setup(self, request, groupname, tree_id=SpecialID['DEFAULT_ID'], **kwargs):
+    def setup(self, request, group_name, tree_id=SpecialID['DEFAULT_ID'], **kwargs):
 
         super().setup(request, **kwargs)
 
-        group = get_object_or_404(TreeUserGroup, name=groupname)
+        group = get_object_or_404(TreeUserGroup, name=group_name)
         self.kwargs['group'] = group
 
         if tree_id == SpecialID['DEFAULT_ID']:
 
             default_tree = Tree.objects.filter(group__id=group.id).first()
+
             if default_tree != None:
                 self.kwargs['current_tree'] = default_tree
             else:
                 self.kwargs['current_tree'] = None
+
         elif tree_id == SpecialID['NONE']:
+
             self.kwargs['current_tree'] = None
             default_tree = None
+
         else:
+
             self.kwargs['current_tree'] = get_object_or_404(Tree, pk=tree_id)
 
     def get_context_data(self, request, user, group, current_tree, **kwargs):
@@ -169,7 +174,7 @@ class TreeView(UserDataView):
                     'tree_list': tree_list,
                     'tree_add_form': tree_add_form,
                     'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
-                    'groupname': group.name,
+                    'group_name': group.name,
                     'current_tree_id': current_tree_id,
                     'has_tree': (current_tree_id > 0),
                   })
@@ -178,7 +183,7 @@ class TreeView(UserDataView):
     def process_post(self, request, user, group, current_tree, **kwargs):
 
         # Default redirect
-        self.redirect_kwargs['groupname'] = group.name
+        self.redirect_kwargs['group_name'] = group.name
         self.redirect_url = 'tags:view_tree'
 
         if 'tree_form' in request.POST:
@@ -258,7 +263,7 @@ class ViewTreeView(TreeView):
 
 class ViewEntryView(TreeView):
 
-    template_name = 'tags/detail_entry.html'
+    template_name = 'tags/view_entry.html'
 
     def get_context_data(self, request, user, group, current_tree, entry_id, **kwargs):
         context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
@@ -305,6 +310,8 @@ class ViewEntryView(TreeView):
                 entry.save()
 
                 self.redirect_url = 'tags:view_entry'
+                self.redirect_kwargs['group_name'] = group.name
+                self.redirect_kwargs['tree_id'] = current_tree.id
                 self.redirect_kwargs['entry_id'] = entry.id
 
 class UpsertEntryView(TreeView):

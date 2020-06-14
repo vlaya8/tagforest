@@ -13,6 +13,7 @@ tree_urlpatterns = [
             path('view/', views.ViewTreeView.as_view(), name="view_tree"),
             path('tags/', views.ManageTagsView.as_view(), name="manage_tags"),
             path('entry/', include([
+                path('', views.ViewEntryView.as_view(), name="view_entry"),
                 path('<int:entry_id>/', views.ViewEntryView.as_view(), name="view_entry"),
                 path('add/', views.UpsertEntryView.as_view(), name="upsert_entry"),
                 path('<int:entry_id>/edit/', views.UpsertEntryView.as_view(), name="upsert_entry"),
@@ -23,7 +24,7 @@ tree_urlpatterns = [
 
 urlpatterns = [
         path('', views.index, name="index"),
-        path('group/<str:groupname>/', include(tree_urlpatterns)),
+        path('group/<str:group_name>/', include(tree_urlpatterns)),
         path('user/<str:username>/', include([
             path('profile/', views.ProfileView.as_view(), name="profile"),
             path('groups/', views.ManageGroupsView.as_view(), name="manage_groups"),

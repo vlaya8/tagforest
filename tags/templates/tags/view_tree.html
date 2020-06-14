@@ -21,7 +21,7 @@
 
   {% if has_tree %}
   <br/><br/>
-  <a href="{% url 'tags:upsert_entry' groupname=groupname tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+  <a href="{% url 'tags:upsert_entry' group_name=group_name tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
   {% endif %}
 
 {% endblock %}
