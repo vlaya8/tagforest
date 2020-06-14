@@ -94,9 +94,11 @@ def get_groups(user):
 
     for member in user_members:
         if not member.group.public_group:
-            groups.append(member.group)
+            if not member.group.single_member:
+                groups.append(member.group)
     for group in public_groups:
-        groups.append(group)
+        if not group.single_member:
+            groups.append(group)
 
     return groups
 
