@@ -95,7 +95,7 @@ class Profile(models.Model):
     public_user = models.BooleanField(default=False)
     listed_user = models.BooleanField(default=False)
 
-    saved_groups = models.ManyToManyField(TreeUserGroup)
+    saved_groups = models.ManyToManyField(TreeUserGroup, blank=True)
 
 ### User methods
 
