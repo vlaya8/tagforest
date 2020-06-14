@@ -1,0 +1,15 @@
+{% extends "tags/base.html" %}
+
+{% block title %}Add group{% endblock %}
+
+{% block content %}
+
+<form class="contentForm" action="{% url 'tags:view_group' username=username %}" method="post">
+  {% csrf_token %}
+  <ul>
+  {{ form.as_ul }}
+  <li><input type="submit" name="upsert_group" value="Submit"></li>
+  </ul>
+</form>
+
+{% endblock %}

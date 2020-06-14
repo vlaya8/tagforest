@@ -13,8 +13,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from ..models import Entry,Tag,Tree
-from ..models import TreeUserGroup
-from ..forms import EntryForm, TreeForm
+from ..models import TreeUserGroup, Role, Member
+from ..forms import EntryForm, TreeForm, GroupForm
 from .utilities import *
 
 import json
@@ -121,6 +121,101 @@ class ChangePasswordView(auth_views.PasswordChangeView):
 class ManageGroupsView(UserDataView):
 
     template_name = 'tags/manage_groups.html'
+
+    def get_context_data(self, request, user, **kwargs):
+
+        context = super().get_context_data(request, user=user, **kwargs)
+
+        group_list = TreeUserGroup.objects.all()
+
+        context.update({
+                         'groups': group_list,
+                      })
+
+        return context
+    
+    def process_post(self, request, user, **kwargs):
+
+        super().process_post(request, user=user, **kwargs)
+
+        # Process a group which got deleted
+        if 'delete_group_id' in request.POST:
+            group_id = int(request.POST['delete_group_id'])
+
+            group = get_object_or_404(TreeUserGroup, pk=group_id)
+            group.delete()
+
+        self.redirect_url = 'tags:manage_groups'
+        self.redirect_kwargs['username'] = user.username
+
+class UpsertGroupView(UserDataView):
+
+    template_name = 'tags/upsert_group.html'
+
+    def get_context_data(self, request, user, **kwargs):
+
+        context = super().get_context_data(request, user=user, **kwargs)
+
+        # If user wants to edit a group
+        if 'group_id' in kwargs:
+            group_id = kwargs['group_id']
+            group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+            data = {"name": group.name, "group_id": group_id}
+        # If user wants to add a group
+        else:
+            data = {"group_id": SpecialID['NEW_ID']}
+
+        form = GroupForm(initial=data)
+
+        context.update({
+                         'form': form,
+                     })
+
+        return context
+
+class ViewGroupView(UserDataView):
+
+    template_name = 'tags/view_group.html'
+
+    def get_context_data(self, request, user, group_id, **kwargs):
+
+        context = super().get_context_data(request, user=user, **kwargs)
+
+        group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+        context.update({
+                         'group': group,
+                      })
+
+        return context
+
+    def process_post(self, request, user, **kwargs):
+
+        # Process a group which got added or edited
+        if 'upsert_group' in request.POST:
+
+            form = GroupForm(request.POST)
+
+            if form.is_valid():
+
+                group_name = form.cleaned_data['name']
+                group_id = form.cleaned_data['group_id']
+
+                # If the group has been edited
+                if group_id != SpecialID['NEW_ID']:
+                    group = get_object_or_404(TreeUserGroup, pk=group_id)
+                    group.name = group_name
+                else:
+                    group = TreeUserGroup.objects.create(name=group_name, single_member=False)
+                    admin_role = Role.objects.filter(name="admin").first()
+                    member = Member.objects.create(user=user, role=admin_role, group=group)
+
+                group.save()
+
+                self.redirect_url = 'tags:view_group'
+                self.redirect_kwargs['group_id'] = group.id
+                self.redirect_kwargs['username'] = user.username
 
 class TreeView(UserDataView):
 
@@ -288,10 +383,11 @@ class ViewEntryView(TreeView):
 
                 entry_name = form.cleaned_data['name']
                 entry_text = form.cleaned_data['text']
+                entry_id = form.cleaned_data['entry_id']
 
                 # If the entry has been edited
-                if form.cleaned_data['entry_id'] != SpecialID['NEW_ID']:
-                    entry = get_object_or_404(Entry, pk=form.cleaned_data['entry_id'])
+                if entry_id != SpecialID['NEW_ID']:
+                    entry = get_object_or_404(Entry, pk=entry_id)
                     entry.name = entry_name
                     entry.text = entry_text
                     entry.tags.clear()
@@ -321,20 +417,22 @@ class UpsertEntryView(TreeView):
     def get_context_data(self, request, user, group, current_tree, **kwargs):
         context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
 
+        # If user wants to edit an entry
         if 'entry_id' in kwargs:
             entry_id = kwargs['entry_id']
             entry = get_object_or_404(Entry, pk=entry_id)
 
             tags = ",".join([tag.name for tag in entry.tags.filter(group__id=group.id)])
             data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
+        # If user wants to add a group
         else:
             data = {"entry_id": SpecialID['NEW_ID']}
 
         form = EntryForm(initial=data)
 
         context.update({
-                    'form': form,
-                  })
+                         'form': form,
+                     })
 
         return context
 

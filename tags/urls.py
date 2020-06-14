@@ -14,7 +14,7 @@ tree_urlpatterns = [
             path('tags/', views.ManageTagsView.as_view(), name="manage_tags"),
             path('entry/', include([
                 path('', views.ViewEntryView.as_view(), name="view_entry"),
-                path('<int:entry_id>/', views.ViewEntryView.as_view(), name="view_entry"),
+                path('<int:entry_id>/view/', views.ViewEntryView.as_view(), name="view_entry"),
                 path('add/', views.UpsertEntryView.as_view(), name="upsert_entry"),
                 path('<int:entry_id>/edit/', views.UpsertEntryView.as_view(), name="upsert_entry"),
             ])),
@@ -27,7 +27,15 @@ urlpatterns = [
         path('group/<str:group_name>/', include(tree_urlpatterns)),
         path('user/<str:username>/', include([
             path('profile/', views.ProfileView.as_view(), name="profile"),
-            path('groups/', views.ManageGroupsView.as_view(), name="manage_groups"),
+            path('groups/', include([
+                path('', views.ManageGroupsView.as_view(), name="manage_groups"),
+                path('group/', include([
+                    path('', views.ViewGroupView.as_view(), name="view_group"),
+                    path('<int:group_id>/view/', views.ViewGroupView.as_view(), name="view_group"),
+                    path('add/', views.UpsertGroupView.as_view(), name="upsert_group"),
+                    path('<int:group_id>/edit/', views.UpsertGroupView.as_view(), name="upsert_group"),
+                ])),
+            ])),
         ])),
         path('about/', views.AboutView.as_view(), name="about"),
         path('accounts/', include([

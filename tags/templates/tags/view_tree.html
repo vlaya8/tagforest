@@ -8,7 +8,7 @@
   <!-- VueJS tag select app -->
   <div id="tag_select_app">
     {% for tag_count, tag_name, selected_tags in tag_list %}
-      {% include "tags/tag_block.html" with url_args=selected_tags %}
+      {% include "tags/blocks/tag_block.html" with url_args=selected_tags %}
     {% endfor %}
   </div>
 
@@ -16,7 +16,7 @@
 
   <!-- Entries -->
   {% for entry in entry_list %}
-    {% include "tags/entry_block.html" %}
+    {% include "tags/blocks/entry_block.html" %}
   {% endfor %}
 
   {% if has_tree %}

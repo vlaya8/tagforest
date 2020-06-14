@@ -41,3 +41,5 @@ class TreeForm(forms.Form):
 class GroupForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
+
+    group_id = forms.IntegerField(widget=forms.HiddenInput())
