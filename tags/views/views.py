@@ -42,7 +42,7 @@ def signup(request):
 @login_required
 def index(request):
 
-    group = TreeUserGroup.get_user_group(request.user)
+    group = request.user.get_user_group()
 
     return redirect_with_get_params(
                 'tags:view_tree',
@@ -126,7 +126,7 @@ class ManageGroupsView(UserDataView):
 
         context = super().get_context_data(request, user=user, **kwargs)
 
-        group_list = TreeUserGroup.objects.all()
+        group_list = user.get_groups()
 
         context.update({
                          'groups': group_list,

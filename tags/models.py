@@ -15,9 +15,6 @@ class TreeUserGroup(models.Model):
     single_member = models.BooleanField()
     public_group = models.BooleanField(default=False)
 
-    def get_user_group(user):
-        return TreeUserGroup.objects.filter(name=user.username).filter(single_member=True).first()
-
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
     def __str__(self):
@@ -83,3 +80,25 @@ class Entry(models.Model):
     class Meta:
         unique_together = ('name', 'group', 'tree')
 
+## User methods
+
+def get_user_group(user):
+
+    return TreeUserGroup.objects.filter(name=user.username).filter(single_member=True).first()
+
+def get_groups(user):
+
+    groups = []
+    public_groups = TreeUserGroup.objects.filter(public_group=True)
+    user_members = Member.objects.filter(user=user)
+
+    for member in user_members:
+        if not member.group.public_group:
+            groups.append(member.group)
+    for group in public_groups:
+        groups.append(group)
+
+    return groups
+
+User.add_to_class('get_user_group', get_user_group)
+User.add_to_class('get_groups', get_groups)
