@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'tags.apps.TagsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
+    'notifications',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
