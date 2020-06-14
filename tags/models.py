@@ -90,14 +90,15 @@ def get_user_group(user):
 def get_groups(user):
 
     groups = []
-    public_groups = TreeUserGroup.objects.filter(public_group=True)
+    listed_groups = TreeUserGroup.objects.filter(listed_group=True)
     user_members = Member.objects.filter(user=user)
 
     for member in user_members:
-        if not member.group.public_group:
-            if not member.group.single_member:
-                groups.append(member.group)
-    for group in public_groups:
+        group = member.group
+        if not group.listed_group:
+            if not group.single_member:
+                groups.append(group)
+    for group in listed_groups:
         if not group.single_member:
             groups.append(group)
 

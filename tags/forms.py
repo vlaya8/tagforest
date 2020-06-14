@@ -42,5 +42,6 @@ class GroupForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
     public_group = forms.BooleanField(required=False)
+    listed_group = forms.BooleanField(required=False)
 
     group_id = forms.IntegerField(widget=forms.HiddenInput())

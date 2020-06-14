@@ -173,7 +173,7 @@ class UpsertGroupView(UserDataView):
             if not user.has_group_writer_permission(group):
                 raise PermissionDenied("You don't have permission to edit this group")
 
-            data = {"name": group.name, "group_id": group_id, "public_group": group.public_group}
+            data = {"name": group.name, "group_id": group_id, "public_group": group.public_group, "listed_group": group.listed_group}
         # If user wants to add a group
         else:
             data = {"group_id": SpecialID['NEW_ID']}
@@ -221,6 +221,7 @@ class ViewGroupView(UserDataView):
                 group_name = form.cleaned_data['name']
                 group_id = form.cleaned_data['group_id']
                 public_group = form.cleaned_data['public_group']
+                listed_group = form.cleaned_data['listed_group']
 
                 # If the group has been edited
                 if group_id != SpecialID['NEW_ID']:
@@ -231,8 +232,9 @@ class ViewGroupView(UserDataView):
 
                     group.name = group_name
                     group.public_group = public_group
+                    group.listed_group = listed_group
                 else:
-                    group = TreeUserGroup.objects.create(name=group_name, single_member=False, public_group=public_group)
+                    group = TreeUserGroup.objects.create(name=group_name, single_member=False, public_group=public_group, listed_group=listed_group)
                     admin_role = Role.objects.filter(name="admin").first()
                     member = Member.objects.create(user=user, role=admin_role, group=group)
 
