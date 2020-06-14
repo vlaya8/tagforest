@@ -81,7 +81,17 @@ class Entry(models.Model):
     class Meta:
         unique_together = ('name', 'group', 'tree')
 
-## User methods
+## User
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    public_user = models.BooleanField(default=False)
+    listed_user = models.BooleanField(default=False)
+
+    saved_groups = models.ManyToManyField(TreeUserGroup)
+
+### User methods
 
 def get_user_group(user):
 
