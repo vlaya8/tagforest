@@ -100,5 +100,17 @@ def get_groups(user):
 
     return groups
 
+def has_group_reader_permission(user, group):
+    return group.public_group or group.member_set.filter(user=user).exists()
+
+def has_group_writer_permission(user, group):
+    return group.member_set.filter(user=user).filter(role__manage_entries=True).exists()
+
+def has_group_admin_permission(user, group):
+    return group.member_set.filter(user=user).filter(role__manage_users=True).exists()
+
 User.add_to_class('get_user_group', get_user_group)
 User.add_to_class('get_groups', get_groups)
+User.add_to_class('has_group_reader_permission', has_group_reader_permission)
+User.add_to_class('has_group_writer_permission', has_group_writer_permission)
+User.add_to_class('has_group_admin_permission', has_group_admin_permission)
