@@ -1,6 +1,5 @@
 from django.http import HttpResponseRedirect
 from django.views import generic,View
-from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 
 from django.core.exceptions import PermissionDenied
@@ -13,6 +12,10 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+
+from django.shortcuts import render, get_object_or_404
+
+from django.template import RequestContext
 
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
@@ -28,6 +31,15 @@ SpecialID = {
                 'NONE': -2,
                 'NEW_ID': -3,
             }
+
+def handler404(request, exception):
+
+    return render(request,'tags/404.html')
+
+def handler500(request):
+
+    return render(request,'tags/500.html')
+
 
 def signup(request):
     if request.method == 'POST':
