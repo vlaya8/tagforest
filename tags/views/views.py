@@ -184,8 +184,11 @@ class ViewGroupView(UserDataView):
 
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
+        members = group.member_set.all()
+
         context.update({
                          'group': group,
+                         'members': members,
                       })
 
         return context

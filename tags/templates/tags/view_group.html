@@ -7,6 +7,16 @@
   <h1>{{ group.name }}</h1>
 
   <p>
+    <b>Members</b>
+
+    <ul>
+    {% for member in members %}
+      <li>{{member.user}}, {{member.role}}</li>
+    {% endfor %}
+    </ul>
+  </p>
+
+  <p>
   <a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" class="buttonLink" >Edit</a>
   </p>
 {% endblock %}
