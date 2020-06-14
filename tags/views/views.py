@@ -128,14 +128,24 @@ class ManageGroupsView(UserDataView):
 
         context = super().get_context_data(request, user=user, **kwargs)
 
-        group_list = user.get_groups()
+        joined_group_list = user.get_joined_groups()
+        saved_group_list = user.get_saved_groups()
+        listed_group_list = TreeUserGroup.get_listed_groups()
 
-        groups = []
-        for group in group_list:
-            groups.append((group, user.has_group_writer_permission(group)))
+        joined_groups = []
+        for group in joined_group_list:
+            joined_groups.append((group, user.has_group_writer_permission(group)))
+        saved_groups = []
+        for group in saved_group_list:
+            saved_groups.append((group, user.has_group_writer_permission(group)))
+        listed_groups = []
+        for group in listed_group_list:
+            listed_groups.append((group, user.has_group_writer_permission(group)))
 
         context.update({
-                         'groups': groups,
+                         'joined_groups': joined_groups,
+                         'saved_groups': saved_groups,
+                         'listed_groups': listed_groups,
                       })
 
         return context

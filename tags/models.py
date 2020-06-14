@@ -16,6 +16,9 @@ class TreeUserGroup(models.Model):
     public_group = models.BooleanField(default=False)
     listed_group = models.BooleanField(default=False)
 
+    def get_listed_groups():
+        return TreeUserGroup.objects.filter(listed_group=True)
+
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
     def __str__(self):
@@ -100,22 +103,20 @@ def get_user_group(user):
 
     return TreeUserGroup.objects.filter(name=user.username).filter(single_member=True).first()
 
-def get_groups(user):
+def get_joined_groups(user):
 
     groups = []
-    listed_groups = TreeUserGroup.objects.filter(listed_group=True)
     user_members = Member.objects.filter(user=user)
 
     for member in user_members:
-        group = member.group
-        if not group.listed_group:
-            if not group.single_member:
-                groups.append(group)
-    for group in listed_groups:
-        if not group.single_member:
-            groups.append(group)
+        if not member.group.single_member:
+            groups.append(member.group)
 
     return groups
+
+def get_saved_groups(user):
+
+    return user.profile.saved_groups.all()
 
 def has_group_reader_permission(user, group):
     return group.public_group or group.member_set.filter(user=user).exists()
@@ -127,7 +128,8 @@ def has_group_admin_permission(user, group):
     return group.member_set.filter(user=user).filter(role__manage_users=True).exists()
 
 User.add_to_class('get_user_group', get_user_group)
-User.add_to_class('get_groups', get_groups)
+User.add_to_class('get_joined_groups', get_joined_groups)
+User.add_to_class('get_saved_groups', get_saved_groups)
 User.add_to_class('has_group_reader_permission', has_group_reader_permission)
 User.add_to_class('has_group_writer_permission', has_group_writer_permission)
 User.add_to_class('has_group_admin_permission', has_group_admin_permission)

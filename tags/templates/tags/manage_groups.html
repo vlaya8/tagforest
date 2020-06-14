@@ -4,7 +4,18 @@
 
 {% block content %}
 
-  {% for group, has_writer_permission in groups %}
+  <b>Saved groups:</b>
+  {% for group, has_writer_permission in saved_groups %}
+      {% include "tags/blocks/group_block.html" %}
+  {% endfor %}
+  <br/>
+  <b>Joined groups:</b>
+  {% for group, has_writer_permission in joined_groups %}
+      {% include "tags/blocks/group_block.html" %}
+  {% endfor %}
+  <br/>
+  <b>Public listed groups:</b>
+  {% for group, has_writer_permission in listed_groups %}
       {% include "tags/blocks/group_block.html" %}
   {% endfor %}
 
