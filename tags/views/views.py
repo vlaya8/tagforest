@@ -3,6 +3,8 @@ from django.views import generic,View
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 
+from django.core.exceptions import PermissionDenied
+
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 
@@ -128,8 +130,12 @@ class ManageGroupsView(UserDataView):
 
         group_list = user.get_groups()
 
+        groups = []
+        for group in group_list:
+            groups.append((group, user.has_group_writer_permission(group)))
+
         context.update({
-                         'groups': group_list,
+                         'groups': groups,
                       })
 
         return context
@@ -138,11 +144,14 @@ class ManageGroupsView(UserDataView):
 
         super().process_post(request, user=user, **kwargs)
 
+
         # Process a group which got deleted
         if 'delete_group_id' in request.POST:
             group_id = int(request.POST['delete_group_id'])
 
             group = get_object_or_404(TreeUserGroup, pk=group_id)
+            if not user.has_group_writer_permission(group):
+                raise PermissionDenied("You don't have permission to delete this group")
             group.delete()
 
         self.redirect_url = 'tags:manage_groups'
@@ -160,6 +169,9 @@ class UpsertGroupView(UserDataView):
         if 'group_id' in kwargs:
             group_id = kwargs['group_id']
             group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+            if not user.has_group_writer_permission(group):
+                raise PermissionDenied("You don't have permission to edit this group")
 
             data = {"name": group.name, "group_id": group_id, "public_group": group.public_group}
         # If user wants to add a group
@@ -184,10 +196,14 @@ class ViewGroupView(UserDataView):
 
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
+        if not user.has_group_reader_permission(group):
+            raise PermissionDenied("You don't have permission to view that group")
+
         members = group.member_set.all()
 
         context.update({
                          'group': group,
+                         'has_writer_permission': user.has_group_writer_permission(group),
                          'members': members,
                       })
 
@@ -209,6 +225,10 @@ class ViewGroupView(UserDataView):
                 # If the group has been edited
                 if group_id != SpecialID['NEW_ID']:
                     group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+                    if not user.has_group_writer_permission(group):
+                        raise PermissionDenied("You don't have permission to edit this group")
+
                     group.name = group_name
                     group.public_group = public_group
                 else:
@@ -229,6 +249,10 @@ class TreeView(UserDataView):
         super().setup(request, **kwargs)
 
         group = get_object_or_404(TreeUserGroup, name=group_name)
+
+        if not request.user.has_group_reader_permission(group):
+            raise PermissionDenied("You don't have permission to view this group")
+
         self.kwargs['group'] = group
 
         if tree_id == SpecialID['DEFAULT_ID']:
@@ -281,6 +305,9 @@ class TreeView(UserDataView):
         return context
 
     def process_post(self, request, user, group, current_tree, **kwargs):
+
+        if not user.has_group_writer_permission(group):
+            raise PermissionDenied("You don't have permission to edit in this group")
 
         # Default redirect
         self.redirect_kwargs['group_name'] = group.name

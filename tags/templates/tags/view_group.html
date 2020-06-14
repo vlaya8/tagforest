@@ -16,9 +16,12 @@
     </ul>
   </p>
 
-  <p>
-  <a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" class="buttonLink" >Edit</a>
-  </p>
+  {% if has_writer_permission %}
+    <p>
+    <a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" class="buttonLink" >Edit</a>
+    </p>
+  {% endif %}
+
 {% endblock %}
 
 {% block script_includes %}

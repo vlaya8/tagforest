@@ -1,10 +1,12 @@
 <article>
   <a href="{% url 'tags:view_group' username=username group_id=group.id %}" class="buttonLink" >{{ group.name }}</a>
 
-  <form class="inlineDeleteForm" action="{% url 'tags:manage_groups' username=username %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="delete_group_id" value="{{ group.id }}">
-    <button class="backgroundButton" type="submit" ><i class="fa fa-trash"></i></button>
-  </form>
+  {% if has_writer_permission %}
+    <form class="inlineDeleteForm" action="{% url 'tags:manage_groups' username=username %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="delete_group_id" value="{{ group.id }}">
+      <button class="backgroundButton" type="submit" ><i class="fa fa-trash"></i></button>
+    </form>
+  {% endif %}
     
 </article>
