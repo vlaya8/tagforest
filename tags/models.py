@@ -5,6 +5,19 @@ from django_dag.models import *
 
 ## Groups
 
+# Can represent a group of users or a single user
+# Can own trees
+class TreeUserGroup(models.Model):
+    def __str__(self):
+        return self.name
+
+    name = models.CharField('name', max_length=255, unique=True)
+    single_member = models.BooleanField()
+    public_group = models.BooleanField(default=False)
+
+    def get_user_group(user):
+        return TreeUserGroup.objects.filter(name=user.username).filter(single_member=True).first()
+
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
     def __str__(self):
@@ -14,18 +27,6 @@ class Role(models.Model):
 
     manage_users = models.BooleanField(default=False)
     manage_entries = models.BooleanField(default=False)
-
-# Can represent a group of users or a single user
-# Can own trees
-class TreeUserGroup(models.Model):
-    def __str__(self):
-        return self.name
-
-    name = models.CharField('name', max_length=255)
-    single_member = models.BooleanField()
-
-    def get_user_group(user):
-        return TreeUserGroup.objects.filter(name=user.username).filter(single_member=True).first()
 
 # A user which is part of a group
 class Member(models.Model):
