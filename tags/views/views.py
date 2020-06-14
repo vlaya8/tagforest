@@ -306,11 +306,6 @@ class TreeView(UserDataView):
         else:
             current_tree_id = current_tree.id
 
-        if user.profile.saved_groups.filter(pk=group.id).exists():
-            saved_group = True
-        else:
-            saved_group = False
-
         context.update({
                     'tree_list': tree_list,
                     'tree_add_form': tree_add_form,
@@ -318,7 +313,8 @@ class TreeView(UserDataView):
                     'group_name': group.name,
                     'current_tree_id': current_tree_id,
                     'has_tree': (current_tree_id > 0),
-                    'saved_group': saved_group
+                    'saved_group': user.profile.saved_groups.filter(pk=group.id).exists(),
+                    'single_member': group.single_member,
                   })
         return context
 
