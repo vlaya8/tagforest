@@ -13,6 +13,7 @@ def create_group(sender, instance, created, **kwargs):
                                      single_member=True)
         member = Member.objects.create(user=instance, role=admin_role, group=group)
 
+
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
