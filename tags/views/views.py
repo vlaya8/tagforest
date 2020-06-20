@@ -393,10 +393,10 @@ class ViewTreeView(TreeView):
 
             # Generate the entries to be displayed
             if len(selected_tags) > 0:
-                entry_list = Entry.objects.none()
+                entry_list = Entry.objects.all()
                 
                 for tag in selected_tags:
-                    entry_list |= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=current_tree.id).filter(group__id=group.id)
+                    entry_list &= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=current_tree.id).filter(group__id=group.id)
 
                 entry_list = entry_list.distinct()
             else:
