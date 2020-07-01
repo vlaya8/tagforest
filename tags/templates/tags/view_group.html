@@ -22,6 +22,17 @@
     </p>
   {% endif %}
 
+  <p>
+    <b>Invite a member:</b>
+    <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
+      {% csrf_token %}
+      <ul>
+      {{ invite_form.as_ul }}
+      <li><input type="submit" name="invite_member" value="Submit"></li>
+      </ul>
+    </form>
+   </p>
+
 {% endblock %}
 
 {% block script_includes %}

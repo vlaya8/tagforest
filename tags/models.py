@@ -35,10 +35,11 @@ class Member(models.Model):
         return "({})".format(",".join([self.role.name, self.user.username]))
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
     role = models.ForeignKey(Role, on_delete=models.CASCADE, null=False)
-
     group = models.ForeignKey(TreeUserGroup, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = ('user', 'group')
 
 ## Trees, Entries, Tags
 

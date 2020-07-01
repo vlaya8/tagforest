@@ -1,11 +1,14 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.views import generic,View
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import render, get_object_or_404
 
 from django.core.exceptions import PermissionDenied
 
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+
+from django.template import RequestContext
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth import views as auth_views
@@ -13,13 +16,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from django.shortcuts import render, get_object_or_404
-
-from django.template import RequestContext
+from notifications.signals import notify
+from notifications.models import Notification
 
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
-from ..forms import EntryForm, TreeForm, GroupForm
+from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm
 from .utilities import *
 
 import json
@@ -84,10 +86,15 @@ class UserDataView(View):
         logged_in = user.is_authenticated
         logout_next = reverse('tags:index')
 
+        new_notifications = [(n.verb, n.id) for n in user.notifications.unread()]
+        new_notification_count = len(new_notifications)
+
         context = {
                     'logged_in': logged_in,
                     'logout_next': {"next": logout_next},
                     'username': user.username,
+                    'new_notifications': new_notifications,
+                    'new_notification_count': new_notification_count,
                   }
 
         return context
@@ -98,7 +105,6 @@ class UserDataView(View):
     def get(self, request, **kwargs):
 
         kwargs.update(self.kwargs)
-        #del kwargs['username']
 
         context = self.get_context_data(request, **kwargs)
 
@@ -107,7 +113,6 @@ class UserDataView(View):
     def post(self, request, **kwargs):
 
         kwargs.update(self.kwargs)
-        #del kwargs['username']
 
         self.process_post(request, **kwargs)
 
@@ -116,6 +121,91 @@ class UserDataView(View):
                     get_params=self.redirect_get_params,
                     kwargs=self.redirect_kwargs,
                 )
+
+class ViewNotificationsView(UserDataView):
+
+    template_name = 'tags/view_notifications.html'
+
+    def get_context_data(self, request, user, **kwargs):
+
+        context = super().get_context_data(request, user=user, **kwargs)
+
+        unread_notifications = [(n.verb, n.id, n.target) for n in user.notifications.unread()]
+        unread_notification_count = len(unread_notifications)
+        read_notifications = [(n.verb, n.id, n.target) for n in user.notifications.read()]
+        read_notification_count = len(read_notifications)
+
+        context.update({
+                         'unread_notifications': unread_notifications,
+                         'unread_notification_count': unread_notification_count,
+                         'read_notifications': read_notifications,
+                         'read_notification_count': read_notification_count,
+                       })
+        return context
+
+class ViewNotificationView(UserDataView):
+
+    template_name = 'tags/view_notification.html'
+
+    def get_context_data(self, request, user, notification_id, **kwargs):
+
+        context = super().get_context_data(request, user=user, **kwargs)
+
+        # If the notification has not been read
+        query = user.notifications.unread().filter(pk=notification_id)
+        self.unread = query.exists()
+        if self.unread:
+
+            notification = query.first()
+
+            context.update({
+                             'notification': notification,
+                          })
+        return context
+
+    def get(self, request, username, notification_id, **kwargs):
+
+        kwargs.update(self.kwargs)
+        context = self.get_context_data(request, **kwargs)
+
+        user = kwargs['user']
+
+        # If the notification has been read 
+        if self.unread == False:
+
+            query = user.notifications.read().filter(pk=notification_id)
+
+            if query.exists():
+                notification = query.first()
+                if notification.target == None:
+                    raise Http404("This group does not exist anymore")
+                return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'group_name': notification.target.name}))
+            raise Http404("Notification does not exist")
+
+        return render(request, self.template_name, context)
+
+    def process_post(self, request, user, notification_id, **kwargs):
+
+        super().process_post(request, user=user, **kwargs)
+
+        if 'accept_notification' in request.POST or 'decline_notification' in request.POST:
+
+            query = user.notifications.unread().filter(pk=notification_id)
+            if query.exists():
+                notification = query.first()
+            else:
+                raise Http404("Notification does not exist")
+
+            notification.mark_as_read()
+
+            if 'accept_notification' in request.POST:
+                Member.objects.create(user=user, role=notification.action_object, group=notification.target)
+
+                self.redirect_url = 'tags:view_tree'
+                self.redirect_kwargs['group_name'] = notification.target.name
+            else:
+                self.redirect_url = 'tags:view_notifications'
+                self.redirect_kwargs['username'] = user.username
 
 class ProfileView(UserDataView):
 
@@ -212,9 +302,11 @@ class ViewGroupView(UserDataView):
 
     template_name = 'tags/view_group.html'
 
-    def get_context_data(self, request, user, group_id, **kwargs):
+    def get(self, request, group_id, invite_form=None, **kwargs):
 
-        context = super().get_context_data(request, user=user, **kwargs)
+        kwargs.update(self.kwargs)
+        user = kwargs['user']
+        context = super().get_context_data(request, **kwargs)
 
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
@@ -223,15 +315,45 @@ class ViewGroupView(UserDataView):
 
         members = group.member_set.all()
 
+        if invite_form == None:
+            invite_form = MemberInvitationForm(group, initial={})
+
         context.update({
                          'group': group,
                          'has_writer_permission': user.has_group_writer_permission(group),
                          'members': members,
+                         'invite_form': invite_form,
                       })
 
-        return context
+        return render(request, self.template_name, context)
 
-    def process_post(self, request, user, **kwargs):
+    def post(self, request, group_id=SpecialID['NEW_ID'], **kwargs):
+
+        kwargs.update(self.kwargs)
+        user = kwargs['user']
+        super().process_post(request, **kwargs)
+
+        # Process a member invitation
+
+        if 'invite_member' in request.POST:
+
+            group = get_object_or_404(TreeUserGroup, pk=group_id)
+            form = MemberInvitationForm(group, request.POST)
+
+            if form.is_valid():
+
+                member_name = form.cleaned_data['name']
+                role = form.cleaned_data['role']
+                group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+                target_user = get_object_or_404(User, username=member_name)
+
+                notify.send(user, recipient=target_user,
+                                  verb="{} invited you to join {}".format(user, group),
+                                  action_object=role,
+                                  target=group)
+            else:
+                return self.get(request, invite_form=form, **kwargs)
 
         # Process a group which got added or edited
         if 'upsert_group' in request.POST:
@@ -265,6 +387,12 @@ class ViewGroupView(UserDataView):
                 self.redirect_url = 'tags:view_group'
                 self.redirect_kwargs['group_id'] = group.id
                 self.redirect_kwargs['username'] = user.username
+
+        return redirect_with_get_params(
+                    self.redirect_url,
+                    get_params=self.redirect_get_params,
+                    kwargs=self.redirect_kwargs,
+                )
 
 class TreeView(UserDataView):
 
@@ -332,14 +460,14 @@ class TreeView(UserDataView):
 
     def process_post(self, request, user, group, current_tree, **kwargs):
 
-        if not user.has_group_writer_permission(group):
-            raise PermissionDenied("You don't have permission to edit in this group")
-
         # Default redirect
         self.redirect_kwargs['group_name'] = group.name
         self.redirect_url = 'tags:view_tree'
 
         if 'tree_form' in request.POST:
+            if not user.has_group_writer_permission(group):
+                raise PermissionDenied("You don't have permission to edit in this group")
+
             form = TreeForm(request.POST)
 
             if form.is_valid():

@@ -5,33 +5,27 @@ a:hover {
   cursor: pointer;
 }
 
+$nav-bar-height: 1.7rem;
+$nav-bar-padding: 0.9rem;
+$nav-bar-button-padding: 1.5rem;
+
 nav {
   background-color: base.$header-color;
   border: 1px solid color.adjust(base.$header-color, $lightness: 10);
   border-width: 1px 1px 3px;
   margin-bottom: 1rem;
-  //text-align: justify;
-
-  //&:after {
-  //  content: '';
-  //  display: inline-block;
-  //  width: 100%;
-  //  height: 0;
-  //  font-size:0;
-  //  line-height:0;
-  //}
 
   h1, a, input, button, .linkLike {
     color: base.$font-color;
     display: inline-block;
 
-    padding:0.9rem;
-    padding-right: 1.5rem;
-    padding-left: 1.5rem;
+    padding: $nav-bar-padding;
+    padding-right: $nav-bar-button-padding;
+    padding-left: $nav-bar-button-padding;
 
     margin: 0rem;
 
-    line-height: 1.7rem;
+    line-height: $nav-bar-height;
     vertical-align: top;
 
     font-weight: bold;
@@ -88,6 +82,74 @@ nav {
   .alignRight {
     float: right;
   }
+}
+
+/*
+ * Dropdown menu
+ */
+
+$dropdown-width: 20rem;
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+
+  background-color: color.adjust(base.$header-color, $alpha: 0);
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+
+  width: $dropdown-width;
+  right: 0;
+
+  top: $nav-bar-height + 2 * $nav-bar-padding;
+
+  a, h1 {
+    padding-left: 0.8rem;
+    padding-right: 0rem;
+    display: block;
+    font-size: 80%;
+    font-weight: normal;
+    width: $dropdown-width - 0.8rem;
+  }
+
+  a:nth-of-type(odd) {
+    background-color: color.adjust(base.$header-color, $hue: 0.35);
+  }
+
+  h1 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.2rem;
+    font-weight: bold;
+  }
+
+}
+
+.dropdown .dropdown-content {
+  display: block;
+}
+
+.notificationCount {
+  position: Absolute;
+
+  background-color: base.$highlight-color;
+  border-radius: 0.25rem;
+
+  top: $nav-bar-height / 2 + 0.75rem;
+  left: $nav-bar-height / 2 + 1.3rem;
+  padding-left: 0.25rem;
+  padding-right: 0.35rem;
+  padding-top: 0.10rem;
+  padding-bottom: 0.10rem;
+  line-height: normal;
+
+  font-size: 90%;
 }
 
 footer {
@@ -185,3 +247,28 @@ article {
 p {
   padding: 1rem;
 }
+
+.dialogBox {
+  position: absolute;
+  display: block;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+
+  padding: 2rem;
+
+  background-color: color.adjust(base.$header-color, $lightness: 5);
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+
+  -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+ }
+

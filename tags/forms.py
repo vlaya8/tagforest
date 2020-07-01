@@ -1,4 +1,6 @@
 from django import forms
+from .models import Role
+from django.contrib.auth.models import User
 
 def parse_tag(tags_string):
 
@@ -45,3 +47,22 @@ class GroupForm(forms.Form):
     listed_group = forms.BooleanField(required=False)
 
     group_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class MemberInvitationForm(forms.Form):
+
+    name = forms.CharField(label = "Name", max_length=255)
+    role = forms.ModelChoiceField(queryset=Role.objects.all(), empty_label=None)
+
+    def __init__(self, group, *args, **kwargs):
+        super(MemberInvitationForm, self).__init__(*args, **kwargs)
+        self.group = group
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get("name")
+        if not User.objects.filter(username=name).exists():
+            raise forms.ValidationError("There is no user named {}".format(name))
+        if self.group.member_set.filter(user__username=name).exists():
+            raise forms.ValidationError("{} is already in {}".format(name, self.group))
+
+        return cleaned_data
