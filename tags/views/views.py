@@ -99,8 +99,9 @@ class UserDataView(View):
 
         return context
 
-    def process_post(self, request, user, **kwargs):
-        pass
+    def get_return(self, request, context, user, **kwargs):
+
+        return render(request, self.template_name, context)
 
     def get(self, request, **kwargs):
 
@@ -108,7 +109,18 @@ class UserDataView(View):
 
         context = self.get_context_data(request, **kwargs)
 
-        return render(request, self.template_name, context)
+        return self.get_return(request, context, **kwargs)
+
+    def process_post(self, request, user, **kwargs):
+        pass
+
+    def post_return(self, request, user, **kwargs):
+
+        return redirect_with_get_params(
+                    self.redirect_url,
+                    get_params=self.redirect_get_params,
+                    kwargs=self.redirect_kwargs,
+                )
 
     def post(self, request, **kwargs):
 
@@ -116,11 +128,8 @@ class UserDataView(View):
 
         self.process_post(request, **kwargs)
 
-        return redirect_with_get_params(
-                    self.redirect_url,
-                    get_params=self.redirect_get_params,
-                    kwargs=self.redirect_kwargs,
-                )
+        return self.post_return(request, **kwargs)
+
 
 class ViewNotificationsView(UserDataView):
 
@@ -151,50 +160,21 @@ class ViewNotificationView(UserDataView):
 
         context = super().get_context_data(request, user=user, **kwargs)
 
-        # If the notification has not been read
-        query = user.notifications.unread().filter(pk=notification_id)
-        self.unread = query.exists()
-        if self.unread:
+        notification = get_object_or_404(Notification, pk=notification_id)
 
-            notification = query.first()
-
-            context.update({
-                             'notification': notification,
-                          })
+        context.update({
+                         'notification': notification,
+                      })
         return context
 
-    def get(self, request, username, notification_id, **kwargs):
-
-        kwargs.update(self.kwargs)
-        context = self.get_context_data(request, **kwargs)
-
-        user = kwargs['user']
-
-        # If the notification has been read 
-        if self.unread == False:
-
-            query = user.notifications.read().filter(pk=notification_id)
-
-            if query.exists():
-                notification = query.first()
-                if notification.target == None:
-                    raise Http404("This group does not exist anymore")
-                return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'group_name': notification.target.name}))
-            raise Http404("Notification does not exist")
-
-        return render(request, self.template_name, context)
-
+    # Process an invitation which has been accepted or declined
     def process_post(self, request, user, notification_id, **kwargs):
 
         super().process_post(request, user=user, **kwargs)
 
         if 'accept_notification' in request.POST or 'decline_notification' in request.POST:
 
-            query = user.notifications.unread().filter(pk=notification_id)
-            if query.exists():
-                notification = query.first()
-            else:
-                raise Http404("Notification does not exist")
+            notification = get_object_or_404(Notification, pk=notification_id)
 
             notification.mark_as_read()
 
@@ -216,12 +196,6 @@ class ChangePasswordView(auth_views.PasswordChangeView):
     success_url = reverse_lazy('tags:index')
     template_name = 'tags/registration/password_change.html'
 
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-
-        return context
-
 class ManageGroupsView(UserDataView):
 
     template_name = 'tags/manage_groups.html'
@@ -234,15 +208,9 @@ class ManageGroupsView(UserDataView):
         saved_group_list = user.get_saved_groups()
         listed_group_list = TreeUserGroup.get_listed_groups()
 
-        joined_groups = []
-        for group in joined_group_list:
-            joined_groups.append((group, user.has_group_writer_permission(group)))
-        saved_groups = []
-        for group in saved_group_list:
-            saved_groups.append((group, user.has_group_writer_permission(group)))
-        listed_groups = []
-        for group in listed_group_list:
-            listed_groups.append((group, user.has_group_writer_permission(group)))
+        joined_groups = [(group, user.has_group_writer_permission(group)) for group in joined_group_list]
+        saved_groups = [(group, user.has_group_writer_permission(group)) for group in saved_group_list]
+        listed_groups = [(group, user.has_group_writer_permission(group)) for group in listed_group_list]
 
         context.update({
                          'joined_groups': joined_groups,
@@ -255,7 +223,6 @@ class ManageGroupsView(UserDataView):
     def process_post(self, request, user, **kwargs):
 
         super().process_post(request, user=user, **kwargs)
-
 
         # Process a group which got deleted
         if 'delete_group_id' in request.POST:
@@ -302,11 +269,9 @@ class ViewGroupView(UserDataView):
 
     template_name = 'tags/view_group.html'
 
-    def get(self, request, group_id, invite_form=None, **kwargs):
+    def get_context_data(self, request, user, group_id, invite_form=None, **kwargs):
 
-        kwargs.update(self.kwargs)
-        user = kwargs['user']
-        context = super().get_context_data(request, **kwargs)
+        context = super().get_context_data(request, user, **kwargs)
 
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
@@ -325,35 +290,9 @@ class ViewGroupView(UserDataView):
                          'invite_form': invite_form,
                       })
 
-        return render(request, self.template_name, context)
+        return context
 
-    def post(self, request, group_id=SpecialID['NEW_ID'], **kwargs):
-
-        kwargs.update(self.kwargs)
-        user = kwargs['user']
-        super().process_post(request, **kwargs)
-
-        # Process a member invitation
-
-        if 'invite_member' in request.POST:
-
-            group = get_object_or_404(TreeUserGroup, pk=group_id)
-            form = MemberInvitationForm(group, request.POST)
-
-            if form.is_valid():
-
-                member_name = form.cleaned_data['name']
-                role = form.cleaned_data['role']
-                group = get_object_or_404(TreeUserGroup, pk=group_id)
-
-                target_user = get_object_or_404(User, username=member_name)
-
-                notify.send(user, recipient=target_user,
-                                  verb="{} invited you to join {}".format(user, group),
-                                  action_object=role,
-                                  target=group)
-            else:
-                return self.get(request, invite_form=form, **kwargs)
+    def process_post(self, request, user, group_id=SpecialID['NEW_ID'], **kwargs):
 
         # Process a group which got added or edited
         if 'upsert_group' in request.POST:
@@ -388,18 +327,40 @@ class ViewGroupView(UserDataView):
                 self.redirect_kwargs['group_id'] = group.id
                 self.redirect_kwargs['username'] = user.username
 
-        return redirect_with_get_params(
-                    self.redirect_url,
-                    get_params=self.redirect_get_params,
-                    kwargs=self.redirect_kwargs,
-                )
+    def post_return(self, request, user, group_id=SpecialID['NEW_ID'], **kwargs):
+
+        # Process a member invitation
+        if 'invite_member' in request.POST:
+
+            group = get_object_or_404(TreeUserGroup, pk=group_id)
+            form = MemberInvitationForm(group, request.POST)
+
+            if form.is_valid():
+
+                member_name = form.cleaned_data['name']
+                role = form.cleaned_data['role']
+                group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+                target_user = get_object_or_404(User, username=member_name)
+
+                notify.send(user, recipient=target_user,
+                                  verb="{} invited you to join {}".format(user, group),
+                                  action_object=role,
+                                  target=group)
+            else:
+                context = self.get_context_data(request, user, group_id, invite_form=form, **kwargs)
+                return self.get_return(request, context, user, **kwargs)
+
+        return super().post_return(request, user, **kwargs)
 
 class TreeView(UserDataView):
 
+    # Setup group and current_tree arguments
     def setup(self, request, group_name, tree_id=SpecialID['DEFAULT_ID'], **kwargs):
 
         super().setup(request, **kwargs)
 
+        # Setup group argument
         group = get_object_or_404(TreeUserGroup, name=group_name)
 
         if not request.user.has_group_reader_permission(group):
@@ -407,22 +368,14 @@ class TreeView(UserDataView):
 
         self.kwargs['group'] = group
 
+        # Setup tree argument
         if tree_id == SpecialID['DEFAULT_ID']:
-
-            default_tree = Tree.objects.filter(group__id=group.id).first()
-
-            if default_tree != None:
-                self.kwargs['current_tree'] = default_tree
-            else:
-                self.kwargs['current_tree'] = None
+            self.kwargs['current_tree'] = Tree.objects.filter(group__id=group.id).first()
 
         elif tree_id == SpecialID['NONE']:
-
             self.kwargs['current_tree'] = None
-            default_tree = None
 
         else:
-
             self.kwargs['current_tree'] = get_object_or_404(Tree, pk=tree_id)
 
     def get_context_data(self, request, user, group, current_tree, **kwargs):
