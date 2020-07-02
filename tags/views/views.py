@@ -329,6 +329,28 @@ class ViewGroupView(UserDataView):
 
     def post_return(self, request, user, group_id=SpecialID['NEW_ID'], **kwargs):
 
+        # If a member has been deleted
+        if 'delete_member_id' in request.POST:
+
+            group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+            if not user.has_group_admin_permission(group):
+                raise PermissionDenied("You don't have permission to delete this member")
+
+            if group.member_set.count() == 1:
+                # TODO: Show error
+                context = self.get_context_data(request, user, group_id, **kwargs)
+                return self.get_return(request, context, user, **kwargs)
+
+
+            member = get_object_or_404(Member, pk=request.POST['delete_member_id'])
+
+            member.delete()
+
+            self.redirect_url = 'tags:view_group'
+            self.redirect_kwargs['group_id'] = group.id
+            self.redirect_kwargs['username'] = user.username
+
         # Process a member invitation
         if 'invite_member' in request.POST:
 

@@ -4,40 +4,44 @@
 {% block title %}{{ group.name }}{% endblock %}
 
 {% block content %}
-  <h1>{{ group.name }}</h1>
+  <h1>
+    {{ group.name }}
+    {% if has_writer_permission %}<a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" class="buttonLink" >Edit</a>{% endif %}
+  </h1>
 
   <p>
-    <b>Members</b>
+    <h2>Members</h2>
 
     <ul>
     {% for member in members %}
-      <li>{{member.user}}, {{member.role}}</li>
+      <li>
+	<a href="{% url "tags:profile" member.user.username %}" class="buttonLink" >{{member.user}}, {{member.role}}</a>
+
+	<form class="inlineDeleteForm" action="{% url "tags:view_group" username=username group_id=group.id %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="delete_member_id" value="{{ member.id }}">
+          <button class="backgroundButton" type="submit" ><i class="fa fa-trash"></i></button>
+        </form>
+
+      </li>
     {% endfor %}
     </ul>
   </p>
 
-  {% if has_writer_permission %}
-    <p>
-    <a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" class="buttonLink" >Edit</a>
-    </p>
-  {% endif %}
-
-  <p>
-    <b>Invite a member:</b>
-    <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
-      {% csrf_token %}
-      <ul>
+  <h2>Invite a member:</h2>
+  <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
+    {% csrf_token %}
+    <ul>
       {{ invite_form.as_ul }}
       <li><input type="submit" name="invite_member" value="Submit"></li>
-      </ul>
-    </form>
-   </p>
+    </ul>
+  </form>
 
 {% endblock %}
 
 {% block script_includes %}
 {{ block.super }}
-  <!-- VueJS Script include -->
-  <script src="{% static 'tags/vue-markdown.js' %}"></script>
-  <script src="{% static 'tags/entry_display.js' %}"></script>
+<!-- VueJS Script include -->
+<script src="{% static 'tags/vue-markdown.js' %}"></script>
+<script src="{% static 'tags/entry_display.js' %}"></script>
 {% endblock %}
