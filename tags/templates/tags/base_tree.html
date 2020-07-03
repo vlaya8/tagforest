@@ -22,6 +22,7 @@
 	  --><a v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}"><!--
 		-->{{ tree_name }}<!--
 	  --></a><!--
+          {% if has_writer_permission %}
 	  Tree name edit icons
 	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}"><!--
 	        --><span class="treeName" >{{ tree_name }}</span><!--
@@ -46,9 +47,11 @@
 		--><button class="thinButton" name="tree_form" type="submit"><i class="fa fa-check" ></i></button><!--
 	  --></form><!--
 	  --><a v-if="editTree[{{ tree_id }}]" v-on:click="exitEditTree({{ tree_id }})" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+          {% endif %}
 
     {% endfor %}
     {% endif %}
+    {% if has_writer_permission %}
     --><a v-if="editMode" v-on:click="exitEditMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
 
     Mode selectors
@@ -66,6 +69,7 @@
 	  --><button class="thinButton" name="tree_form" type="submit"><i class="fa fa-check" ></i></button><!--
     --></form><!--
     --><a v-if="addMode" v-on:click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+    {% endif %}
 
     {% if not single_member %}
       {% if saved_group %}

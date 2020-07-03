@@ -20,8 +20,10 @@
   {% endfor %}
 
   {% if has_tree %}
+  {% if has_writer_permission %}
   <br/><br/>
   <a href="{% url 'tags:upsert_entry' group_name=group_name tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+  {% endif %}
   {% endif %}
 
 {% endblock %}

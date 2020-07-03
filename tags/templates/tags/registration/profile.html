@@ -4,8 +4,10 @@
 
 {% block content %}
 
-<p><b>Username: </b>{{ username }}</p>
+<p><b>Username: </b>{{ link_user.username }}</p>
 
-<p><a href="{% url "tags:password_change" %}">Change password</a></p>
+{% if has_edit_permission %}
+  <p><a href="{% url "tags:password_change" %}">Change password</a></p>
+{% endif %}
 
 {% endblock %}

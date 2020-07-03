@@ -130,11 +130,15 @@ class UserDataView(BaseView):
     template_name = 'tags/view_tree.html'
     redirect_url = 'tags:index'
 
-    def setup(self, request, **kwargs):
+    def setup(self, request, username=None, **kwargs):
 
         super().setup(request, **kwargs)
 
         self.user = request.user
+        if username == None:
+            self.link_user = None
+        else:
+            self.link_user = get_object_or_404(User, username=username)
 
     def get_context_data(self, request, **kwargs):
 
@@ -150,6 +154,7 @@ class UserDataView(BaseView):
                     'logged_in': logged_in,
                     'logout_next': {"next": logout_next},
                     'username': self.user.username,
+                    'link_user': self.link_user,
                     'new_notifications': new_notifications,
                     'new_notification_count': new_notification_count,
                   })
@@ -215,6 +220,17 @@ class ViewNotificationView(UserDataView):
 class ProfileView(UserDataView):
 
     template_name = 'tags/registration/profile.html'
+
+    def get_context_data(self, request, **kwargs):
+
+        context = super().get_context_data(request, **kwargs)
+
+        has_edit_permission = (self.user.username == self.link_user.username)
+
+        context.update({
+                         'has_edit_permission': has_edit_permission,
+                      })
+        return context
 
 class ChangePasswordView(auth_views.PasswordChangeView):
 
@@ -534,6 +550,7 @@ class ViewTreeView(TreeView):
         context.update({
                     'entry_list': entry_list,
                     'tag_list': tag_list,
+                    'has_writer_permission': self.user.has_group_writer_permission(self.group),
                   })
 
         return context
@@ -559,6 +576,7 @@ class ViewEntryView(TreeView):
         entry = get_object_or_404(Entry, pk=entry_id)
         context.update({
                     'entry': entry,
+                    'has_writer_permission': self.user.has_group_writer_permission(self.group),
                   })
 
         return context

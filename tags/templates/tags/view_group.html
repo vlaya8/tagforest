@@ -34,6 +34,7 @@
     {% endfor %}
     </ul>
 
+  {% if has_admin_permission %}
   <h2>Invite a member:</h2>
   <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
     {% csrf_token %}
@@ -55,6 +56,7 @@
       <li><input type="submit" name="invite_member" value="Submit"></li>
     </ul>
   </form>
+  {% endif %}
 
 {% endblock %}
 
