@@ -8,8 +8,8 @@
 
 <form action="{% url "tags:view_notification" username=username notification_id=notification.id %}" method="post">
   {% csrf_token %}
-  <button name="accept_notification" type="submit" ><i class="fa fa-check"></i> Accept</button>
-  <button name="decline_notification" type="submit" ><i class="fa fa-close"></i> Decline</button>
+  <button class="backgroundButton" name="accept_notification" type="submit" ><i class="fa fa-check"></i> Accept</button>
+  <button class="backgroundButton" name="decline_notification" type="submit" ><i class="fa fa-close"></i> Decline</button>
 </form>
 
 {% endblock %}

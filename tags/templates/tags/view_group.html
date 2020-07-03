@@ -18,13 +18,17 @@
     <ul>
     {% for member in members %}
       <li>
+	<article>
 	<a href="{% url "tags:profile" member.user.username %}" class="buttonLink" >{{member.user}}, {{member.role}}</a>
 
-	<form class="inlineDeleteForm" action="{% url "tags:view_group" username=username group_id=group.id %}" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="delete_member_id" value="{{ member.id }}">
-          <button class="backgroundButton" type="submit" ><i class="fa fa-trash"></i></button>
-        </form>
+	{% if has_admin_permission %}
+	  <form class="inlineDeleteForm" action="{% url "tags:view_group" username=username group_id=group.id %}" method="post">
+	    {% csrf_token %}
+	    <input type="hidden" name="delete_member_id" value="{{ member.id }}">
+	    <button class="backgroundButton iconLink" type="submit" ><i class="fa fa-trash"></i></button>
+	  </form>
+	{% endif %}
+	</article>
 
       </li>
     {% endfor %}

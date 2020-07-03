@@ -1,8 +1,8 @@
 <article>
   <a href="{% url 'tags:view_tree' group_name=group.name %}" class="buttonLink" >{{ group.name }}</a>
 
-  {% if has_writer_permission %}
     <a class="buttonLink" href="{% url 'tags:view_group' username=username group_id=group.id %}">View</a>
+  {% if has_admin_permission %}
     <form class="inlineDeleteForm" action="{% url 'tags:manage_groups' username=username %}" method="post">
       {% csrf_token %}
       <input type="hidden" name="delete_group_id" value="{{ group.id }}">

@@ -233,9 +233,9 @@ class ManageGroupsView(UserDataView):
         saved_group_list = self.user.get_saved_groups()
         listed_group_list = TreeUserGroup.get_listed_groups()
 
-        joined_groups = [(group, self.user.has_group_writer_permission(group)) for group in joined_group_list]
-        saved_groups = [(group, self.user.has_group_writer_permission(group)) for group in saved_group_list]
-        listed_groups = [(group, self.user.has_group_writer_permission(group)) for group in listed_group_list]
+        joined_groups = [(group, self.user.has_group_admin_permission(group)) for group in joined_group_list]
+        saved_groups = [(group, self.user.has_group_admin_permission(group)) for group in saved_group_list]
+        listed_groups = [(group, self.user.has_group_admin_permission(group)) for group in listed_group_list]
 
         context.update({
                          'joined_groups': joined_groups,
@@ -311,6 +311,7 @@ class ViewGroupView(UserDataView):
         context.update({
                          'group': group,
                          'has_writer_permission': self.user.has_group_writer_permission(group),
+                         'has_admin_permission': self.user.has_group_admin_permission(group),
                          'members': members,
                          'invite_form': invite_form,
                       })
