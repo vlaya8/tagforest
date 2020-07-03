@@ -5,84 +5,15 @@ a:hover {
   cursor: pointer;
 }
 
-$nav-bar-height: 1.7rem;
-$nav-bar-padding: 0.9rem;
-$nav-bar-button-padding: 1.5rem;
-
-nav {
-  background-color: base.$header-color;
-  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
-  border-width: 1px 1px 3px;
-  margin-bottom: 1rem;
-
-  h1, a, input, button, .linkLike {
-    color: base.$font-color;
-    display: inline-block;
-
-    padding: $nav-bar-padding;
-    padding-right: $nav-bar-button-padding;
-    padding-left: $nav-bar-button-padding;
-
-    margin: 0rem;
-
-    line-height: $nav-bar-height;
-    vertical-align: top;
-
-    font-weight: bold;
-    border: 1px solid color.adjust(base.$header-color, $lightness: 10);
-    border-width: 0px 1px 0px 0px;
-    background-color: color.adjust(base.$highlight-color, $alpha: -0.95);
-  }
-  .linkLike {
-
-    padding-right: 0.3rem;
-    padding-left: 0.7rem;
-
-    .treeName {
-      margin-right: 0.4rem;
-    }
-  }
-  a:hover, input[type=submit]:hover, button:hover {
-    cursor: pointer;
-    background-color: color.adjust(base.$highlight-color, $alpha: -0.73);
-  }
-  .thinButton {
-    padding-left: 0.8rem;
-    padding-right: 0.8rem;
-  }
-  .mediumButton {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  .innerButton {
-    padding: 0.4rem;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
-
-    margin: 0.1rem;
-
-    display: inline;
-    background-color: transparent;
-    z-index: 10;
-    border: none;
-
-    background-color: color.adjust(base.$highlight-color, $alpha: -0.93);
-    border-radius: 0.3rem;
-  }
-  form.innerButton {
-    background-color: transparent;
-  }
-  .innerButton button {
-    margin: 0rem;
-    padding: 0rem;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
-  }
-
-  .alignRight {
-    float: right;
-  }
+html {
+  font-size: 130%;
 }
+
+$nav-bar-link-padding: 0rem;
+$nav-bar-height: 2.3rem;
+$nav-bar-padding: 0.9rem;
+$nav-bar-button-padding: 1.7rem;
+
 
 /*
  * Dropdown menu
@@ -93,6 +24,9 @@ $dropdown-width: 20rem;
 .dropdown {
   position: relative;
   display: inline-block;
+  i {
+    font-size: 150%;
+  }
 }
 
 .dropdown-content {
@@ -152,10 +86,6 @@ $dropdown-width: 20rem;
   font-size: 90%;
 }
 
-footer {
-  float: bottom;
-}
-
 a {
   font-family: base.$font-stack;
   color: base.$font-color;
@@ -164,6 +94,7 @@ a {
 }
 
 %link-block {
+  display: inline-block;
   font-family: base.$font-stack;
   color: base.$font-color;
   text-decoration: none;
@@ -172,6 +103,11 @@ a {
   font-size: 100%;
   line-height: 1em;
   background-color: color.adjust(base.$background-color, $lightness: 5);
+}
+
+// Adjust icons to be aligned with the text
+.iconLink {
+  padding-top: 0.37em;
 }
 
 %link-block:hover {
@@ -193,33 +129,61 @@ a {
   background-color: color.adjust(base.$highlight-color, $hue: 10);
 }
 
-@for $i from 1 through 6 {
+h1, footer {
+  background-color: base.$header-color;
+  padding: 0.7rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+  font-size: 125%;
+}
+
+.separator {
+  display: inline;
+  border-left: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  margin: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+h1 a {
+  display: inline-block;
+
+  background-color: color.adjust(base.$header-color, $lightness: 5);
+  padding: 0.5rem;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+  line-height: initial;
+}
+
+h1 a:hover {
+  background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
+}
+
+footer {
+  margin-top: 2rem;
+  float: bottom;
+}
+
+
+@for $i from 2 through 6 {
 
   h#{$i} {
-    background-color: base.$header-color;
-    padding: 1rem;
-    //line-height: 30px;
-    border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+    background-color: color.adjust(base.$background-color, $lightness: 3);
+    padding: 0.5rem;
+    border: 1px solid color.adjust(base.$background-color, $lightness: 5);
     border-width: 1px 1px 3px;
-  }
-
-  h#{$i} a {
-    background-color: transparent;
-    padding: initial;
-    line-height: initial;
-  }
-
-  h#{$i} a:hover {
-    background-color: transparent;
   }
 }
 
 article {
   margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
 }
 
 .inlineDeleteForm {
-  display: inline-block;
+  display: inline;
 }
 
 .backgroundButton {
@@ -241,11 +205,11 @@ article {
 
 .tagBlock {
   display: inline-block;
-  margin: 0.5em;
+  margin: 0.1em;
 }
 
 p {
-  padding: 1rem;
+  padding-bottom: 0.5rem;
 }
 
 .dialogBox {
@@ -270,5 +234,97 @@ p {
   -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
   -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
   box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
- }
+}
 
+.errorMessage {
+  font-weight: bold;
+  color: base.$highlight-color;
+}
+
+nav {
+  background-color: base.$header-color;
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+  margin-bottom: 1rem;
+  font-size: 120%;
+
+  h1, a, input, button, .linkLike {
+    color: base.$font-color;
+    display: inline-block;
+
+    padding: $nav-bar-padding;
+    padding-right: $nav-bar-button-padding;
+    padding-left: $nav-bar-button-padding;
+
+    margin: 0rem;
+
+    line-height: $nav-bar-height;
+    vertical-align: top;
+
+    font-weight: bold;
+    border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+    border-width: 0px 1px 0px 0px;
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.95);
+  }
+
+  h1 {
+    font-size: 140%;
+    padding-bottom: $nav-bar-padding - 2*$nav-bar-link-padding;
+    padding-right: $nav-bar-button-padding - 2*$nav-bar-link-padding;
+    padding-left: $nav-bar-button-padding - 2*$nav-bar-link-padding;
+  }
+  h1 a, h1 a:hover {
+    padding: $nav-bar-link-padding;
+    background-color: initial;
+    border: initial;
+  }
+  .linkLike {
+
+    padding-right: 0.3rem;
+    padding-left: 0.7rem;
+
+    .treeName {
+      margin-right: 0.4rem;
+    }
+  }
+  a:hover, input[type=submit]:hover, button:hover {
+    cursor: pointer;
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.73);
+  }
+  .thinButton {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+  .mediumButton {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .innerButton {
+    padding: 0.4rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+
+    margin: 0.1rem;
+
+    display: inline;
+    background-color: transparent;
+    z-index: 10;
+    border: none;
+
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.93);
+    border-radius: 0.3rem;
+  }
+  form.innerButton {
+    background-color: transparent;
+  }
+  .innerButton button {
+    margin: 0rem;
+    padding: 0rem;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
+
+  .alignRight {
+    float: right;
+  }
+}

@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 from notifications.signals import notify
 from notifications.models import Notification
 
+from ..exceptions import UserError
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
 from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm
@@ -67,10 +68,11 @@ def index(request):
             )
 
 @method_decorator(login_required, name='dispatch')
-class UserDataView(View):
+class BaseView(View):
 
     template_name = 'tags/view_tree.html'
     redirect_url = 'tags:index'
+    error_message = None
 
     def setup(self, request, **kwargs):
 
@@ -79,27 +81,15 @@ class UserDataView(View):
 
         super().setup(request, **kwargs)
 
-        self.kwargs['user'] = request.user
-
-    def get_context_data(self, request, user, **kwargs):
-
-        logged_in = user.is_authenticated
-        logout_next = reverse('tags:index')
-
-        new_notifications = [(n.verb, n.id) for n in user.notifications.unread()]
-        new_notification_count = len(new_notifications)
+    def get_context_data(self, request, **kwargs):
 
         context = {
-                    'logged_in': logged_in,
-                    'logout_next': {"next": logout_next},
-                    'username': user.username,
-                    'new_notifications': new_notifications,
-                    'new_notification_count': new_notification_count,
+                    'error_message': self.error_message,
                   }
 
         return context
 
-    def get_return(self, request, context, user, **kwargs):
+    def get_return(self, request, context, **kwargs):
 
         return render(request, self.template_name, context)
 
@@ -111,10 +101,10 @@ class UserDataView(View):
 
         return self.get_return(request, context, **kwargs)
 
-    def process_post(self, request, user, **kwargs):
+    def process_post(self, request, **kwargs):
         pass
 
-    def post_return(self, request, user, **kwargs):
+    def post_return(self, request, **kwargs):
 
         return redirect_with_get_params(
                     self.redirect_url,
@@ -126,22 +116,57 @@ class UserDataView(View):
 
         kwargs.update(self.kwargs)
 
-        self.process_post(request, **kwargs)
+        try:
+            self.process_post(request, **kwargs)
+        except UserError as user_error:
+            self.error_message = user_error.message
+            return self.get(request, **kwargs)
 
         return self.post_return(request, **kwargs)
 
+@method_decorator(login_required, name='dispatch')
+class UserDataView(BaseView):
+
+    template_name = 'tags/view_tree.html'
+    redirect_url = 'tags:index'
+
+    def setup(self, request, **kwargs):
+
+        super().setup(request, **kwargs)
+
+        self.user = request.user
+
+    def get_context_data(self, request, **kwargs):
+
+        context = super().get_context_data(request, **kwargs)
+
+        logged_in = self.user.is_authenticated
+        logout_next = reverse('tags:index')
+
+        new_notifications = [(n.verb, n.id) for n in self.user.notifications.unread()]
+        new_notification_count = len(new_notifications)
+
+        context.update({
+                    'logged_in': logged_in,
+                    'logout_next': {"next": logout_next},
+                    'username': self.user.username,
+                    'new_notifications': new_notifications,
+                    'new_notification_count': new_notification_count,
+                  })
+
+        return context
 
 class ViewNotificationsView(UserDataView):
 
     template_name = 'tags/view_notifications.html'
 
-    def get_context_data(self, request, user, **kwargs):
+    def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, user=user, **kwargs)
+        context = super().get_context_data(request, **kwargs)
 
-        unread_notifications = [(n.verb, n.id, n.target) for n in user.notifications.unread()]
+        unread_notifications = [(n.verb, n.id, n.target) for n in self.user.notifications.unread()]
         unread_notification_count = len(unread_notifications)
-        read_notifications = [(n.verb, n.id, n.target) for n in user.notifications.read()]
+        read_notifications = [(n.verb, n.id, n.target) for n in self.user.notifications.read()]
         read_notification_count = len(read_notifications)
 
         context.update({
@@ -156,9 +181,9 @@ class ViewNotificationView(UserDataView):
 
     template_name = 'tags/view_notification.html'
 
-    def get_context_data(self, request, user, notification_id, **kwargs):
+    def get_context_data(self, request, notification_id, **kwargs):
 
-        context = super().get_context_data(request, user=user, **kwargs)
+        context = super().get_context_data(request, **kwargs)
 
         notification = get_object_or_404(Notification, pk=notification_id)
 
@@ -168,9 +193,9 @@ class ViewNotificationView(UserDataView):
         return context
 
     # Process an invitation which has been accepted or declined
-    def process_post(self, request, user, notification_id, **kwargs):
+    def process_post(self, request, notification_id, **kwargs):
 
-        super().process_post(request, user=user, **kwargs)
+        super().process_post(request, **kwargs)
 
         if 'accept_notification' in request.POST or 'decline_notification' in request.POST:
 
@@ -179,13 +204,13 @@ class ViewNotificationView(UserDataView):
             notification.mark_as_read()
 
             if 'accept_notification' in request.POST:
-                Member.objects.create(user=user, role=notification.action_object, group=notification.target)
+                Member.objects.create(user=self.user, role=notification.action_object, group=notification.target)
 
                 self.redirect_url = 'tags:view_tree'
                 self.redirect_kwargs['group_name'] = notification.target.name
             else:
                 self.redirect_url = 'tags:view_notifications'
-                self.redirect_kwargs['username'] = user.username
+                self.redirect_kwargs['username'] = self.user.username
 
 class ProfileView(UserDataView):
 
@@ -200,17 +225,17 @@ class ManageGroupsView(UserDataView):
 
     template_name = 'tags/manage_groups.html'
 
-    def get_context_data(self, request, user, **kwargs):
+    def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, user=user, **kwargs)
+        context = super().get_context_data(request, **kwargs)
 
-        joined_group_list = user.get_joined_groups()
-        saved_group_list = user.get_saved_groups()
+        joined_group_list = self.user.get_joined_groups()
+        saved_group_list = self.user.get_saved_groups()
         listed_group_list = TreeUserGroup.get_listed_groups()
 
-        joined_groups = [(group, user.has_group_writer_permission(group)) for group in joined_group_list]
-        saved_groups = [(group, user.has_group_writer_permission(group)) for group in saved_group_list]
-        listed_groups = [(group, user.has_group_writer_permission(group)) for group in listed_group_list]
+        joined_groups = [(group, self.user.has_group_writer_permission(group)) for group in joined_group_list]
+        saved_groups = [(group, self.user.has_group_writer_permission(group)) for group in saved_group_list]
+        listed_groups = [(group, self.user.has_group_writer_permission(group)) for group in listed_group_list]
 
         context.update({
                          'joined_groups': joined_groups,
@@ -220,36 +245,36 @@ class ManageGroupsView(UserDataView):
 
         return context
     
-    def process_post(self, request, user, **kwargs):
+    def process_post(self, request, **kwargs):
 
-        super().process_post(request, user=user, **kwargs)
+        super().process_post(request, **kwargs)
 
         # Process a group which got deleted
         if 'delete_group_id' in request.POST:
             group_id = int(request.POST['delete_group_id'])
 
             group = get_object_or_404(TreeUserGroup, pk=group_id)
-            if not user.has_group_writer_permission(group):
+            if not self.user.has_group_writer_permission(group):
                 raise PermissionDenied("You don't have permission to delete this group")
             group.delete()
 
         self.redirect_url = 'tags:manage_groups'
-        self.redirect_kwargs['username'] = user.username
+        self.redirect_kwargs['username'] = self.user.username
 
 class UpsertGroupView(UserDataView):
 
     template_name = 'tags/upsert_group.html'
 
-    def get_context_data(self, request, user, **kwargs):
+    def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, user=user, **kwargs)
+        context = super().get_context_data(request, **kwargs)
 
         # If user wants to edit a group
         if 'group_id' in kwargs:
             group_id = kwargs['group_id']
             group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-            if not user.has_group_writer_permission(group):
+            if not self.user.has_group_writer_permission(group):
                 raise PermissionDenied("You don't have permission to edit this group")
 
             data = {"name": group.name, "group_id": group_id, "public_group": group.public_group, "listed_group": group.listed_group}
@@ -269,13 +294,13 @@ class ViewGroupView(UserDataView):
 
     template_name = 'tags/view_group.html'
 
-    def get_context_data(self, request, user, group_id, invite_form=None, **kwargs):
+    def get_context_data(self, request, group_id, invite_form=None, **kwargs):
 
-        context = super().get_context_data(request, user, **kwargs)
+        context = super().get_context_data(request, **kwargs)
 
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-        if not user.has_group_reader_permission(group):
+        if not self.user.has_group_reader_permission(group):
             raise PermissionDenied("You don't have permission to view that group")
 
         members = group.member_set.all()
@@ -285,14 +310,14 @@ class ViewGroupView(UserDataView):
 
         context.update({
                          'group': group,
-                         'has_writer_permission': user.has_group_writer_permission(group),
+                         'has_writer_permission': self.user.has_group_writer_permission(group),
                          'members': members,
                          'invite_form': invite_form,
                       })
 
         return context
 
-    def process_post(self, request, user, group_id=SpecialID['NEW_ID'], **kwargs):
+    def process_post(self, request, group_id=SpecialID['NEW_ID'], **kwargs):
 
         # Process a group which got added or edited
         if 'upsert_group' in request.POST:
@@ -310,7 +335,7 @@ class ViewGroupView(UserDataView):
                 if group_id != SpecialID['NEW_ID']:
                     group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-                    if not user.has_group_writer_permission(group):
+                    if not self.user.has_group_writer_permission(group):
                         raise PermissionDenied("You don't have permission to edit this group")
 
                     group.name = group_name
@@ -319,29 +344,24 @@ class ViewGroupView(UserDataView):
                 else:
                     group = TreeUserGroup.objects.create(name=group_name, single_member=False, public_group=public_group, listed_group=listed_group)
                     admin_role = Role.objects.filter(name="admin").first()
-                    member = Member.objects.create(user=user, role=admin_role, group=group)
+                    member = Member.objects.create(user=self.user, role=admin_role, group=group)
 
                 group.save()
 
                 self.redirect_url = 'tags:view_group'
                 self.redirect_kwargs['group_id'] = group.id
-                self.redirect_kwargs['username'] = user.username
-
-    def post_return(self, request, user, group_id=SpecialID['NEW_ID'], **kwargs):
+                self.redirect_kwargs['username'] = self.user.username
 
         # If a member has been deleted
         if 'delete_member_id' in request.POST:
 
             group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-            if not user.has_group_admin_permission(group):
+            if not self.user.has_group_admin_permission(group):
                 raise PermissionDenied("You don't have permission to delete this member")
 
             if group.member_set.count() == 1:
-                # TODO: Show error
-                context = self.get_context_data(request, user, group_id, **kwargs)
-                return self.get_return(request, context, user, **kwargs)
-
+                raise UserError("The last member of the group can't be deleted (delete the group instead)")
 
             member = get_object_or_404(Member, pk=request.POST['delete_member_id'])
 
@@ -349,7 +369,10 @@ class ViewGroupView(UserDataView):
 
             self.redirect_url = 'tags:view_group'
             self.redirect_kwargs['group_id'] = group.id
-            self.redirect_kwargs['username'] = user.username
+            self.redirect_kwargs['username'] = self.user.username
+
+
+    def post_return(self, request, group_id=SpecialID['NEW_ID'], **kwargs):
 
         # Process a member invitation
         if 'invite_member' in request.POST:
@@ -365,15 +388,15 @@ class ViewGroupView(UserDataView):
 
                 target_user = get_object_or_404(User, username=member_name)
 
-                notify.send(user, recipient=target_user,
-                                  verb="{} invited you to join {}".format(user, group),
+                notify.send(self.user, recipient=target_user,
+                                  verb="{} invited you to join {}".format(self.user, group),
                                   action_object=role,
                                   target=group)
             else:
-                context = self.get_context_data(request, user, group_id, invite_form=form, **kwargs)
-                return self.get_return(request, context, user, **kwargs)
+                context = self.get_context_data(request, group_id, invite_form=form, **kwargs)
+                return self.get_return(request, context, **kwargs)
 
-        return super().post_return(request, user, **kwargs)
+        return super().post_return(request, **kwargs)
 
 class TreeView(UserDataView):
 
@@ -383,32 +406,30 @@ class TreeView(UserDataView):
         super().setup(request, **kwargs)
 
         # Setup group argument
-        group = get_object_or_404(TreeUserGroup, name=group_name)
+        self.group = get_object_or_404(TreeUserGroup, name=group_name)
 
-        if not request.user.has_group_reader_permission(group):
+        if not self.user.has_group_reader_permission(self.group):
             raise PermissionDenied("You don't have permission to view this group")
-
-        self.kwargs['group'] = group
 
         # Setup tree argument
         if tree_id == SpecialID['DEFAULT_ID']:
-            self.kwargs['current_tree'] = Tree.objects.filter(group__id=group.id).first()
+            self.current_tree = Tree.objects.filter(group__id=self.group.id).first()
 
         elif tree_id == SpecialID['NONE']:
-            self.kwargs['current_tree'] = None
+            self.current_tree = None
 
         else:
-            self.kwargs['current_tree'] = get_object_or_404(Tree, pk=tree_id)
+            self.current_tree = get_object_or_404(Tree, pk=tree_id)
 
-    def get_context_data(self, request, user, group, current_tree, **kwargs):
+    def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, user=user, **kwargs)
+        context = super().get_context_data(request, **kwargs)
 
         tree_list = []
         tree_add_form = TreeForm(initial={'tree_id': SpecialID['NEW_ID'], 'delete_tree': False})
         tree_ids = []
 
-        for tree in Tree.objects.filter(group__id=group.id):
+        for tree in Tree.objects.filter(group__id=self.group.id):
             add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
             delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
             delete_form = TreeForm(initial=delete_data)
@@ -416,31 +437,31 @@ class TreeView(UserDataView):
             tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form))
             tree_ids.append(tree.id)
 
-        if current_tree == None:
+        if self.current_tree == None:
             current_tree_id = SpecialID['NONE']
         else:
-            current_tree_id = current_tree.id
+            current_tree_id = self.current_tree.id
 
         context.update({
                     'tree_list': tree_list,
                     'tree_add_form': tree_add_form,
                     'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
-                    'group_name': group.name,
+                    'group_name': self.group.name,
                     'current_tree_id': current_tree_id,
                     'has_tree': (current_tree_id > 0),
-                    'saved_group': user.profile.saved_groups.filter(pk=group.id).exists(),
-                    'single_member': group.single_member,
+                    'saved_group': self.user.profile.saved_groups.filter(pk=self.group.id).exists(),
+                    'single_member': self.group.single_member,
                   })
         return context
 
-    def process_post(self, request, user, group, current_tree, **kwargs):
+    def process_post(self, request, **kwargs):
 
         # Default redirect
-        self.redirect_kwargs['group_name'] = group.name
+        self.redirect_kwargs['group_name'] = self.group.name
         self.redirect_url = 'tags:view_tree'
 
         if 'tree_form' in request.POST:
-            if not user.has_group_writer_permission(group):
+            if not self.user.has_group_writer_permission(self.group):
                 raise PermissionDenied("You don't have permission to edit in this group")
 
             form = TreeForm(request.POST)
@@ -461,7 +482,7 @@ class TreeView(UserDataView):
                         tree.name = tree_name
                         tree.save()
                 else:
-                    tree = Tree.objects.create(name=tree_name, group=group)
+                    tree = Tree.objects.create(name=tree_name, group=self.group)
 
                 if not delete_tree:
                     self.redirect_kwargs['tree_id'] = tree.id
@@ -471,39 +492,39 @@ class TreeView(UserDataView):
 
         elif 'save_group' in request.POST:
 
-            user.profile.saved_groups.add(group)
-            user.save()
+            self.user.profile.saved_groups.add(self.group)
+            self.user.save()
 
         elif 'unsave_group' in request.POST:
 
-            user.profile.saved_groups.remove(group)
-            user.save()
+            self.user.profile.saved_groups.remove(self.group)
+            self.user.save()
 
 class ViewTreeView(TreeView):
 
     template_name = 'tags/view_tree.html'
 
-    def get_context_data(self, request, user, group, current_tree, **kwargs):
+    def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
+        context = super().get_context_data(request, **kwargs)
 
-        if current_tree != None:
+        if self.current_tree != None:
 
             # Get selected tags from GET url parameters
             selected_tags = get_selected_tag_list(request)
             # Generate all the elements to be displayed in the tag list
-            tag_list = get_tag_list(group, current_tree.id, selected_tags)
+            tag_list = get_tag_list(self.group, self.current_tree.id, selected_tags)
 
             # Generate the entries to be displayed
             if len(selected_tags) > 0:
                 entry_list = Entry.objects.all()
                 
                 for tag in selected_tags:
-                    entry_list &= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=current_tree.id).filter(group__id=group.id)
+                    entry_list &= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=self.current_tree.id).filter(group__id=self.group.id)
 
                 entry_list = entry_list.distinct()
             else:
-                entry_list = Entry.objects.filter(tree__id=current_tree.id).filter(group__id=group.id)
+                entry_list = Entry.objects.filter(tree__id=self.current_tree.id).filter(group__id=self.group.id)
         else:
 
             entry_list = []
@@ -516,9 +537,9 @@ class ViewTreeView(TreeView):
 
         return context
 
-    def process_post(self, request, user, group, current_tree, **kwargs):
+    def process_post(self, request, **kwargs):
 
-        super().process_post(request, user=user, group=group, current_tree=current_tree, **kwargs)
+        super().process_post(request, **kwargs)
 
         # Process an entry which got deleted
         if 'delete_entry_id' in request.POST:
@@ -531,8 +552,8 @@ class ViewEntryView(TreeView):
 
     template_name = 'tags/view_entry.html'
 
-    def get_context_data(self, request, user, group, current_tree, entry_id, **kwargs):
-        context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
+    def get_context_data(self, request, entry_id, **kwargs):
+        context = super().get_context_data(request, **kwargs)
 
         entry = get_object_or_404(Entry, pk=entry_id)
         context.update({
@@ -541,9 +562,9 @@ class ViewEntryView(TreeView):
 
         return context
 
-    def process_post(self, request, user, group, current_tree, **kwargs):
+    def process_post(self, request, **kwargs):
 
-        super().process_post(request, user=user, group=group, current_tree=current_tree, **kwargs)
+        super().process_post(request, **kwargs)
 
         # Process an entry which got added or edited
         if 'upsert_entry' in request.POST:
@@ -563,13 +584,13 @@ class ViewEntryView(TreeView):
                     entry.text = entry_text
                     entry.tags.clear()
                 else:
-                    entry = Entry.objects.create(name=entry_name, text=entry_text, tree=current_tree, added_date=timezone.now(), group=group)
+                    entry = Entry.objects.create(name=entry_name, text=entry_text, tree=self.current_tree, added_date=timezone.now(), group=self.group)
 
                 tags_name = parse_tags(form.cleaned_data['tags'])
 
                 for tag_name in tags_name:
 
-                    tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree=current_tree, group=group)
+                    tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree=self.current_tree, group=self.group)
                     tag_obj.save()
 
                     entry.tags.add(tag_obj)
@@ -577,23 +598,23 @@ class ViewEntryView(TreeView):
                 entry.save()
 
                 self.redirect_url = 'tags:view_entry'
-                self.redirect_kwargs['group_name'] = group.name
-                self.redirect_kwargs['tree_id'] = current_tree.id
+                self.redirect_kwargs['group_name'] = self.group.name
+                self.redirect_kwargs['tree_id'] = self.current_tree.id
                 self.redirect_kwargs['entry_id'] = entry.id
 
 class UpsertEntryView(TreeView):
 
     template_name = 'tags/upsert_entry.html'
 
-    def get_context_data(self, request, user, group, current_tree, **kwargs):
-        context = super().get_context_data(request, user=user, group=group, current_tree=current_tree, **kwargs)
+    def get_context_data(self, request, **kwargs):
+        context = super().get_context_data(request, **kwargs)
 
         # If user wants to edit an entry
         if 'entry_id' in kwargs:
             entry_id = kwargs['entry_id']
             entry = get_object_or_404(Entry, pk=entry_id)
 
-            tags = ",".join([tag.name for tag in entry.tags.filter(group__id=group.id)])
+            tags = ",".join([tag.name for tag in entry.tags.filter(group__id=self.group.id)])
             data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
         # If user wants to add a group
         else:

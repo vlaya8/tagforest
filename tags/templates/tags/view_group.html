@@ -6,10 +6,13 @@
 {% block content %}
   <h1>
     {{ group.name }}
-    {% if has_writer_permission %}<a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" class="buttonLink" >Edit</a>{% endif %}
+    {% if has_writer_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" >Edit</a>{% endif %}
   </h1>
 
-  <p>
+  {% if error_message %}
+    <div class="errorMessage">{{ error_message }}</div>
+  {% endif %}
+
     <h2>Members</h2>
 
     <ul>
@@ -26,13 +29,25 @@
       </li>
     {% endfor %}
     </ul>
-  </p>
 
   <h2>Invite a member:</h2>
   <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
     {% csrf_token %}
+    {{ invite_form.non_field_errors }}
     <ul>
-      {{ invite_form.as_ul }}
+      <li>
+      {{ invite_form.name.errors }}
+      {{ invite_form.name.label_tag }}
+      {{ invite_form.name }}
+      </li>
+      <li>
+      {{ invite_form.role.errors }}
+      {{ invite_form.role.label_tag }}
+      <div class="custom-select">
+        {{ invite_form.role }}
+      </div>
+      </li>
+      <br/>
       <li><input type="submit" name="invite_member" value="Submit"></li>
     </ul>
   </form>
@@ -44,4 +59,5 @@
 <!-- VueJS Script include -->
 <script src="{% static 'tags/vue-markdown.js' %}"></script>
 <script src="{% static 'tags/entry_display.js' %}"></script>
+<script src="{% static 'tags/select.js' %}"></script>
 {% endblock %}

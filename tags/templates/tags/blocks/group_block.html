@@ -6,7 +6,7 @@
     <form class="inlineDeleteForm" action="{% url 'tags:manage_groups' username=username %}" method="post">
       {% csrf_token %}
       <input type="hidden" name="delete_group_id" value="{{ group.id }}">
-      <button class="backgroundButton" type="submit" ><i class="fa fa-trash"></i></button>
+      <button class="backgroundButton iconLink" type="submit" ><i class="fa fa-trash"></i></button>
     </form>
   {% endif %}
     

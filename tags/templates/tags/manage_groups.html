@@ -4,22 +4,23 @@
 
 {% block content %}
 
-  <b>Saved groups:</b>
+  <h3>Saved groups:</h3>
   {% for group, has_writer_permission in saved_groups %}
       {% include "tags/blocks/group_block.html" %}
   {% endfor %}
-  <br/><br/>
-  <b>Joined groups:</b>
+
+  <h3>Joined groups:</h3>
   {% for group, has_writer_permission in joined_groups %}
       {% include "tags/blocks/group_block.html" %}
   {% endfor %}
-  <br/><br/>
-  <b>Public listed groups:</b>
+
+  <h3>Public listed groups:</h3>
   {% for group, has_writer_permission in listed_groups %}
       {% include "tags/blocks/group_block.html" %}
   {% endfor %}
 
-  <br/><br/>
+  <article>
   <a href="{% url 'tags:upsert_group' username=username %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+  </article>
 
 {% endblock %}
