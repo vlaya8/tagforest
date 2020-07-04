@@ -38,7 +38,7 @@
   <h2>Invite a member:</h2>
   <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
     {% csrf_token %}
-    {{ invite_form.non_field_errors }}
+    <div class="errorMessage">{{ invite_form.non_field_errors }}</div>
     <ul>
       <li>
       {{ invite_form.name.errors }}
