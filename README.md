@@ -15,6 +15,8 @@ Django website to share and organize knowledge and ressources by classifying the
 
 ## Current state
 
+**v1.0 (2020/07/05)**
+
 ![Index screenshot](readme_img/tagforest-index.png)
 ![Index screenshot with tag selection](readme_img/tagforest-index-tags.png)
 
