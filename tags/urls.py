@@ -11,7 +11,6 @@ tree_urlpatterns = [
         path('', views.ViewTreeView.as_view(), name="view_tree"),
         path('<int:tree_id>/', include([
             path('view/', views.ViewTreeView.as_view(), name="view_tree"),
-            path('tags/', views.ManageTagsView.as_view(), name="manage_tags"),
             path('entry/', include([
                 path('', views.ViewEntryView.as_view(), name="view_entry"),
                 path('<int:entry_id>/view/', views.ViewEntryView.as_view(), name="view_entry"),

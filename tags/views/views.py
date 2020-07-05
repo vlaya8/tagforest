@@ -85,6 +85,7 @@ class BaseView(View):
 
         context = {
                     'error_message': self.error_message,
+                    'current_page': 'index',
                   }
 
         return context
@@ -236,6 +237,10 @@ class ProfileView(UserDataView):
                                            })
             context.update({'form': form})
 
+            current_page = 'profile'
+        else:
+            current_page = 'other_profile'
+
         link_group = self.link_user.get_user_group()
 
         if link_group.group_visibility == TreeUserGroup.PRIVATE:
@@ -249,6 +254,7 @@ class ProfileView(UserDataView):
                          'has_edit_permission': has_edit_permission,
                          'group_visibility': group_visibility,
                          'has_group_view_permission': link_group.is_public(),
+                         'current_page': current_page,
                        })
 
         return context
@@ -288,6 +294,7 @@ class ChangePasswordView(auth_views.PasswordChangeView):
 
     success_url = reverse_lazy('tags:index')
     template_name = 'tags/registration/password_change.html'
+    context = {'current_page': 'profile'}
 
 class ManageGroupsView(UserDataView):
 
@@ -309,6 +316,7 @@ class ManageGroupsView(UserDataView):
                          'joined_groups': joined_groups,
                          'saved_groups': saved_groups,
                          'listed_groups': listed_groups,
+                         'current_page': 'groups',
                       })
 
         return context
@@ -359,6 +367,7 @@ class UpsertGroupView(UserDataView):
 
         context.update({
                          'form': form,
+                         'current_page': 'groups',
                      })
 
         return context
@@ -436,6 +445,7 @@ class ViewGroupView(UserDataView):
                          'members': members,
                          'invite_form': invite_form,
                          'group_visibility': group_visibility,
+                         'current_page': 'groups',
                       })
 
         return context
@@ -538,7 +548,7 @@ class TreeView(UserDataView):
                     'tree_list': tree_list,
                     'tree_add_form': tree_add_form,
                     'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
-                    'group_name': self.group.name,
+                    'group': self.group,
                     'current_tree_id': current_tree_id,
                     'has_tree': (current_tree_id > 0),
                     'saved_group': self.user.profile.saved_groups.filter(pk=self.group.id).exists(),
@@ -725,15 +735,9 @@ class UpsertEntryView(TreeView):
 
         return context
 
-## Tags
-
-class ManageTagsView(TreeView):
-
-    template_name = 'tags/manage_tags.html'
-
 ## About
 
 class AboutView(generic.TemplateView):
     template_name = 'tags/about.html'
-    context = {}
+    context = {'current_page': 'about'}
 

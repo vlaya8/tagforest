@@ -1,38 +1,28 @@
 {% extends "tags/base.html" %}
 {% load static %}
 
-
-{% block nav_menu_tree_links %}<!--
-  {% if has_reader_permission %}
-    {% if has_tree %}
-    --><a href="{% url 'tags:manage_tags' group_name=group_name tree_id=current_tree_id %}">Tags</a><!--
-    {% endif %}
-
-  {% endif %}
--->{% endblock %}
-
 {% block nav_content %}
   {% if has_reader_permission %}
 
   <!-- Vue js tree bar app -->
   <nav id="tree_bar_app" ><!--
 
-    --><a href="{% url 'tags:view_tree' group_name %}">{{ group_name }}></a><!--
+    --><a href="{% url 'tags:view_group' username=username group_id=group.id %}">{{ group.name }}></a><!--
 
     Tree list
     {% if has_tree %}
     {% for tree_name, tree_id, tree_edit_form, tree_delete_form, is_active in tree_list %}
 
           Tree name link
-          --><a {% if is_active %}class="activeLink"{% endif %} v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}"><!--
+          --><a {% if is_active %}class="activeLink"{% endif %} v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}"><!--
 		-->{{ tree_name }}<!--
 	  --></a><!--
           {% if has_writer_permission %}
 	  Tree name edit icons
-	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}"><!--
+	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}"><!--
 	        --><span class="treeName" >{{ tree_name }}</span><!--
 		--><a v-if="editMode & !editTree[{{ tree_id }}]" v-on:click="enterEditTree({{ tree_id }})" class="innerButton" ><i class="fa fa-edit"></i></a><!--
-		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}" method="post"><!--
+		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}" method="post"><!--
 		      -->{% csrf_token %}<!--
 		      -->{{ tree_delete_form.name}}<!--
 		      -->{{ tree_delete_form.delete_tree}}<!--
@@ -42,7 +32,7 @@
 	  --></div><!--
 
 	  Tree form
-	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}" method="post"><!--
+	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}" method="post"><!--
 		-->{% csrf_token %}<!--
 		-->{{ tree_edit_form.non_field_errors}}<!--
 		-->{{ tree_edit_form.name.errors}}<!--
@@ -64,7 +54,7 @@
     --><a v-if="viewMode" v-on:click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></a><!-- 
 
     Add form
-    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' group_name=group_name %}" method="post"><!--
+    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name %}" method="post"><!--
 	  -->{% csrf_token %}<!--
 	  -->{{ tree_add_form.non_field_errors}}<!--
 	  -->{{ tree_add_form.name.errors}}<!--
@@ -78,12 +68,12 @@
 
     {% if not single_member %}
       {% if saved_group %}
-        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group_name %}" method="post" ><!--
+        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
               -->{% csrf_token %}<!--
              --><button class="thinButton" name="unsave_group" type="submit">Remove from saved</button><!--
         --></form><!--
       {% else %}
-        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group_name %}" method="post" ><!--
+        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
               -->{% csrf_token %}<!--
              --><button class="thinButton" name="save_group" type="submit">Save Group</button><!--
         --></form><!--

@@ -13,12 +13,12 @@
   </head>
 
   <nav><!--
-    --><h1><a href="{% url 'tags:index' %}">Tagforest</a></h1><!--
-    --><a href="{% url 'tags:index' %}">Index</a><!--
+    --><h1><a href="{% url 'tags:index' %}" >Tagforest</a></h1><!--
+    --><a href="{% url 'tags:index' %}" {% if current_page == 'index' %}class="activeLink" {% endif %}>Index</a><!--
     {% if logged_in %}
-      --><a href="{% url 'tags:manage_groups' username=username %}">Groups</a><!--
-      --><a href="{% url 'tags:profile' username=username %}">{{ username }}</a><!--
-      --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a><!--
+      --><a href="{% url 'tags:manage_groups' username=username %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>Groups</a><!--
+      --><a href="{% url 'tags:profile' username=username %}" {% if current_page == 'profile' %}class="activeLink" {% endif %}>{{ username }}</a><!--
+      --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}" {% if current_page == 'logout' %}class="activeLink" {% endif %}>Logout</a><!--
     {% endif %}
     -->{% block nav_menu_tree_links %}{% endblock %}<!--
 
