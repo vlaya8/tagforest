@@ -28,8 +28,8 @@ class TagField(forms.CharField):
 class EntryForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
-    text = forms.CharField(label = "Text", widget=forms.Textarea)
-    tags = forms.CharField(label = "Tags", max_length=255)
+    text = forms.CharField(label = "Text", widget=forms.Textarea, required=False)
+    tags = forms.CharField(label = "Tags", max_length=255, required=False)
 
     entry_id = forms.IntegerField(widget=forms.HiddenInput())
 
@@ -48,6 +48,14 @@ class ProfileForm(forms.Form):
                                       label = "Confidentiality",
                                       choices = TreeUserGroup.GROUP_VISIBILITY_CHOICES,
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("{} is already taken".format(username))
+
+        return cleaned_data
 
 class GroupForm(forms.Form):
 

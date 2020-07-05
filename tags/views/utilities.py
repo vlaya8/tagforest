@@ -11,7 +11,11 @@ from ..forms import EntryForm, TreeForm
 from .utilities import *
 from urllib.parse import urlencode
 
-import json
+SpecialID = {
+                'DEFAULT_ID': -1,
+                'NONE': -2,
+                'NEW_ID': -3,
+            }
 
 def redirect_with_get_params(url_name, get_params, kwargs):
 

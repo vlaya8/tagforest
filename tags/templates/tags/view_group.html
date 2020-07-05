@@ -15,9 +15,9 @@
   {% endif %}
 
   <p>
+    <a class="buttonLink" href="{% url 'tags:view_tree' group_name=group.name %}" >View trees</a><br/><br/>
     <b>Group type:</b> {% if group.single_member %}Personal Group{% else %}Shared Group{% endif %}<br/>
     <b>Group visibility:</b> {{ group_visibility }}<br/>
-    <a href="{% url 'tags:view_tree' group_name=group.name %}" >View trees</a>
   </p>
 
   <h2>Members</h2>
