@@ -4,6 +4,8 @@
 {% block title %}Index{% endblock %}
 
 {% block content %}
+{{ block.super }}
+{% if has_reader_permission %}
 
   <!-- VueJS tag select app -->
   <div id="tag_select_app">
@@ -26,6 +28,7 @@
   {% endif %}
   {% endif %}
 
+{% endif %}
 {% endblock %}
 
 {% block script_includes %}

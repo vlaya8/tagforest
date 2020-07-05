@@ -1,5 +1,5 @@
 from django import forms
-from .models import Role
+from .models import Role, TreeUserGroup
 from django.contrib.auth.models import User
 
 def parse_tag(tags_string):
@@ -40,11 +40,23 @@ class TreeForm(forms.Form):
     delete_tree = forms.BooleanField(required=False, widget=forms.HiddenInput())
     tree_id = forms.IntegerField(widget=forms.HiddenInput())
 
+class ProfileForm(forms.Form):
+
+    username = forms.CharField(label = "Username", max_length=255)
+
+    personal_group_visibility = forms.ChoiceField(
+                                      label = "Confidentiality",
+                                      choices = TreeUserGroup.GROUP_VISIBILITY_CHOICES,
+    )
+
 class GroupForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
-    public_group = forms.BooleanField(required=False)
-    listed_group = forms.BooleanField(required=False)
+
+    group_visibility = forms.ChoiceField(
+                                      label = "Confidentiality",
+                                      choices = TreeUserGroup.GROUP_VISIBILITY_CHOICES,
+    )
 
     group_id = forms.IntegerField(widget=forms.HiddenInput())
 

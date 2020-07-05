@@ -22,7 +22,7 @@ from notifications.models import Notification
 from ..exceptions import UserError
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
-from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm
+from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm
 from .utilities import *
 
 import json
@@ -221,16 +221,68 @@ class ProfileView(UserDataView):
 
     template_name = 'tags/registration/profile.html'
 
-    def get_context_data(self, request, **kwargs):
+    def get_context_data(self, request, form=None, **kwargs):
 
         context = super().get_context_data(request, **kwargs)
 
         has_edit_permission = (self.user.username == self.link_user.username)
+        if has_edit_permission:
+
+            group = self.user.get_user_group()
+            if form == None:
+                form = ProfileForm(initial={
+                                             'username': self.user.username,
+                                             'personal_group_visibility': group.group_visibility,
+                                           })
+            context.update({'form': form})
+
+        link_group = self.link_user.get_user_group()
+
+        if link_group.group_visibility == TreeUserGroup.PRIVATE:
+            group_visibility = "Private"
+        elif link_group.group_visibility == TreeUserGroup.PUBLIC:
+            group_visibility = "Unlisted and Public"
+        else:
+            group_visibility = "Listed and Public"
 
         context.update({
                          'has_edit_permission': has_edit_permission,
-                      })
+                         'group_visibility': group_visibility,
+                         'has_group_view_permission': link_group.is_public(),
+                       })
+
         return context
+
+    def post_return(self, request, **kwargs):
+
+        if 'edit_profile' in request.POST:
+
+            form = ProfileForm(request.POST)
+
+            if form.is_valid():
+
+                if self.user.username != self.link_user.username:
+                    raise PermissionDenied("You don't have permission to edit this profile")
+
+                username = form.cleaned_data['username']
+                personal_group_visibility = form.cleaned_data['personal_group_visibility']
+
+                group = self.user.get_user_group()
+
+                group.group_visibility = personal_group_visibility
+                group.name = username
+                group.save()
+
+                self.user.username = username
+                self.user.save()
+
+
+                self.redirect_url = 'tags:profile'
+                self.redirect_kwargs['username'] = self.user.username
+            else:
+                context = self.get_context_data(request, form=form, **kwargs)
+                return self.get_return(request, context, **kwargs)
+        return super().post_return(request, **kwargs)
 
 class ChangePasswordView(auth_views.PasswordChangeView):
 
@@ -249,9 +301,9 @@ class ManageGroupsView(UserDataView):
         saved_group_list = self.user.get_saved_groups()
         listed_group_list = TreeUserGroup.get_listed_groups()
 
-        joined_groups = [(group, self.user.has_group_admin_permission(group)) for group in joined_group_list]
-        saved_groups = [(group, self.user.has_group_admin_permission(group)) for group in saved_group_list]
-        listed_groups = [(group, self.user.has_group_admin_permission(group)) for group in listed_group_list]
+        joined_groups = [(group, not group.single_member and self.user.has_group_admin_permission(group)) for group in joined_group_list]
+        saved_groups = [(group, not group.single_member and self.user.has_group_admin_permission(group)) for group in saved_group_list]
+        listed_groups = [(group, not group.single_member and self.user.has_group_admin_permission(group)) for group in listed_group_list]
 
         context.update({
                          'joined_groups': joined_groups,
@@ -270,8 +322,13 @@ class ManageGroupsView(UserDataView):
             group_id = int(request.POST['delete_group_id'])
 
             group = get_object_or_404(TreeUserGroup, pk=group_id)
+
             if not self.user.has_group_writer_permission(group):
                 raise PermissionDenied("You don't have permission to delete this group")
+
+            if group.single_member:
+                raise PermissionDenied("You don't have permission to delete this group")
+
             group.delete()
 
         self.redirect_url = 'tags:manage_groups'
@@ -293,7 +350,7 @@ class UpsertGroupView(UserDataView):
             if not self.user.has_group_writer_permission(group):
                 raise PermissionDenied("You don't have permission to edit this group")
 
-            data = {"name": group.name, "group_id": group_id, "public_group": group.public_group, "listed_group": group.listed_group}
+            data = {"name": group.name, "group_visibility": group.group_visibility, "group_id": group_id}
         # If user wants to add a group
         else:
             data = {"group_id": SpecialID['NEW_ID']}
@@ -306,6 +363,45 @@ class UpsertGroupView(UserDataView):
 
         return context
 
+    def post_return(self, request, **kwargs):
+
+        # Process a group which got added or edited
+        if 'upsert_group' in request.POST:
+
+            form = GroupForm(request.POST)
+
+            if form.is_valid():
+
+                group_name = form.cleaned_data['name']
+                group_visibility = form.cleaned_data['group_visibility']
+                group_id = form.cleaned_data['group_id']
+
+                # If the group has been edited
+                if group_id != SpecialID['NEW_ID']:
+                    group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+                    if not self.user.has_group_writer_permission(group):
+                        raise PermissionDenied("You don't have permission to edit this group")
+
+                    group.name = group_name
+                    group.group_visibility = group_visibility
+                else:
+                    group = TreeUserGroup.objects.create(name=group_name, single_member=False, group_visibility=group_visibility)
+                    admin_role = Role.objects.filter(name="admin").first()
+                    member = Member.objects.create(user=self.user, role=admin_role, group=group)
+
+                group.save()
+
+                self.redirect_url = 'tags:view_group'
+                self.redirect_kwargs['group_id'] = group.id
+                self.redirect_kwargs['username'] = self.user.username
+            else:
+                context = self.get_context_data(request, group_id, invite_form=form, **kwargs)
+                return self.get_return(request, context, **kwargs)
+
+        return super().post_return(request, **kwargs)
+
+
 class ViewGroupView(UserDataView):
 
     template_name = 'tags/view_group.html'
@@ -317,57 +413,34 @@ class ViewGroupView(UserDataView):
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
         if not self.user.has_group_reader_permission(group):
-            raise PermissionDenied("You don't have permission to view that group")
+            context.update({'has_reader_permission': False})
+            return context
 
         members = group.member_set.all()
 
         if invite_form == None:
             invite_form = MemberInvitationForm(group, initial={})
 
+        if group.group_visibility == TreeUserGroup.PRIVATE:
+            group_visibility = "Private"
+        elif group.group_visibility == TreeUserGroup.PUBLIC:
+            group_visibility = "Unlisted and Public"
+        else:
+            group_visibility = "Listed and Public"
+
         context.update({
                          'group': group,
+                         'has_reader_permission': True,
                          'has_writer_permission': self.user.has_group_writer_permission(group),
                          'has_admin_permission': self.user.has_group_admin_permission(group),
                          'members': members,
                          'invite_form': invite_form,
+                         'group_visibility': group_visibility,
                       })
 
         return context
 
     def process_post(self, request, group_id=SpecialID['NEW_ID'], **kwargs):
-
-        # Process a group which got added or edited
-        if 'upsert_group' in request.POST:
-
-            form = GroupForm(request.POST)
-
-            if form.is_valid():
-
-                group_name = form.cleaned_data['name']
-                group_id = form.cleaned_data['group_id']
-                public_group = form.cleaned_data['public_group']
-                listed_group = form.cleaned_data['listed_group']
-
-                # If the group has been edited
-                if group_id != SpecialID['NEW_ID']:
-                    group = get_object_or_404(TreeUserGroup, pk=group_id)
-
-                    if not self.user.has_group_writer_permission(group):
-                        raise PermissionDenied("You don't have permission to edit this group")
-
-                    group.name = group_name
-                    group.public_group = public_group
-                    group.listed_group = listed_group
-                else:
-                    group = TreeUserGroup.objects.create(name=group_name, single_member=False, public_group=public_group, listed_group=listed_group)
-                    admin_role = Role.objects.filter(name="admin").first()
-                    member = Member.objects.create(user=self.user, role=admin_role, group=group)
-
-                group.save()
-
-                self.redirect_url = 'tags:view_group'
-                self.redirect_kwargs['group_id'] = group.id
-                self.redirect_kwargs['username'] = self.user.username
 
         # If a member has been deleted
         if 'delete_member_id' in request.POST:
@@ -425,9 +498,6 @@ class TreeView(UserDataView):
         # Setup group argument
         self.group = get_object_or_404(TreeUserGroup, name=group_name)
 
-        if not self.user.has_group_reader_permission(self.group):
-            raise PermissionDenied("You don't have permission to view this group")
-
         # Setup tree argument
         if tree_id == SpecialID['DEFAULT_ID']:
             self.current_tree = Tree.objects.filter(group__id=self.group.id).first()
@@ -441,6 +511,10 @@ class TreeView(UserDataView):
     def get_context_data(self, request, **kwargs):
 
         context = super().get_context_data(request, **kwargs)
+
+        if not self.user.has_group_reader_permission(self.group):
+            context.update({'has_reader_permission': False})
+            return context
 
         tree_list = []
         tree_add_form = TreeForm(initial={'tree_id': SpecialID['NEW_ID'], 'delete_tree': False})
@@ -460,6 +534,7 @@ class TreeView(UserDataView):
             current_tree_id = self.current_tree.id
 
         context.update({
+                    'has_reader_permission': True,
                     'tree_list': tree_list,
                     'tree_add_form': tree_add_form,
                     'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
@@ -476,6 +551,9 @@ class TreeView(UserDataView):
         # Default redirect
         self.redirect_kwargs['group_name'] = self.group.name
         self.redirect_url = 'tags:view_tree'
+
+        if not self.user.has_group_reader_permission(self.group):
+            raise UserError("")
 
         if 'tree_form' in request.POST:
             if not self.user.has_group_writer_permission(self.group):

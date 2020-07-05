@@ -1,13 +1,18 @@
 {% extends "tags/base.html" %}
 {% load static %}
 
+
 {% block nav_menu_tree_links %}<!--
+  {% if has_reader_permission %}
     {% if has_tree %}
     --><a href="{% url 'tags:manage_tags' group_name=group_name tree_id=current_tree_id %}">Tags</a><!--
     {% endif %}
+
+  {% endif %}
 -->{% endblock %}
 
 {% block nav_content %}
+  {% if has_reader_permission %}
 
   <!-- Vue js tree bar app -->
   <nav id="tree_bar_app" ><!--
@@ -88,11 +93,21 @@
     -->
   </nav>
 
+  {% endif %}
 {% endblock %}
 
 {% block body_data %}
+  {% if has_reader_permission %}
 tree_bar_data="{{ tree_bar_data }}"
+  {% endif %}
 {% endblock %}
+
+{% block content %}
+  {% if not has_reader_permission %}
+    <div class="errorMessage">You don't have permission to view this group's trees</div>
+  {% endif %}
+{% endblock %}
+
 
 {% block script_includes %}
   {{ block.super }}

@@ -4,37 +4,43 @@
 {% block title %}{{ group.name }}{% endblock %}
 
 {% block content %}
+{% if has_reader_permission %}
   <h1>
     {{ group.name }}
-    {% if has_writer_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" >Edit</a>{% endif %}
+    {% if has_admin_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" >Edit</a>{% endif %}
   </h1>
 
   {% if error_message %}
     <div class="errorMessage">{{ error_message }}</div>
   {% endif %}
 
-    <h2>Members</h2>
+  <p>
+    <b>Group type:</b> {% if group.single_member %}Personal Group{% else %}Shared Group{% endif %}<br/>
+    <b>Group visibility:</b> {{ group_visibility }}<br/>
+  </p>
 
-    <ul>
-    {% for member in members %}
-      <li>
-	<article>
-	<a href="{% url "tags:profile" member.user.username %}" class="buttonLink" >{{member.user}}, {{member.role}}</a>
+  <h2>Members</h2>
 
-	{% if has_admin_permission %}
-	  <form class="inlineDeleteForm" action="{% url "tags:view_group" username=username group_id=group.id %}" method="post">
-	    {% csrf_token %}
-	    <input type="hidden" name="delete_member_id" value="{{ member.id }}">
-	    <button class="backgroundButton iconLink" type="submit" ><i class="fa fa-trash"></i></button>
-	  </form>
-	{% endif %}
-	</article>
+  <ul>
+  {% for member in members %}
+    <li>
+      <article>
+      <a href="{% url "tags:profile" member.user.username %}" class="buttonLink" >{{member.user}}, {{member.role}}</a>
 
-      </li>
-    {% endfor %}
-    </ul>
+      {% if has_admin_permission %}
+        <form class="inlineDeleteForm" action="{% url "tags:view_group" username=username group_id=group.id %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="delete_member_id" value="{{ member.id }}">
+          <button class="backgroundButton iconLink" type="submit" ><i class="fa fa-trash"></i></button>
+        </form>
+      {% endif %}
+      </article>
 
-  {% if has_admin_permission %}
+    </li>
+  {% endfor %}
+  </ul>
+
+  {% if has_admin_permission and not group.single_member %}
   <h2>Invite a member:</h2>
   <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
     {% csrf_token %}
@@ -46,11 +52,9 @@
       {{ invite_form.name }}
       </li>
       <li>
-      {{ invite_form.role.errors }}
-      {{ invite_form.role.label_tag }}
-      <div class="custom-select">
-        {{ invite_form.role }}
-      </div>
+	<div class="errorMessage">{{ invite_form.role.errors }}</div>
+        {{ invite_form.role.label_tag }}
+        <div class="select">{{ invite_form.role }}</div>
       </li>
       <br/>
       <li><input type="submit" name="invite_member" value="Submit"></li>
@@ -58,12 +62,15 @@
   </form>
   {% endif %}
 
+{% else %}
+<div class="errorMessage" >You don't have permission to view that group</div>
+{% endif %}
+
 {% endblock %}
 
 {% block script_includes %}
-{{ block.super }}
-<!-- VueJS Script include -->
-<script src="{% static 'tags/vue-markdown.js' %}"></script>
-<script src="{% static 'tags/entry_display.js' %}"></script>
-<script src="{% static 'tags/select.js' %}"></script>
+  {{ block.super }}
+  <!-- VueJS Script include -->
+  <script src="{% static 'tags/entry_display.js' %}"></script>
+  <script src="{% static 'tags/select.js' %}"></script>
 {% endblock %}

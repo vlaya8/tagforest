@@ -8,16 +8,38 @@ from django_dag.models import *
 # Can represent a group of users or a single user
 # Can own trees
 class TreeUserGroup(models.Model):
+
+    PRIVATE = 'PRIV'
+    PUBLIC = 'PUB'
+    LISTED = 'LIS'
+    GROUP_VISIBILITY_CHOICES = [
+            (PRIVATE, 'Private'),
+            (PUBLIC, 'Unlisted and Public'),
+            (LISTED, 'Listed and Public'),
+    ]
+
+
     def __str__(self):
         return self.name
 
     name = models.CharField('name', max_length=255, unique=True)
     single_member = models.BooleanField()
-    public_group = models.BooleanField(default=False)
-    listed_group = models.BooleanField(default=False)
+
+    group_visibility = models.CharField(
+            max_length=4,
+            choices=GROUP_VISIBILITY_CHOICES,
+            default=PRIVATE,
+    )
 
     def get_listed_groups():
-        return TreeUserGroup.objects.filter(listed_group=True)
+        return TreeUserGroup.objects.filter(group_visibility=TreeUserGroup.LISTED)
+
+    def is_private(self):
+        return self.group_visibility == self.PRIVATE
+    def is_public(self):
+        return self.group_visibility != self.PRIVATE
+    def is_listed(self):
+        return self.group_visibility == self.LISTED
 
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
@@ -116,11 +138,10 @@ def get_joined_groups(user):
     return groups
 
 def get_saved_groups(user):
-
     return user.profile.saved_groups.all()
 
 def has_group_reader_permission(user, group):
-    return group.public_group or group.member_set.filter(user=user).exists()
+    return group.is_public() or group.member_set.filter(user=user).exists()
 
 def has_group_writer_permission(user, group):
     return group.member_set.filter(user=user).filter(role__manage_entries=True).exists()
