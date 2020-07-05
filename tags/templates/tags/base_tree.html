@@ -21,10 +21,10 @@
 
     Tree list
     {% if has_tree %}
-    {% for tree_name, tree_id, tree_edit_form, tree_delete_form in tree_list %}
+    {% for tree_name, tree_id, tree_edit_form, tree_delete_form, is_active in tree_list %}
 
           Tree name link
-	  --><a v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}"><!--
+          --><a {% if is_active %}class="activeLink"{% endif %} v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' group_name=group_name tree_id=tree_id %}"><!--
 		-->{{ tree_name }}<!--
 	  --></a><!--
           {% if has_writer_permission %}

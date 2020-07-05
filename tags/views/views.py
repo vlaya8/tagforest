@@ -525,7 +525,7 @@ class TreeView(UserDataView):
             delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
             delete_form = TreeForm(initial=delete_data)
             delete_form.fields['name'].widget = forms.HiddenInput()
-            tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form))
+            tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form, (tree == self.current_tree)))
             tree_ids.append(tree.id)
 
         if self.current_tree == None:

@@ -327,4 +327,7 @@ nav {
   .alignRight {
     float: right;
   }
+  .activeLink {
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.70);
+  }
 }
