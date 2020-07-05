@@ -1,4 +1,6 @@
 from django import forms
+from .models import Role, TreeUserGroup
+from django.contrib.auth.models import User
 
 def parse_tag(tags_string):
 
@@ -26,8 +28,8 @@ class TagField(forms.CharField):
 class EntryForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
-    text = forms.CharField(label = "Text", widget=forms.Textarea)
-    tags = forms.CharField(label = "Tags", max_length=255)
+    text = forms.CharField(label = "Text", widget=forms.Textarea, required=False)
+    tags = forms.CharField(label = "Tags", max_length=255, required=False)
 
     entry_id = forms.IntegerField(widget=forms.HiddenInput())
 
@@ -37,3 +39,50 @@ class TreeForm(forms.Form):
 
     delete_tree = forms.BooleanField(required=False, widget=forms.HiddenInput())
     tree_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class ProfileForm(forms.Form):
+
+    username = forms.CharField(label = "Username", max_length=255)
+
+    personal_group_visibility = forms.ChoiceField(
+                                      label = "Confidentiality",
+                                      choices = TreeUserGroup.GROUP_VISIBILITY_CHOICES,
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("{} is already taken".format(username))
+
+        return cleaned_data
+
+class GroupForm(forms.Form):
+
+    name = forms.CharField(label = "Name", max_length=255)
+
+    group_visibility = forms.ChoiceField(
+                                      label = "Confidentiality",
+                                      choices = TreeUserGroup.GROUP_VISIBILITY_CHOICES,
+    )
+
+    group_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class MemberInvitationForm(forms.Form):
+
+    name = forms.CharField(label = "Name", max_length=255)
+    role = forms.ModelChoiceField(queryset=Role.objects.all(), empty_label=None)
+
+    def __init__(self, group, *args, **kwargs):
+        super(MemberInvitationForm, self).__init__(*args, **kwargs)
+        self.group = group
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get("name")
+        if not User.objects.filter(username=name).exists():
+            raise forms.ValidationError("There is no user named {}".format(name))
+        if self.group.member_set.filter(user__username=name).exists():
+            raise forms.ValidationError("{} is already in {}".format(name, self.group))
+
+        return cleaned_data

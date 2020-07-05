@@ -1,29 +1,28 @@
 {% extends "tags/base.html" %}
 {% load static %}
 
-{% block nav_menu_tree_links %}<!--
-    --><a href="{% url 'tags:manage_tags' username=tree_username tree_id=current_tree_id %}">Tags</a><!--
--->{% endblock %}
-
 {% block nav_content %}
+  {% if has_reader_permission %}
 
   <!-- Vue js tree bar app -->
   <nav id="tree_bar_app" ><!--
 
-    --><a href="{% url 'tags:view_tree' tree_username %}">{{ tree_username }}></a><!--
+    --><a href="{% url 'tags:view_group' username=username group_id=group.id %}">{{ group.name }}></a><!--
 
     Tree list
-    -->{% for tree_name, tree_id, tree_edit_form, tree_delete_form in tree_list %}<!--
+    {% if has_tree %}
+    {% for tree_name, tree_id, tree_edit_form, tree_delete_form, is_active in tree_list %}
 
           Tree name link
-	  --><a v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}"><!--
+          --><a {% if is_active %}class="activeLink"{% endif %} v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}"><!--
 		-->{{ tree_name }}<!--
 	  --></a><!--
+          {% if has_writer_permission %}
 	  Tree name edit icons
-	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}"><!--
+	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}"><!--
 	        --><span class="treeName" >{{ tree_name }}</span><!--
 		--><a v-if="editMode & !editTree[{{ tree_id }}]" v-on:click="enterEditTree({{ tree_id }})" class="innerButton" ><i class="fa fa-edit"></i></a><!--
-		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}" method="post"><!--
+		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}" method="post"><!--
 		      -->{% csrf_token %}<!--
 		      -->{{ tree_delete_form.name}}<!--
 		      -->{{ tree_delete_form.delete_tree}}<!--
@@ -33,7 +32,7 @@
 	  --></div><!--
 
 	  Tree form
-	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' username=tree_username tree_id=tree_id %}" method="post"><!--
+	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}" method="post"><!--
 		-->{% csrf_token %}<!--
 		-->{{ tree_edit_form.non_field_errors}}<!--
 		-->{{ tree_edit_form.name.errors}}<!--
@@ -43,8 +42,11 @@
 		--><button class="thinButton" name="tree_form" type="submit"><i class="fa fa-check" ></i></button><!--
 	  --></form><!--
 	  --><a v-if="editTree[{{ tree_id }}]" v-on:click="exitEditTree({{ tree_id }})" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+          {% endif %}
 
-    -->{% endfor %}<!--
+    {% endfor %}
+    {% endif %}
+    {% if has_writer_permission %}
     --><a v-if="editMode" v-on:click="exitEditMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
 
     Mode selectors
@@ -52,7 +54,7 @@
     --><a v-if="viewMode" v-on:click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></a><!-- 
 
     Add form
-    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' username=tree_username tree_id=current_tree_id %}" method="post"><!--
+    --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name %}" method="post"><!--
 	  -->{% csrf_token %}<!--
 	  -->{{ tree_add_form.non_field_errors}}<!--
 	  -->{{ tree_add_form.name.errors}}<!--
@@ -62,15 +64,40 @@
 	  --><button class="thinButton" name="tree_form" type="submit"><i class="fa fa-check" ></i></button><!--
     --></form><!--
     --><a v-if="addMode" v-on:click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+    {% endif %}
+
+    {% if not single_member %}
+      {% if saved_group %}
+        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
+              -->{% csrf_token %}<!--
+             --><button class="thinButton" name="unsave_group" type="submit">Remove from saved</button><!--
+        --></form><!--
+      {% else %}
+        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
+              -->{% csrf_token %}<!--
+             --><button class="thinButton" name="save_group" type="submit">Save Group</button><!--
+        --></form><!--
+      {% endif %}
+    {% endif %}
 
     -->
   </nav>
 
+  {% endif %}
 {% endblock %}
 
 {% block body_data %}
+  {% if has_reader_permission %}
 tree_bar_data="{{ tree_bar_data }}"
+  {% endif %}
 {% endblock %}
+
+{% block content %}
+  {% if not has_reader_permission %}
+    <div class="errorMessage">You don't have permission to view this group's trees</div>
+  {% endif %}
+{% endblock %}
+
 
 {% block script_includes %}
   {{ block.super }}

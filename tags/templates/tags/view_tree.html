@@ -4,11 +4,13 @@
 {% block title %}Index{% endblock %}
 
 {% block content %}
+{{ block.super }}
+{% if has_reader_permission %}
 
   <!-- VueJS tag select app -->
   <div id="tag_select_app">
     {% for tag_count, tag_name, selected_tags in tag_list %}
-      {% include "tags/tag_block.html" with url_args=selected_tags %}
+      {% include "tags/blocks/tag_block.html" with url_args=selected_tags %}
     {% endfor %}
   </div>
 
@@ -16,12 +18,17 @@
 
   <!-- Entries -->
   {% for entry in entry_list %}
-    {% include "tags/entry_block.html" %}
+    {% include "tags/blocks/entry_block.html" %}
   {% endfor %}
 
+  {% if has_tree %}
+  {% if has_writer_permission %}
   <br/><br/>
-  <a href="{% url 'tags:upsert_entry' username=tree_username tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+  <a href="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+  {% endif %}
+  {% endif %}
 
+{% endif %}
 {% endblock %}
 
 {% block script_includes %}

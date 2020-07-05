@@ -1,0 +1,12 @@
+<article>
+  <a href="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree_id entry_id=entry.id %}" class="buttonLink" >{{ entry.name }}</a>
+
+  {% if has_writer_permission %}
+  <form class="inlineDeleteForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree_id %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="delete_entry_id" value="{{ entry.id }}">
+    <button class="backgroundButton" type="submit" ><i class="fa fa-trash"></i></button>
+  </form>
+  {% endif %}
+    
+</article>

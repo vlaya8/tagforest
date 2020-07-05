@@ -1,0 +1,28 @@
+{% extends "tags/base.html" %}
+
+{% block title %}Add group{% endblock %}
+
+{% block content %}
+
+<form class="contentForm" method="post" action="{% url 'tags:upsert_group' username=username %}">
+  {% csrf_token %}
+  <div class="errorMessage">{{ form.non_field_errors }}</div>
+  {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+  {% endfor %}
+  <ul>
+    <li>
+      <div class="errorMessage">{{ form.name.errors }}</div>
+      {{ form.name.label_tag }} {{ form.name }}
+    </li>
+    <li>
+      <div class="errorMessage">{{ form.group_visibility.errors }}</div>
+      {{ form.group_visibility.label_tag }}
+      <div class="select" >{{ form.group_visibility }}</div>
+    </li>
+    <br/>
+    <li><input type="submit" name="upsert_group" value="Submit"></li>
+  </ul>
+</form>
+
+{% endblock %}

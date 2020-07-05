@@ -1,0 +1,15 @@
+{% extends "tags/base.html" %}
+
+{% block title %}Notification{% endblock %}
+
+{% block content %}
+
+<p>{{ notification.verb }}</p>
+
+<form action="{% url "tags:view_notification" username=username notification_id=notification.id %}" method="post">
+  {% csrf_token %}
+  <button class="backgroundButton" name="accept_notification" type="submit" ><i class="fa fa-check"></i> Accept</button>
+  <button class="backgroundButton" name="decline_notification" type="submit" ><i class="fa fa-close"></i> Decline</button>
+</form>
+
+{% endblock %}

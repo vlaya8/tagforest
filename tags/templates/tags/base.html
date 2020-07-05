@@ -13,15 +13,42 @@
   </head>
 
   <nav><!--
-    --><h1><a href="{% url 'tags:index' %}">Tagforest</a></h1><!--
-    --><a href="{% url 'tags:index' %}">Index</a><!--
-    -->{% block nav_menu_tree_links %}<!--
-    -->{% endblock %}<!--
-    -->{% if logged_in %}<!--
-    --><a href="{% url 'tags:profile' username=username %}">{{ username }}</a><!--
-      --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a><!--
-    -->{% endif %}
-  </nav>
+    --><h1><a href="{% url 'tags:index' %}" >Tagforest</a></h1><!--
+    --><a href="{% url 'tags:index' %}" {% if current_page == 'index' %}class="activeLink" {% endif %}>Index</a><!--
+    {% if logged_in %}
+      --><a href="{% url 'tags:manage_groups' username=username %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>Groups</a><!--
+      --><a href="{% url 'tags:profile' username=username %}" {% if current_page == 'profile' %}class="activeLink" {% endif %}>{{ username }}</a><!--
+      --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}" {% if current_page == 'logout' %}class="activeLink" {% endif %}>Logout</a><!--
+    {% endif %}
+    -->{% block nav_menu_tree_links %}{% endblock %}<!--
+
+
+    {% if logged_in %}
+      --><div class="alignRight"><div id="notification_menu_app" class="dropdown">
+	<button v-click-outside="hide" @click="toggle" >
+	  {% if new_notification_count %}
+	    <b><i class="fa fa-bell"></i></b>
+	    <div class="notificationCount"><b>{{ new_notification_count }}</b></div>
+	  {% else %}
+	    <i class="fa fa-bell"></i>
+	  {% endif %}
+	</button>
+	<div v-if="showMenu" class="dropdown-content" >
+	  {% if new_notification_count %}
+	    <h1>Notifications:</h1>
+	    {% for message, notification_id in new_notifications %}
+	      <a href="{% url 'tags:view_notification' username=username notification_id=notification_id %}">{{ message }}</a>
+	    {% endfor %}
+	  {% else %}
+	    <a href="">No new notifications</a>
+	  {% endif %}
+	  <a href="{% url 'tags:view_notifications' username=username %}"><b>View all notifications</b></a>
+	</div>
+      </div></div><!--
+    {% endif %}
+    
+
+  --></nav>
 
   {% block nav_content %}
   {% endblock %}
@@ -35,14 +62,14 @@
     {% block script_includes %}
       <!-- VueJS scripts include !-->
       <script src="{% static 'tags/vue.js' %}"></script>
+      <script src="{% static 'tags/vue-click-outside.js' %}"></script>
+      <script src="{% static 'tags/notification_menu.js' %}"></script>
     {% endblock %}
 
   </body>
   
   <footer>
-    <h4>
     <a href="{%url 'tags:about' %}">About</a>
-    </h4>
   </footer>
 
 

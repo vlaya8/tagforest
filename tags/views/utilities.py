@@ -11,7 +11,11 @@ from ..forms import EntryForm, TreeForm
 from .utilities import *
 from urllib.parse import urlencode
 
-import json
+SpecialID = {
+                'DEFAULT_ID': -1,
+                'NONE': -2,
+                'NEW_ID': -3,
+            }
 
 def redirect_with_get_params(url_name, get_params, kwargs):
 
@@ -31,10 +35,10 @@ def get_selected_tag_list(request):
     return selected_tags
 
 # Generate all the elements to be displayed in the tag list
-def get_tag_list(user, tree_id, selected_tags):
+def get_tag_list(group, tree_id, selected_tags):
     tag_list = []
 
-    for tag in Tag.objects.filter(tree__id=tree_id).filter(user__id=user.id):
+    for tag in Tag.objects.filter(tree__id=tree_id).filter(group__id=group.id):
 
         tag_name = tag.name
         tag_count = tag.entry_set.count()

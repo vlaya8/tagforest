@@ -42,14 +42,14 @@ form ul {
 
 form.contentForm input[type=submit], form.contentForm button, form input[type=button]{
 
-  background-color: base.$header-color;
+  background-color: color.adjust(base.$header-color, $alpha: -0.35);
   color: base.$font-color;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 100%;
 
   cursor: pointer;
 
-  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border: 1px solid color.adjust(base.$header-color, $alpha: -0.1);
   border-width: 1px 1px 3px;
 
   vertical-align: top;
@@ -60,6 +60,7 @@ form {
 
     color: base.$font-color;
     background: rgba(255,255,255,.1);
+    font-size: 100%;
 
     padding: .5rem;
     margin: -.5rem;
@@ -96,3 +97,60 @@ form.headerForm {
   }
 }
 
+/* Custom select
+   Source: https://speckyboy.com/open-source-css-javascript-select-box-snippets/ (6 Pure CSS)
+*/
+
+.select {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px;
+  width: 100%;
+
+  select {
+    display: inline-block;
+    width: 100%;
+    cursor: pointer;
+    padding: 10px 15px;
+    outline: 0;
+    border: 0;
+    border-radius: 0;
+    appearance: none;
+
+    background: base.$header-color;
+    color: base.$font-color;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  select::-ms-expand {
+    display: none;
+  }
+  select:hover, .select select:focus {
+    color: base.$font-color;
+    background: color.adjust(base.$header-color, $lightness:5);
+  }
+  select:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  select:hover ~ .select__arrow, select:focus ~ .select__arrow {
+    border-top-color: base.$font-color;
+  }
+  select:disabled ~ .select__arrow {
+    border-top-color: base.$font-color;
+  }
+}
+.select__arrow {
+  position: absolute;
+  top: 16px;
+  right: 15px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  border-style: solid;
+  border-width: 8px 5px 0 5px;
+  border-color: color.adjust(base.$font-color, $alpha: -0.3) transparent transparent transparent;
+}

@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form class="contentForm" action="{% url 'tags:view_entry' username=tree_username tree_id=current_tree_id entry_id=1 %}" method="post">
+<form class="contentForm" action="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree_id %}" method="post">
   {% csrf_token %}
   <ul>
   {{ form.as_ul }}

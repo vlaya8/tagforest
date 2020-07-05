@@ -14,7 +14,9 @@
     {% endfor %}
   </p>
   <p>
-  <a href="{% url 'tags:upsert_entry' username=tree_username tree_id=current_tree_id entry_id=entry.id %}" class="buttonLink" >Edit</a>
+  {% if has_writer_permission %}
+    <a href="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree_id entry_id=entry.id %}" class="buttonLink" >Edit</a>
+  {% endif %}
   </p>
 {% endblock %}
 

@@ -1,11 +1,43 @@
 {% extends "tags/base.html" %}
+{% load static %}
 
 {% block title %}Profile{% endblock %}
 
 {% block content %}
 
-<p><b>Username: </b>{{ username }}</p>
+<p>
+  <b>Username: </b>{{ link_user.username }}<br/>
+  <b>Personal group visibility:</b> {{ group_visibility }}<br/>
+  {% if has_group_view_permission %}
+  <a href="{% url 'tags:view_tree' group_name=link_user.username %}">Personal Group</a>
+  {% endif %}
+</p>
 
-<p><a href="{% url "tags:password_change" %}">Change password</a></p>
+{% if has_edit_permission %}
+  <form class="contentForm" method="post" action="{% url "tags:profile" username=username %}">
+    {% csrf_token %}
+    <div class="errorMessage">{{ form.non_field_errors }}</div>
+    <ul>
+      <li>
+        <div class="errorMessage">{{ form.username.errors }}</div>
+        {{ form.username.label_tag }} {{ form.username }}
+      </li>
+      <li>
+	<div class="errorMessage">{{ form.personal_group_visibility.errors }}</div>
+        {{ form.personal_group_visibility.label_tag }}
+        <div class="select" >{{ form.personal_group_visibility }}</div>
+      </li>
+      <br/>
+      <li><input type="submit" name="edit_profile" value="Submit"></li>
+    </ul>
+  </form>
+  <p><a href="{% url "tags:password_change" %}">Change password</a></p>
+{% endif %}
 
+{% endblock %}
+
+{% block script_includes %}
+  {{ block.super }}
+  <!-- VueJS Script include -->
+  <script src="{% static 'tags/select.js' %}"></script>
 {% endblock %}

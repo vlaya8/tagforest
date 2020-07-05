@@ -5,29 +5,278 @@ a:hover {
   cursor: pointer;
 }
 
+html {
+  font-size: 130%;
+}
+
+$nav-bar-link-padding: 0rem;
+$nav-bar-height: 2.3rem;
+$nav-bar-padding: 0.9rem;
+$nav-bar-button-padding: 1.7rem;
+
+
+/*
+ * Dropdown menu
+ */
+
+$dropdown-width: 20rem;
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  i {
+    font-size: 150%;
+  }
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+
+  background-color: color.adjust(base.$header-color, $alpha: 0);
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+
+  width: $dropdown-width;
+  right: 0;
+
+  top: $nav-bar-height + 2 * $nav-bar-padding;
+
+  a, h1 {
+    padding-left: 0.8rem;
+    padding-right: 0rem;
+    display: block;
+    font-size: 80%;
+    font-weight: normal;
+    width: $dropdown-width - 0.8rem;
+  }
+
+  a:nth-of-type(odd) {
+    background-color: color.adjust(base.$header-color, $hue: 0.35);
+  }
+
+  h1 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.2rem;
+    font-weight: bold;
+  }
+
+}
+
+.dropdown .dropdown-content {
+  display: block;
+}
+
+.notificationCount {
+  position: Absolute;
+
+  background-color: base.$highlight-color;
+  border-radius: 0.25rem;
+
+  top: $nav-bar-height / 2 + 0.75rem;
+  left: $nav-bar-height / 2 + 1.3rem;
+  padding-left: 0.25rem;
+  padding-right: 0.35rem;
+  padding-top: 0.10rem;
+  padding-bottom: 0.10rem;
+  line-height: normal;
+
+  font-size: 90%;
+}
+
+a {
+  font-family: base.$font-stack;
+  color: base.$font-color;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+%link-block {
+  display: inline-block;
+  font-family: base.$font-stack;
+  color: base.$font-color;
+  text-decoration: none;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 100%;
+  line-height: 1em;
+  background-color: color.adjust(base.$background-color, $lightness: 5);
+}
+
+// Adjust icons to be aligned with the text
+.iconLink {
+  padding-top: 0.37em;
+}
+
+%link-block:hover {
+  background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
+}
+
+%link-block.selected {
+  background-color: color.adjust(base.$background-color, $lightness: 20);
+}
+
+.buttonLink {
+  @extend %link-block;
+}
+
+.buttonLink:visited {
+}
+
+.buttonLink:active {
+  background-color: color.adjust(base.$highlight-color, $hue: 10);
+}
+
+h1, footer {
+  background-color: base.$header-color;
+  padding: 0.7rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+  font-size: 125%;
+}
+
+.separator {
+  display: inline;
+  border-left: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  margin: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+h1 a {
+  display: inline-block;
+
+  background-color: color.adjust(base.$header-color, $lightness: 5);
+  padding: 0.5rem;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+  line-height: initial;
+}
+
+h1 a:hover {
+  background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
+}
+
+footer {
+  margin-top: 2rem;
+  float: bottom;
+}
+
+
+@for $i from 2 through 6 {
+
+  h#{$i} {
+    background-color: color.adjust(base.$background-color, $lightness: 3);
+    padding: 0.5rem;
+    border: 1px solid color.adjust(base.$background-color, $lightness: 5);
+    border-width: 1px 1px 3px;
+  }
+}
+
+article {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+
+.inlineDeleteForm {
+  display: inline;
+}
+
+.backgroundButton {
+  display:inline-block;
+
+  box-shadow: none;
+  border-color: transparent;
+  border-radius: 0px;
+  border: 0px;
+  text-shadow: none;
+  cursor:pointer;
+
+  @extend %link-block;
+}
+.backgroundButton:active {
+  position:relative;
+  top:1px;
+}
+
+.tagBlock {
+  display: inline-block;
+  margin: 0.1em;
+}
+
+p {
+  padding-bottom: 0.5rem;
+}
+
+.dialogBox {
+  position: absolute;
+  display: block;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+
+  padding: 2rem;
+
+  background-color: color.adjust(base.$header-color, $lightness: 5);
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+
+  -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+}
+
+.errorMessage {
+  font-weight: bold;
+  color: base.$highlight-color;
+}
+
 nav {
   background-color: base.$header-color;
   border: 1px solid color.adjust(base.$header-color, $lightness: 10);
   border-width: 1px 1px 3px;
   margin-bottom: 1rem;
+  font-size: 120%;
 
   h1, a, input, button, .linkLike {
     color: base.$font-color;
     display: inline-block;
 
-    padding:0.9rem;
-    padding-right: 1.5rem;
-    padding-left: 1.5rem;
+    padding: $nav-bar-padding;
+    padding-right: $nav-bar-button-padding;
+    padding-left: $nav-bar-button-padding;
 
     margin: 0rem;
 
-    line-height: 1.7rem;
+    line-height: $nav-bar-height;
     vertical-align: top;
 
     font-weight: bold;
     border: 1px solid color.adjust(base.$header-color, $lightness: 10);
     border-width: 0px 1px 0px 0px;
     background-color: color.adjust(base.$highlight-color, $alpha: -0.95);
+  }
+
+  h1 {
+    font-size: 140%;
+    padding-bottom: $nav-bar-padding - 2*$nav-bar-link-padding;
+    padding-right: $nav-bar-button-padding - 2*$nav-bar-link-padding;
+    padding-left: $nav-bar-button-padding - 2*$nav-bar-link-padding;
+  }
+  h1 a, h1 a:hover {
+    padding: $nav-bar-link-padding;
+    background-color: initial;
+    border: initial;
   }
   .linkLike {
 
@@ -74,100 +323,11 @@ nav {
     padding-left: 0.4rem;
     padding-right: 0.4rem;
   }
-}
 
-footer {
-  float: bottom;
-}
-
-a {
-  font-family: base.$font-stack;
-  color: base.$font-color;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-%link-block {
-  font-family: base.$font-stack;
-  color: base.$font-color;
-  text-decoration: none;
-  padding: 0.5rem;
-  font-weight: bold;
-  font-size: 100%;
-  line-height: 1em;
-  background-color: color.adjust(base.$background-color, $lightness: 5);
-}
-
-%link-block:hover {
-  background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
-}
-
-%link-block.selected {
-  background-color: color.adjust(base.$background-color, $lightness: 20);
-}
-
-.buttonLink {
-  @extend %link-block;
-}
-
-.buttonLink:visited {
-}
-
-.buttonLink:active {
-  background-color: color.adjust(base.$highlight-color, $hue: 10);
-}
-
-@for $i from 1 through 6 {
-
-  h#{$i} {
-    background-color: base.$header-color;
-    padding: 1rem;
-    //line-height: 30px;
-    border: 1px solid color.adjust(base.$header-color, $lightness: 10);
-    border-width: 1px 1px 3px;
+  .alignRight {
+    float: right;
   }
-
-  h#{$i} a {
-    background-color: transparent;
-    padding: initial;
-    line-height: initial;
+  .activeLink {
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.70);
   }
-
-  h#{$i} a:hover {
-    background-color: transparent;
-  }
-}
-
-article {
-  margin-top: 0.2rem;
-}
-
-.entryDeleteForm {
-  display: inline-block;
-}
-
-.backgroundButton {
-  display:inline-block;
-
-  box-shadow: none;
-  border-color: transparent;
-  border-radius: 0px;
-  border: 0px;
-  text-shadow: none;
-  cursor:pointer;
-
-  @extend %link-block;
-}
-.backgroundButton:active {
-  position:relative;
-  top:1px;
-}
-
-.tagBlock {
-  display: inline-block;
-  margin: 0.5em;
-}
-
-p {
-  padding: 1rem;
 }
