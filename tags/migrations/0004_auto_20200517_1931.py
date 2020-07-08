@@ -2,12 +2,6 @@
 
 from django.db import migrations
 
-def create_default_tree(apps, schema_editor):
-    Tree = apps.get_model('tags', 'Tree')
-
-    tree = Tree(name="Tree")
-    tree.save()
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -15,5 +9,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-            migrations.RunPython(create_default_tree),
     ]
