@@ -511,5 +511,8 @@ class UpsertEntryView(BaseTreeView):
 
 class AboutView(generic.TemplateView):
     template_name = 'tags/about.html'
-    context = {'current_page': 'about'}
+
+    def get_context_data(self):
+        context = {'current_page': 'about'}
+        return context
 

@@ -46,8 +46,8 @@
 	</div>
       </div></div><!--
     {% endif %}
-    
 
+    --><a href="{% url 'tags:about' %}" {% if current_page == 'about' %}class="activeLink" {% endif %}>About</a><!--
   --></nav>
 
   {% block nav_content %}
@@ -69,7 +69,8 @@
   </body>
   
   <footer>
-    <a href="{%url 'tags:about' %}">About</a>
+    v1.1 - <a class="buttonLink" href="https://github.com/vlaya8/tagforest" >Tagforest Github</a> - 
+    <a class="buttonLink" href="{%url 'tags:about' %}">About</a>
   </footer>
 
 

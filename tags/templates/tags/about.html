@@ -3,10 +3,100 @@
 {% block title %}About{% endblock %}
 
 {% block content %}
-  <br/>
-  <p>
-    <b>Created with Django, VueJS and Sass</b><br/>
-    <b>Github:</b> <a href="https://github.com/vlaya8/tagforest">https://github.com/vlaya8/tagforest</a>
-  </p>
-  <br/>
+<b>Source code:</b> <a class="buttonLink" href="https://github.com/vlaya8/tagforest">https://github.com/vlaya8/tagforest</a>
+<br/></br>
+<b>Contact:</b> tagforest@protonmail.com
+
+<h2>Description</h2>
+
+<p>Tagforest aims to share and organize knowledge and ressources by classifying them with tags</p>
+
+<h2>Goals</h2>
+
+<ul>
+  <li>Track, classify, take notes of ressources you've read / seen from different subjects in one place</li>
+  <li>Visualize them in one place, and share a set of knowledge from a subject to others with one link</li>
+  <li>Create groups to collaboratively organize ressources together</li>
+  <li>[In Progress] Visualize the different categories / movements and the way they connect to each other</li>
+  <li>[In Progress] Merge your set of ressources and categories with someone else, or see what ressource you have in common</li>
+  <li>[In Progress] Website accessibility:
+    <ul>
+      <li>should be as accessible as possible to disabled people (send a mail to tagforest@protonmail.com if you see something that could be made more accessible)</li>
+      <li>should be as easy as possible to understand</li>
+    </ul>
+</ul>
+
+<h2>Accessibility, Privacy, Security, Content</h2>
+
+<ul>
+  <li>
+    [In Progress] Website accessibility:
+    <ul>
+      <li>should be as accessible as possible to disabled people</li>
+      <li>should be as easy as possible to understand</li>
+    </ul>
+  </li>
+  <li>
+    [In Progress] Privacy and security:
+    <ul>
+      <li>Private data on this website should be free of any government spying</li>
+    </ul>
+  </li>
+  <li>
+    [In Progress] Content:
+    <ul>
+      <li>Radical political content should not be censored, however oppressive content is not allowed</li>
+    </ul>
+  </li>
+</ul>
+
+<p>If something could be made more accessible, if you see a privacy / security issue, send a mail to tagforest@protonmail.com</p>
+
+<h2>Current state</h2>
+
+<b>v1.1 (2020/07/09)</b>
+
+<ul>
+  <li>User authentification system</li>
+  <li>Groups, Trees, Entries and Tags:</li>
+  <li>
+    <ul>
+      <li> A group contains multiple users</li>
+      <li> Trees can be added to a group</li>
+      <li> A tree contains a list of entries and tags</li>
+      <li> Each entry can have multiple tags</li>
+      <li> In a tree, entries can be sorted by tags, and tags are sorted by entry count</li>
+      <li> An entry can contain markdown formatted text, and the markdown is rendered when viewing it</li>
+    </ul>
+  </li>
+</ul>
+
+<h2>Upcoming</h2>
+
+<ul>
+  <li>Tag name fuzzyness: each tag has a set of names which will be considered to lead to the same tag</li>
+  <li>Directed Acyclic Graph (DAG) of tags: tags are related to each other through a DAG</li>
+  <li>More fields for each entry, and different types of tags</li>
+  <li>Multiple color schemes</li>
+</ul>
+
+
+<h2>Tools / Languages / Frameworks used</h2>
+
+<b>Website developpment:</b>
+<ul>
+  <li>Languages: <b>Python 3, HTML, CSS, Javascript</b></li>
+  <li><a class="buttonLink" href="https://www.djangoproject.com/" >Django:</a> main framework, django modules used: django-notifications-hq, django-dag (upcoming)</li>
+  <li><a class="buttonLink" href="https://vuejs.org/" >VueJS:</a> for small javascript apps throughout the website, vue modules used: vue-markdown, vue-click-outside</li>
+  <li><a class="buttonLink" href="https://sass-lang.com/" >Sass:</a> CSS preprocessing</li>
+</ul>
+
+<b>Server:</b>
+<ul>
+  <li>OS: <a class="buttonLink" href="https://www.debian.org/" >Debian Buster 10</a></li>
+  <li>Hosted by <a class="buttonLink" href="https://www.ovh.com/" >OVH</a> on a Virtual Private Server</li>
+  <li>HTTP server with <a class="buttonLink" href="https://gunicorn.org/" >Gunicorn</a></li>
+  <li>Static files are served with <a class="buttonLink" href="http://nginx.org/" >Nginx</a></li>
+</ul>
+
 {% endblock %}

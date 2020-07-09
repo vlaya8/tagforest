@@ -3,6 +3,7 @@
 ## Description
 
 Django website to share and organize knowledge and ressources by classifying them with tags
+[Website link](www.tagforest.fr)
 
 ## Goals
 
@@ -13,9 +14,17 @@ Django website to share and organize knowledge and ressources by classifying the
 - [In Progress] Merge your set of ressources and categories with someone else, or see what ressources
   you have in common
 
+## Accessibility, Privacy, Security, Content
+
+- [In Progress] Website accessibility:
+   * should be as accessible as possible to disabled people
+   * should be as easy as possible to understand
+
 ## Current state
 
-**v1.0 (2020/07/05)**
+**v1.1 (2020/07/09)**
+
+Usage example: 
 
 ![Index screenshot](readme_img/tagforest-index.png)
 ![Index screenshot with tag selection](readme_img/tagforest-index-tags.png)
@@ -34,6 +43,7 @@ Django website to share and organize knowledge and ressources by classifying the
 - Tag name fuzzyness: each tag has a set of names which will be considered to lead to the same tag
 - Directed Acyclic Graph (DAG) of tags: tags are related to each other through a DAG
 - More fields for each entry, and different types of tags
+- Multiple color schemes
 
 ## Run a local version of the website
 
@@ -51,4 +61,12 @@ Django website to share and organize knowledge and ressources by classifying the
   * vue modules used: vue-markdown, vue-click-outside
 - Sass is used to preprocess CSS
 
+
+## Tools / Languages / Frameworks used
+
+### Website developpment:
+  - Languages: **Python 3, HTML, CSS, Javascript**
+  - [Django](https://www.djangoproject.com/): main framework, django modules used: django-notifications-hq, django-dag (upcoming)</li>
+  - [VueJS](https://vuejs.org/): for small javascript apps throughout the website, vue modules used: vue-markdown, vue-click-outside</li>
+  - [Sass](https://sass-lang.com/): CSS preprocessing</li>
 
