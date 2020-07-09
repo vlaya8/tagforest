@@ -122,7 +122,7 @@ class ProfileView(BaseUserView):
 
             group = self.user.get_user_group()
             if form == None:
-                form = ProfileForm(initial={
+                form = ProfileForm(self.user, initial={
                                              'username': self.user.username,
                                              'personal_group_visibility': group.group_visibility,
                                            })
@@ -154,7 +154,7 @@ class ProfileView(BaseUserView):
 
         if 'edit_profile' in request.POST:
 
-            form = ProfileForm(request.POST)
+            form = ProfileForm(self.user, request.POST)
 
             if form.is_valid():
 

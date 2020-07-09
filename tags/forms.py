@@ -42,6 +42,10 @@ class TreeForm(forms.Form):
 
 class ProfileForm(forms.Form):
 
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
     username = forms.CharField(label = "Username", max_length=255)
 
     personal_group_visibility = forms.ChoiceField(
@@ -52,7 +56,7 @@ class ProfileForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         username = cleaned_data.get("username")
-        if User.objects.filter(username=username).exists():
+        if username != self.user.username and User.objects.filter(username=username).exists():
             raise forms.ValidationError("{} is already taken".format(username))
 
         return cleaned_data
