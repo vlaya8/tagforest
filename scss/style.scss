@@ -161,12 +161,6 @@ h1 a:hover {
   background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
 }
 
-footer {
-  margin-top: 2rem;
-  float: bottom;
-}
-
-
 @for $i from 2 through 6 {
 
   h#{$i} {
@@ -329,5 +323,20 @@ nav {
   }
   .activeLink {
     background-color: color.adjust(base.$highlight-color, $alpha: -0.70);
+  }
+}
+
+ul {
+  li {
+    margin: 10px;
+  }
+}
+
+footer {
+  font-size: 100%;
+  margin-top: 2rem;
+  float: bottom;
+  .buttonLink {
+    background-color: base.$header-color;
   }
 }
