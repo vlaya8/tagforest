@@ -22,7 +22,7 @@ Django website to share and organize knowledge and ressources by classifying the
 
 ## Current state
 
-**v1.1 (2020/07/09)**
+**v1.2 (2020/07/09)**
 
 Usage example: 
 
