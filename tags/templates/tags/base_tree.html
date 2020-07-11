@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block nav_content %}
+  {% if tree_bar_error %}
+    <div class="errorMessage">{{ tree_bar_error }}</div>
+  {% endif %}
   {% if has_reader_permission %}
 
   <!-- Vue js tree bar app -->

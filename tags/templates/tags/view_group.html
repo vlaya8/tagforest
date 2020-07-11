@@ -10,8 +10,8 @@
     {% if has_admin_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" >Edit</a>{% endif %}
   </h1>
 
-  {% if error_message %}
-    <div class="errorMessage">{{ error_message }}</div>
+  {% if group_error %}
+    <div class="errorMessage">{{ group_error }}</div>
   {% endif %}
 
   <p>

@@ -36,7 +36,7 @@ class BaseView(View):
 
     template_name = 'tags/view_tree.html'
     redirect_url = 'tags:index'
-    error_message = None
+    error_context = {}
     invalid_form = None
 
     def setup(self, request, **kwargs):
@@ -49,9 +49,11 @@ class BaseView(View):
     def get_context_data(self, request, **kwargs):
 
         context = {
-                    'error_message': self.error_message,
                     'current_page': 'index',
                   }
+
+        print(self.error_context)
+        context.update(self.error_context)
 
         return context
 
@@ -88,7 +90,7 @@ class BaseView(View):
         try:
             self.process_post(request, **kwargs)
         except UserError as user_error:
-            self.error_message = user_error.message
+            self.error_context = {user_error.context_name: user_error.message}
             return self.get(request, **kwargs)
         except FormError as form_error:
             self.invalid_form = form_error.invalid_form
@@ -232,6 +234,8 @@ class BaseTreeView(BaseUserView):
                         tree.name = tree_name
                         tree.save()
                 else:
+                    if Tree.objects.filter(name=tree_name, group=self.group).exists():
+                        raise UserError("Your group already contains a tree named {}".format(tree_name), "tree_bar_error")
                     tree = Tree.objects.create(name=tree_name, group=self.group)
 
                 if not delete_tree:

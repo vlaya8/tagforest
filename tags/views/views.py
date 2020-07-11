@@ -346,7 +346,7 @@ class ViewGroupView(BaseUserView):
                 raise PermissionDenied("You don't have permission to delete this member")
 
             if group.member_set.count() == 1:
-                raise UserError("The last member of the group can't be deleted (delete the group instead)")
+                raise UserError("The last member of the group can't be deleted (delete the group instead)", "group_error")
 
             member = get_object_or_404(Member, pk=request.POST['delete_member_id'])
 
