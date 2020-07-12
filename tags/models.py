@@ -3,21 +3,36 @@ from django.contrib.auth.models import User
 
 from django_dag.models import *
 
+INVITE = 'INV'
+USERS = 'USR'
+ALL = 'ALL'
+
+PUBLIC_CHOICES_STR = { 
+                        INVITE: 'Only invited users',
+                        USERS:  'Only users',
+                        ALL:    'Everyone',
+                     }
+
+# String that can be integrated in a sentence
+PUBLIC_CHOICES_STR_SENTENCE = { 
+                        INVITE: 'invited users',
+                        USERS:  'users',
+                        ALL:    'everyone',
+                     }
+
+PUBLIC_CHOICES_ORDER = { 
+                        INVITE: 0,
+                        USERS:  1,
+                        ALL:    2,
+                     }
+
+PUBLIC_CHOICES = [(choice, PUBLIC_CHOICES_STR[choice]) for choice in PUBLIC_CHOICES_STR]
+
 ## Groups
 
 # Can represent a group of users or a single user
 # Can own trees
 class TreeUserGroup(models.Model):
-
-    PRIVATE = 'PRIV'
-    PUBLIC = 'PUB'
-    LISTED = 'LIS'
-    GROUP_VISIBILITY_CHOICES = [
-            (PRIVATE, 'Private'),
-            (PUBLIC, 'Unlisted and Public'),
-            (LISTED, 'Listed and Public'),
-    ]
-
 
     def __str__(self):
         return self.name
@@ -25,21 +40,56 @@ class TreeUserGroup(models.Model):
     name = models.CharField('name', max_length=255, unique=True)
     single_member = models.BooleanField()
 
-    group_visibility = models.CharField(
-            max_length=4,
-            choices=GROUP_VISIBILITY_CHOICES,
-            default=PRIVATE,
+    listed_to_public = models.CharField(
+            max_length=3,
+            choices=PUBLIC_CHOICES,
+            default=INVITE,
+    )
+    visible_to_public = models.CharField(
+            max_length=3,
+            choices=PUBLIC_CHOICES,
+            default=INVITE,
     )
 
-    def get_listed_groups():
-        return TreeUserGroup.objects.filter(group_visibility=TreeUserGroup.LISTED)
+    def get_listed_to_all():
+        return TreeUserGroup.objects.filter(listed_to_public=ALL)
+    def get_listed_to_users():
+        return TreeUserGroup.objects.filter(listed_to_public=USERS)
 
-    def is_private(self):
-        return self.group_visibility == self.PRIVATE
-    def is_public(self):
-        return self.group_visibility != self.PRIVATE
-    def is_listed(self):
-        return self.group_visibility == self.LISTED
+    def is_visible_to(self, user):
+        if self.visible_to_public == ALL:
+            return True
+        if not user.is_authenticated:
+            return False
+        if self.visible_to_public == USERS:
+            return True
+        if user.member_set.filter(group=self).exists():
+            return True
+        return False
+
+    def has_write_permission_for(self, user):
+        if not user.is_authenticated:
+            return False
+        return user.member_set.filter(group=self).filter(role__manage_entries=True).exists()
+    def has_admin_permission_for(self, user):
+        if not user.is_authenticated:
+            return False
+        return user.member_set.filter(group=self).filter(role__manage_users=True).exists()
+
+    def listed_to_str(self):
+        return PUBLIC_CHOICES_STR[self.listed_to_public]
+    def visible_to_str(self):
+        return PUBLIC_CHOICES_STR[self.visible_to_public]
+
+    def listed_to_str_sentence(self):
+        return PUBLIC_CHOICES_STR_SENTENCE[self.listed_to_public]
+    def visible_to_str_sentence(self):
+        return PUBLIC_CHOICES_STR_SENTENCE[self.visible_to_public]
+
+    def listed_order(self):
+        return PUBLIC_CHOICES_ORDER[self.listed_to_public]
+    def visible_order(self):
+        return PUBLIC_CHOICES_ORDER[self.visible_to_public]
 
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
@@ -140,18 +190,6 @@ def get_joined_groups(user):
 def get_saved_groups(user):
     return user.profile.saved_groups.all()
 
-def has_group_reader_permission(user, group):
-    return group.is_public() or group.member_set.filter(user=user).exists()
-
-def has_group_writer_permission(user, group):
-    return group.member_set.filter(user=user).filter(role__manage_entries=True).exists()
-
-def has_group_admin_permission(user, group):
-    return group.member_set.filter(user=user).filter(role__manage_users=True).exists()
-
 User.add_to_class('get_user_group', get_user_group)
 User.add_to_class('get_joined_groups', get_joined_groups)
 User.add_to_class('get_saved_groups', get_saved_groups)
-User.add_to_class('has_group_reader_permission', has_group_reader_permission)
-User.add_to_class('has_group_writer_permission', has_group_writer_permission)
-User.add_to_class('has_group_admin_permission', has_group_admin_permission)

@@ -4,20 +4,20 @@
 {% block title %}{{ group.name }}{% endblock %}
 
 {% block content %}
-{% if has_reader_permission %}
   <h1>
     {{ group.name }}
-    {% if has_admin_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' username=username group_id=group.id %}" >Edit</a>{% endif %}
+    {% if has_admin_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' group_id=group.id %}" >Edit</a>{% endif %}
+    <div class="separator"> </div><a href="{% url 'tags:view_tree' group_name=group.name %}" >View trees</a>
   </h1>
 
   {% if group_error %}
     <div class="errorMessage">{{ group_error }}</div>
   {% endif %}
 
+  <h2>Personal group visibility settings</h2>
+
   <p>
-    <a class="buttonLink" href="{% url 'tags:view_tree' group_name=group.name %}" >View trees</a><br/><br/>
-    <b>Group type:</b> {% if group.single_member %}Personal Group{% else %}Shared Group{% endif %}<br/>
-    <b>Group visibility:</b> {{ group_visibility }}<br/>
+  Personal group is visible to <b>{{ group_visible_to }}</b> and listed to <b>{{ group_listed_to }}</b>
   </p>
 
   <h2>Members</h2>
@@ -29,7 +29,7 @@
       <a href="{% url "tags:profile" member.user.username %}" class="buttonLink" >{{member.user}}, {{member.role}}</a>
 
       {% if has_admin_permission %}
-        <form class="inlineDeleteForm" action="{% url "tags:view_group" username=username group_id=group.id %}" method="post">
+        <form class="inlineDeleteForm" action="{% url "tags:view_group" group_id=group.id %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="delete_member_id" value="{{ member.id }}">
           <button class="backgroundButton iconLink" type="submit" ><i class="fa fa-trash"></i></button>
@@ -43,7 +43,7 @@
 
   {% if has_admin_permission and not group.single_member %}
   <h2>Invite a member:</h2>
-  <form class="contentForm" action="{% url 'tags:view_group' username=username group_id=group.id %}" method="post">
+  <form class="contentForm" action="{% url 'tags:view_group' group_id=group.id %}" method="post">
     {% csrf_token %}
     <div class="errorMessage">{{ invite_form.non_field_errors }}</div>
     <ul>
@@ -62,10 +62,6 @@
     </ul>
   </form>
   {% endif %}
-
-{% else %}
-<div class="errorMessage" >You don't have permission to view that group</div>
-{% endif %}
 
 {% endblock %}
 

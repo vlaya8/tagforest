@@ -5,12 +5,15 @@
   {% if tree_bar_error %}
     <div class="errorMessage">{{ tree_bar_error }}</div>
   {% endif %}
-  {% if has_reader_permission %}
 
   <!-- Vue js tree bar app -->
   <nav id="tree_bar_app" ><!--
 
-    --><a href="{% url 'tags:view_group' username=username group_id=group.id %}">{{ group.name }}></a><!--
+    {% if single_member %}
+    --><a href="{% url 'tags:profile' username=group.name %}">{{ group.name }}></a><!--
+    {% else %}
+    --><a href="{% url 'tags:view_group' group_id=group.id %}">{{ group.name }}></a><!--
+    {% endif %}
 
     Tree list
     {% if has_tree %}
@@ -69,7 +72,7 @@
     --><a v-if="addMode" v-on:click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
     {% endif %}
 
-    {% if not single_member %}
+    {% if not single_member and logged_in %}
       {% if saved_group %}
         --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
               -->{% csrf_token %}<!--
@@ -86,21 +89,11 @@
     -->
   </nav>
 
-  {% endif %}
 {% endblock %}
 
 {% block body_data %}
-  {% if has_reader_permission %}
 tree_bar_data="{{ tree_bar_data }}"
-  {% endif %}
 {% endblock %}
-
-{% block content %}
-  {% if not has_reader_permission %}
-    <div class="errorMessage">You don't have permission to view this group's trees</div>
-  {% endif %}
-{% endblock %}
-
 
 {% block script_includes %}
   {{ block.super }}

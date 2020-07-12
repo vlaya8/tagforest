@@ -1,5 +1,5 @@
 from django import forms
-from .models import Role, TreeUserGroup
+from .models import Role, TreeUserGroup, PUBLIC_CHOICES, PUBLIC_CHOICES_ORDER, PUBLIC_CHOICES_STR_SENTENCE
 from django.contrib.auth.models import User
 
 def parse_tag(tags_string):
@@ -48,9 +48,13 @@ class ProfileForm(forms.Form):
 
     username = forms.CharField(label = "Username", max_length=255)
 
-    personal_group_visibility = forms.ChoiceField(
-                                      label = "Confidentiality",
-                                      choices = TreeUserGroup.GROUP_VISIBILITY_CHOICES,
+    listed_to_public = forms.ChoiceField(
+                                      label = "Public to which your personal group is listed",
+                                      choices = PUBLIC_CHOICES,
+    )
+    visible_to_public = forms.ChoiceField(
+                                      label = "Public to which your personal group is accessible",
+                                      choices = PUBLIC_CHOICES,
     )
 
     def clean(self):
@@ -65,12 +69,28 @@ class GroupForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
 
-    group_visibility = forms.ChoiceField(
-                                      label = "Confidentiality",
-                                      choices = TreeUserGroup.GROUP_VISIBILITY_CHOICES,
+    listed_to_public = forms.ChoiceField(
+                                      label = "Public to which the group is listed",
+                                      choices = PUBLIC_CHOICES,
+    )
+    visible_to_public = forms.ChoiceField(
+                                      label = "Public to which the group is accessible",
+                                      choices = PUBLIC_CHOICES,
     )
 
     group_id = forms.IntegerField(widget=forms.HiddenInput())
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        listed_to_public = cleaned_data.get("listed_to_public")
+        visible_to_public = cleaned_data.get("visible_to_public")
+
+        if PUBLIC_CHOICES_ORDER[listed_to_public] > PUBLIC_CHOICES_ORDER[visible_to_public]:
+            raise forms.ValidationError("You asked to list the group to {} but it is only visible to {}".format(
+                                        PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
+                                        PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]))
+
 
 class MemberInvitationForm(forms.Form):
 

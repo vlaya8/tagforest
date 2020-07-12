@@ -1,0 +1,30 @@
+{% extends "tags/base.html" %}
+
+{% block title %}Manage groups{% endblock %}
+
+{% block content %}
+
+  {% if logged_in %}
+    <h3>Saved groups:</h3>
+    {% for group, single_member, has_admin_permission in saved_groups %}
+	{% include "tags/blocks/group_block.html" %}
+    {% endfor %}
+
+    <h3>Joined groups:</h3>
+    {% for group, single_member, has_admin_permission in joined_groups %}
+	{% include "tags/blocks/group_block.html" %}
+    {% endfor %}
+  {% endif %}
+
+  <h3>Public listed groups:</h3>
+  {% for group, single_member, has_admin_permission in listed_groups %}
+      {% include "tags/blocks/group_block.html" %}
+  {% endfor %}
+
+  {% if logged_in %}
+    <article>
+    <a href="{% url 'tags:upsert_group' %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+    </article>
+  {% endif %}
+
+{% endblock %}

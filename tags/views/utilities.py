@@ -17,7 +17,7 @@ SpecialID = {
                 'NEW_ID': -3,
             }
 
-def redirect_with_get_params(url_name, get_params, kwargs):
+def redirect_with_get_params(url_name, get_params={}, kwargs={}):
 
     url = reverse(url_name, kwargs=kwargs)
     params = urlencode(get_params)

@@ -12,9 +12,9 @@
       <b>Unread:</b><br/><br/>
       {% for message, notification_id, target_group in unread_notifications %}
         {% if target_group %}
-	  <a href="{% url 'tags:view_notification' username=username notification_id=notification_id %}">{{ message }}</a><br/>
+	  <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a><br/>
         {% else %}
-	  <a href="{% url 'tags:view_notification' username=username notification_id=notification_id %}">{{ message }}</a><br/>
+	  <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a><br/>
         {% endif %}
       {% endfor %}
     </p>

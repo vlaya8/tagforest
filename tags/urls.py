@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, reverse
 from django.contrib.auth import views as auth_views
 from . import views
 from .views import SpecialID
@@ -21,27 +21,32 @@ tree_urlpatterns = [
     ])),
 ]
 
+login_view = auth_views.LoginView.as_view(
+                                template_name='tags/registration/login.html',
+                                extra_context={'current_page': 'login'},
+)
+
 urlpatterns = [
         path('', views.index, name="index"),
         path('group/<str:group_name>/', include(tree_urlpatterns)),
         path('user/<str:username>/', include([
             path('profile/', views.ProfileView.as_view(), name="profile"),
-            path('notifications/', views.ViewNotificationsView.as_view(), name="view_notifications"),
-            path('notification/<int:notification_id>/', views.ViewNotificationView.as_view(), name="view_notification"),
-            path('groups/', include([
-                path('', views.ManageGroupsView.as_view(), name="manage_groups"),
-                path('group/', include([
-                    path('', views.ViewGroupView.as_view(), name="view_group"),
-                    path('<int:group_id>/view/', views.ViewGroupView.as_view(), name="view_group"),
-                    path('add/', views.UpsertGroupView.as_view(), name="upsert_group"),
-                    path('<int:group_id>/edit/', views.UpsertGroupView.as_view(), name="upsert_group"),
-                ])),
+        ])),
+        path('notifications/', views.ViewNotificationsView.as_view(), name="view_notifications"),
+        path('notification/<int:notification_id>/', views.ViewNotificationView.as_view(), name="view_notification"),
+        path('groups/', include([
+            path('', views.ViewGroupsView.as_view(), name="view_groups"),
+            path('group/', include([
+                path('', views.ViewGroupView.as_view(), name="view_group"),
+                path('<int:group_id>/view/', views.ViewGroupView.as_view(), name="view_group"),
+                path('add/', views.UpsertGroupView.as_view(), name="upsert_group"),
+                path('<int:group_id>/edit/', views.UpsertGroupView.as_view(), name="upsert_group"),
             ])),
         ])),
         path('about/', views.AboutView.as_view(), name="about"),
         path('accounts/', include([
             path('password_change/', views.ChangePasswordView.as_view()),
-            path('login/', auth_views.LoginView.as_view(template_name='tags/registration/login.html')),
+            path('login/', login_view),
             path('signup/', views.signup, name="signup"),
             path('', include('django.contrib.auth.urls')),
         ])),

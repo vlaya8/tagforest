@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from notifications.signals import notify
 from notifications.models import Notification
 
-from ..exceptions import UserError, FormError
+from ..exceptions import UserError, FormError, LoginRequired, UserPermissionError
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
 from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm
@@ -24,14 +24,13 @@ from .utilities import *
 import json
 
 # Base views from which (almost) all views inherit from
-# BaseView --> BaseUserView --> BaseTreeView
+# BaseView --> BaseTreeView
 
 # Base View containing the logic and base methods used for all classes
 #
 # Handles UserError and FormError while processing post, and calls
 # back the get function accordingly
 
-@method_decorator(login_required, name='dispatch')
 class BaseView(View):
 
     template_name = 'tags/view_tree.html'
@@ -41,21 +40,38 @@ class BaseView(View):
 
     def setup(self, request, **kwargs):
 
+        super().setup(request, **kwargs)
+
         self.redirect_get_params = {}
         self.redirect_kwargs = {}
 
-        super().setup(request, **kwargs)
-
-    def get_context_data(self, request, **kwargs):
+    def get_base_context(self, request, **kwargs):
 
         context = {
                     'current_page': 'index',
                   }
 
-        print(self.error_context)
         context.update(self.error_context)
 
+        if request.user.is_authenticated:
+
+            logout_next = reverse('tags:index')
+
+            new_notifications = [(n.verb, n.id) for n in request.user.notifications.unread()]
+            new_notification_count = len(new_notifications)
+
+            context.update({
+                        'logged_in': request.user.is_authenticated,
+                        'logout_next': {"next": logout_next},
+                        'username': request.user.username,
+                        'new_notifications': new_notifications,
+                        'new_notification_count': new_notification_count,
+                      })
+
         return context
+
+    def get_context_data(self, request, **kwargs):
+        return {}
 
     def get_return(self, request, context, **kwargs):
 
@@ -65,7 +81,20 @@ class BaseView(View):
 
         kwargs.update(self.kwargs)
 
-        context = self.get_context_data(request, **kwargs)
+        context = self.get_base_context(request, **kwargs)
+
+        try:
+            context.update(self.get_context_data(request, **kwargs))
+
+        except LoginRequired as login_required:
+            return redirect_with_get_params(
+                        'tags:login',
+                        get_params={'next': reverse('tags:index')},
+                    )
+
+        except UserPermissionError as permission_error:
+            context.update({'error_message': permission_error.message})
+            return render(request, 'tags/permission_error.html', context)
 
         if self.invalid_form != None:
             context.update(self.invalid_form)
@@ -89,55 +118,25 @@ class BaseView(View):
 
         try:
             self.process_post(request, **kwargs)
+
+        except LoginRequired as login_required:
+            return redirect_with_get_params(
+                        'tags:login',
+                        get_params={'next': reverse('tags:index')},
+                    )
+
+        except UserPermissionError as permission_error:
+            return render(request, 'tags/permission_error.html', {'error_message': permission_error.message})
+
         except UserError as user_error:
             self.error_context = {user_error.context_name: user_error.message}
             return self.get(request, **kwargs)
+
         except FormError as form_error:
             self.invalid_form = form_error.invalid_form
             return self.get(request, **kwargs)
 
         return self.post_return(request, **kwargs)
-
-# Base View for all views handling data from the logged in user
-# 
-# Provides user context and setups the user and link_user attribute
-
-@method_decorator(login_required, name='dispatch')
-class BaseUserView(BaseView):
-
-    template_name = 'tags/view_tree.html'
-    redirect_url = 'tags:index'
-
-    def setup(self, request, username=None, **kwargs):
-
-        super().setup(request, **kwargs)
-
-        self.user = request.user
-        if username == None:
-            self.link_user = None
-        else:
-            self.link_user = get_object_or_404(User, username=username)
-
-    def get_context_data(self, request, **kwargs):
-
-        context = super().get_context_data(request, **kwargs)
-
-        logged_in = self.user.is_authenticated
-        logout_next = reverse('tags:index')
-
-        new_notifications = [(n.verb, n.id) for n in self.user.notifications.unread()]
-        new_notification_count = len(new_notifications)
-
-        context.update({
-                    'logged_in': logged_in,
-                    'logout_next': {"next": logout_next},
-                    'username': self.user.username,
-                    'link_user': self.link_user,
-                    'new_notifications': new_notifications,
-                    'new_notification_count': new_notification_count,
-                  })
-
-        return context
 
 # Base View for all views handling trees
 #
@@ -145,7 +144,7 @@ class BaseUserView(BaseView):
 # Provides the context for the tree nav bar, and the necessary
 # POST processing for that nav bar
 
-class BaseTreeView(BaseUserView):
+class BaseTreeView(BaseView):
 
     # Setup group and current_tree arguments
     def setup(self, request, group_name, tree_id=SpecialID['DEFAULT_ID'], **kwargs):
@@ -167,39 +166,62 @@ class BaseTreeView(BaseUserView):
 
     def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, **kwargs)
+        context = {}
 
-        if not self.user.has_group_reader_permission(self.group):
-            context.update({'has_reader_permission': False})
-            return context
+        if not self.group.is_visible_to(request.user):
+            raise UserPermissionError("You don't have permission to view this group's trees")
 
-        tree_list = []
-        tree_add_form = TreeForm(initial={'tree_id': SpecialID['NEW_ID'], 'delete_tree': False})
-        tree_ids = []
+        has_writer_permission = self.group.has_write_permission_for(request.user)
 
-        for tree in Tree.objects.filter(group__id=self.group.id):
-            add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
-            delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
-            delete_form = TreeForm(initial=delete_data)
-            delete_form.fields['name'].widget = forms.HiddenInput()
-            tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form, (tree == self.current_tree)))
-            tree_ids.append(tree.id)
+        if has_writer_permission:
+
+            tree_list = []
+            tree_add_form = TreeForm(initial={'tree_id': SpecialID['NEW_ID'], 'delete_tree': False})
+            tree_ids = []
+
+            for tree in Tree.objects.filter(group__id=self.group.id):
+
+                add_data = {'name': tree.name, 'tree_id': tree.id, 'delete_tree': False}
+                delete_data = {'name' : 'unknown', 'tree_id': tree.id, 'delete_tree': True}
+                delete_form = TreeForm(initial=delete_data)
+                delete_form.fields['name'].widget = forms.HiddenInput()
+                tree_ids.append(tree.id)
+
+                tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form, (tree == self.current_tree)))
+
+            context.update({
+                        'tree_add_form': tree_add_form,
+                        'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
+                      })
+        else:
+
+            tree_list = []
+            for tree in Tree.objects.filter(group__id=self.group.id):
+                tree_list.append((tree.name, tree.id, None, None, (tree == self.current_tree)))
 
         if self.current_tree == None:
             current_tree_id = SpecialID['NONE']
         else:
             current_tree_id = self.current_tree.id
 
+        if self.group.name == request.user.username:
+            current_page = 'personal_tree'
+        else:
+            current_page = 'groups'
+
+        if request.user.is_authenticated:
+            context.update({
+                        'saved_group': request.user.profile.saved_groups.filter(pk=self.group.id).exists(),
+                      })
+
         context.update({
-                    'has_reader_permission': True,
                     'tree_list': tree_list,
-                    'tree_add_form': tree_add_form,
-                    'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
                     'group': self.group,
                     'current_tree_id': current_tree_id,
                     'has_tree': (current_tree_id > 0),
-                    'saved_group': self.user.profile.saved_groups.filter(pk=self.group.id).exists(),
                     'single_member': self.group.single_member,
+                    'current_page': current_page,
+                    'has_writer_permission': self.group.has_write_permission_for(request.user),
                   })
         return context
 
@@ -209,11 +231,8 @@ class BaseTreeView(BaseUserView):
         self.redirect_kwargs['group_name'] = self.group.name
         self.redirect_url = 'tags:view_tree'
 
-        if not self.user.has_group_reader_permission(self.group):
-            raise UserError("")
-
         if 'tree_form' in request.POST:
-            if not self.user.has_group_writer_permission(self.group):
+            if not self.group.has_write_permission_for(request.user):
                 raise PermissionDenied("You don't have permission to edit in this group")
 
             form = TreeForm(request.POST)
@@ -228,8 +247,7 @@ class BaseTreeView(BaseUserView):
                     tree = get_object_or_404(Tree, pk=form.cleaned_data['tree_id'])
                     if delete_tree:
                         tree.delete()
-                        self.redirect_url = 'tags:index'
-                        self.redirect_kwargs = {}
+                        self.redirect_url = 'tags:view_tree'
                     else:
                         tree.name = tree_name
                         tree.save()
@@ -246,11 +264,11 @@ class BaseTreeView(BaseUserView):
 
         elif 'save_group' in request.POST:
 
-            self.user.profile.saved_groups.add(self.group)
-            self.user.save()
+            request.user.profile.saved_groups.add(self.group)
+            request.user.save()
 
         elif 'unsave_group' in request.POST:
 
-            self.user.profile.saved_groups.remove(self.group)
-            self.user.save()
+            request.user.profile.saved_groups.remove(self.group)
+            request.user.save()
 

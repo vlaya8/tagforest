@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from notifications.signals import notify
 from notifications.models import Notification
 
-from ..exceptions import UserError, FormError
+from ..exceptions import UserError, FormError, LoginRequired, UserPermissionError
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
 from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm
@@ -42,51 +42,51 @@ def signup(request):
 
 ## Index
 
-@login_required
 def index(request):
 
-    group = request.user.get_user_group()
+    if request.user.is_authenticated:
+        group = request.user.get_user_group()
 
-    return redirect_with_get_params(
-                'tags:view_tree',
-                get_params={'selected_tags': request.GET.get('selected_tags', '')},
-                kwargs={'group_name': group.name}
-            )
+        return redirect_with_get_params(
+                    'tags:view_tree',
+                    get_params={'selected_tags': request.GET.get('selected_tags', '')},
+                    kwargs={'group_name': group.name}
+                )
+    else:
+        return HttpResponseRedirect(reverse('tags:view_groups'))
 
-class ViewNotificationsView(BaseUserView):
+@method_decorator(login_required, name='dispatch')
+class ViewNotificationsView(BaseView):
 
     template_name = 'tags/view_notifications.html'
 
     def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, **kwargs)
-
-        unread_notifications = [(n.verb, n.id, n.target) for n in self.user.notifications.unread()]
+        unread_notifications = [(n.verb, n.id, n.target) for n in request.user.notifications.unread()]
         unread_notification_count = len(unread_notifications)
-        read_notifications = [(n.verb, n.id, n.target) for n in self.user.notifications.read()]
+        read_notifications = [(n.verb, n.id, n.target) for n in request.user.notifications.read()]
         read_notification_count = len(read_notifications)
 
-        context.update({
+        context = {
                          'unread_notifications': unread_notifications,
                          'unread_notification_count': unread_notification_count,
                          'read_notifications': read_notifications,
                          'read_notification_count': read_notification_count,
-                       })
+                       }
         return context
 
-class ViewNotificationView(BaseUserView):
+@method_decorator(login_required, name='dispatch')
+class ViewNotificationView(BaseView):
 
     template_name = 'tags/view_notification.html'
 
     def get_context_data(self, request, notification_id, **kwargs):
 
-        context = super().get_context_data(request, **kwargs)
-
         notification = get_object_or_404(Notification, pk=notification_id)
 
-        context.update({
+        context = {
                          'notification': notification,
-                      })
+                      }
         return context
 
     # Process an invitation which has been accepted or declined
@@ -101,81 +101,90 @@ class ViewNotificationView(BaseUserView):
             notification.mark_as_read()
 
             if 'accept_notification' in request.POST:
-                Member.objects.create(user=self.user, role=notification.action_object, group=notification.target)
+                Member.objects.create(user=request.user, role=notification.action_object, group=notification.target)
 
                 self.redirect_url = 'tags:view_tree'
                 self.redirect_kwargs['group_name'] = notification.target.name
             else:
                 self.redirect_url = 'tags:view_notifications'
-                self.redirect_kwargs['username'] = self.user.username
 
-class ProfileView(BaseUserView):
+class ProfileView(BaseView):
 
     template_name = 'tags/registration/profile.html'
 
+    def setup(self, request, username, **kwargs):
+
+        super().setup(request, **kwargs)
+
+        self.link_user = get_object_or_404(User, username=username)
+
     def get_context_data(self, request, form=None, **kwargs):
 
-        context = super().get_context_data(request, **kwargs)
+        context = {}
 
-        has_edit_permission = (self.user.username == self.link_user.username)
+        if request.user.is_authenticated:
+            has_edit_permission = (request.user.username == self.link_user.username)
+        else:
+            has_edit_permission = False
         if has_edit_permission:
 
-            group = self.user.get_user_group()
+            group = request.user.get_user_group()
             if form == None:
-                form = ProfileForm(self.user, initial={
-                                             'username': self.user.username,
-                                             'personal_group_visibility': group.group_visibility,
+                form = ProfileForm(request.user, initial={
+                                             'username': request.user.username,
+                                             'listed_to_public': group.listed_to_public,
+                                             'visible_to_public': group.visible_to_public,
                                            })
             context.update({'form': form})
 
             current_page = 'profile'
         else:
+
             current_page = 'other_profile'
 
         link_group = self.link_user.get_user_group()
 
-        if link_group.group_visibility == TreeUserGroup.PRIVATE:
-            group_visibility = "Private"
-        elif link_group.group_visibility == TreeUserGroup.PUBLIC:
-            group_visibility = "Unlisted and Public"
-        else:
-            group_visibility = "Listed and Public"
-
         context.update({
                          'has_edit_permission': has_edit_permission,
-                         'group_visibility': group_visibility,
-                         'has_group_view_permission': link_group.is_public(),
+                         'group_listed_to': link_group.listed_to_str_sentence(),
+                         'group_visible_to': link_group.visible_to_str_sentence(),
+                         'has_group_view_permission': link_group.is_visible_to(request.user),
                          'current_page': current_page,
+                         'link_user': self.link_user,
                        })
 
         return context
 
+    @method_decorator(login_required)
     def process_post(self, request, **kwargs):
 
         if 'edit_profile' in request.POST:
 
-            form = ProfileForm(self.user, request.POST)
+            form = ProfileForm(request.user, request.POST)
 
             if form.is_valid():
 
-                if self.user.username != self.link_user.username:
+                if request.user.username != self.link_user.username:
                     raise PermissionDenied("You don't have permission to edit this profile")
 
+
                 username = form.cleaned_data['username']
-                personal_group_visibility = form.cleaned_data['personal_group_visibility']
+                listed_to_public = form.cleaned_data['listed_to_public']
+                visible_to_public = form.cleaned_data['visible_to_public']
 
-                group = self.user.get_user_group()
+                group = request.user.get_user_group()
 
-                group.group_visibility = personal_group_visibility
+                group.listed_to_public = listed_to_public
+                group.visible_to_public = visible_to_public
                 group.name = username
                 group.save()
 
-                self.user.username = username
-                self.user.save()
+                request.user.username = username
+                request.user.save()
 
 
                 self.redirect_url = 'tags:profile'
-                self.redirect_kwargs['username'] = self.user.username
+                self.redirect_kwargs['username'] = request.user.username
             else:
                 raise FormError({'form': form})
 
@@ -185,31 +194,40 @@ class ChangePasswordView(auth_views.PasswordChangeView):
     template_name = 'tags/registration/password_change.html'
     context = {'current_page': 'profile'}
 
-class ManageGroupsView(BaseUserView):
+class ViewGroupsView(BaseView):
 
-    template_name = 'tags/manage_groups.html'
+    template_name = 'tags/view_groups.html'
 
     def get_context_data(self, request, **kwargs):
 
-        context = super().get_context_data(request, **kwargs)
+        listed_group_list = TreeUserGroup.get_listed_to_all()
+        context = {}
 
-        joined_group_list = self.user.get_joined_groups()
-        saved_group_list = self.user.get_saved_groups()
-        listed_group_list = TreeUserGroup.get_listed_groups()
+        if request.user.is_authenticated:
 
-        joined_groups = [(group, not group.single_member and self.user.has_group_admin_permission(group)) for group in joined_group_list]
-        saved_groups = [(group, not group.single_member and self.user.has_group_admin_permission(group)) for group in saved_group_list]
-        listed_groups = [(group, not group.single_member and self.user.has_group_admin_permission(group)) for group in listed_group_list]
+            listed_group_list = listed_group_list.union(TreeUserGroup.get_listed_to_users())
+
+            joined_group_list = request.user.get_joined_groups()
+            saved_group_list = request.user.get_saved_groups()
+
+            joined_groups = [(group, group.single_member, group.has_admin_permission_for(request.user)) for group in joined_group_list]
+            saved_groups = [(group, group.single_member, group.has_admin_permission_for(request.user)) for group in saved_group_list]
+
+            context.update({
+                             'joined_groups': joined_groups,
+                             'saved_groups': saved_groups,
+                          })
+
+        listed_groups = [(group, group.single_member, group.has_admin_permission_for(request.user)) for group in listed_group_list]
 
         context.update({
-                         'joined_groups': joined_groups,
-                         'saved_groups': saved_groups,
                          'listed_groups': listed_groups,
                          'current_page': 'groups',
                       })
 
         return context
     
+    @method_decorator(login_required)
     def process_post(self, request, **kwargs):
 
         super().process_post(request, **kwargs)
@@ -220,44 +238,47 @@ class ManageGroupsView(BaseUserView):
 
             group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-            if not self.user.has_group_writer_permission(group):
+            if not group.has_write_permission_for(request.user):
                 raise PermissionDenied("You don't have permission to delete this group")
 
             if group.single_member:
-                raise PermissionDenied("You don't have permission to delete this group")
+                raise PermissionDenied("You can't delete this group")
 
             group.delete()
 
-        self.redirect_url = 'tags:manage_groups'
-        self.redirect_kwargs['username'] = self.user.username
+        self.redirect_url = 'tags:view_groups'
 
-class UpsertGroupView(BaseUserView):
+@method_decorator(login_required, name='dispatch')
+class UpsertGroupView(BaseView):
 
     template_name = 'tags/upsert_group.html'
 
     def get_context_data(self, request, **kwargs):
-
-        context = super().get_context_data(request, **kwargs)
 
         # If user wants to edit a group
         if 'group_id' in kwargs:
             group_id = kwargs['group_id']
             group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-            if not self.user.has_group_writer_permission(group):
+            if not group.has_write_permission_for(request.user):
                 raise PermissionDenied("You don't have permission to edit this group")
 
-            data = {"name": group.name, "group_visibility": group.group_visibility, "group_id": group_id}
+            data = {
+                     "name": group.name,
+                     "listed_to_public": group.listed_to_public,
+                     "visible_to_public": group.visible_to_public,
+                     "group_id": group_id
+                   }
         # If user wants to add a group
         else:
             data = {"group_id": SpecialID['NEW_ID']}
 
         form = GroupForm(initial=data)
 
-        context.update({
+        context = {
                          'form': form,
                          'current_page': 'groups',
-                     })
+                     }
 
         return context
 
@@ -271,79 +292,73 @@ class UpsertGroupView(BaseUserView):
             if form.is_valid():
 
                 group_name = form.cleaned_data['name']
-                group_visibility = form.cleaned_data['group_visibility']
+                listed_to_public = form.cleaned_data['listed_to_public']
+                visible_to_public = form.cleaned_data['visible_to_public']
                 group_id = form.cleaned_data['group_id']
 
                 # If the group has been edited
                 if group_id != SpecialID['NEW_ID']:
                     group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-                    if not self.user.has_group_writer_permission(group):
+                    if not group.has_write_permission_for(request.user):
                         raise PermissionDenied("You don't have permission to edit this group")
 
                     group.name = group_name
-                    group.group_visibility = group_visibility
+                    group.listed_to_public = listed_to_public
+                    group.visible_to_public = visible_to_public
                 else:
-                    group = TreeUserGroup.objects.create(name=group_name, single_member=False, group_visibility=group_visibility)
+                    group = TreeUserGroup.objects.create(name=group_name, single_member=False,
+                                                         listed_to_public=listed_to_public,
+                                                         visible_to_public=visible_to_public)
                     admin_role = Role.objects.filter(name="admin").first()
-                    member = Member.objects.create(user=self.user, role=admin_role, group=group)
+                    member = Member.objects.create(user=request.user, role=admin_role, group=group)
 
                 group.save()
 
                 self.redirect_url = 'tags:view_group'
                 self.redirect_kwargs['group_id'] = group.id
-                self.redirect_kwargs['username'] = self.user.username
             else:
                 raise FormError({'form': form})
 
-class ViewGroupView(BaseUserView):
+class ViewGroupView(BaseView):
 
     template_name = 'tags/view_group.html'
 
     def get_context_data(self, request, group_id, invite_form=None, **kwargs):
 
-        context = super().get_context_data(request, **kwargs)
-
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
-        if not self.user.has_group_reader_permission(group):
-            context.update({'has_reader_permission': False})
-            return context
+        if not group.is_visible_to(request.user):
+            raise UserPermissionError("You don't have permission to view this group")
 
         members = group.member_set.all()
 
         if invite_form == None:
             invite_form = MemberInvitationForm(group, initial={})
 
-        if group.group_visibility == TreeUserGroup.PRIVATE:
-            group_visibility = "Private"
-        elif group.group_visibility == TreeUserGroup.PUBLIC:
-            group_visibility = "Unlisted and Public"
-        else:
-            group_visibility = "Listed and Public"
-
-        context.update({
+        context = {
                          'group': group,
-                         'has_reader_permission': True,
-                         'has_writer_permission': self.user.has_group_writer_permission(group),
-                         'has_admin_permission': self.user.has_group_admin_permission(group),
+                         'has_writer_permission': group.has_write_permission_for(request.user),
+                         'has_admin_permission': group.has_admin_permission_for(request.user),
                          'members': members,
                          'invite_form': invite_form,
-                         'group_visibility': group_visibility,
+                         'group_listed_to': group.listed_to_str_sentence(),
+                         'group_visible_to': group.visible_to_str_sentence(),
                          'current_page': 'groups',
-                      })
+                      }
 
         return context
 
-    def process_post(self, request, group_id=SpecialID['NEW_ID'], **kwargs):
+    @method_decorator(login_required)
+    def process_post(self, request, group_id, **kwargs):
+
+        group = get_object_or_404(TreeUserGroup, pk=group_id)
+
+        if not group.has_admin_permission_for(request.user):
+            raise PermissionDenied("You don't have admin permission for this group")
 
         # If a member has been deleted
         if 'delete_member_id' in request.POST:
-
-            group = get_object_or_404(TreeUserGroup, pk=group_id)
-
-            if not self.user.has_group_admin_permission(group):
-                raise PermissionDenied("You don't have permission to delete this member")
 
             if group.member_set.count() == 1:
                 raise UserError("The last member of the group can't be deleted (delete the group instead)", "group_error")
@@ -354,12 +369,10 @@ class ViewGroupView(BaseUserView):
 
             self.redirect_url = 'tags:view_group'
             self.redirect_kwargs['group_id'] = group.id
-            self.redirect_kwargs['username'] = self.user.username
 
         # Process a member invitation
         if 'invite_member' in request.POST:
 
-            group = get_object_or_404(TreeUserGroup, pk=group_id)
             form = MemberInvitationForm(group, request.POST)
 
             if form.is_valid():
@@ -370,8 +383,8 @@ class ViewGroupView(BaseUserView):
 
                 target_user = get_object_or_404(User, username=member_name)
 
-                notify.send(self.user, recipient=target_user,
-                                  verb="{} invited you to join {}".format(self.user, group),
+                notify.send(request.user, recipient=target_user,
+                                  verb="{} invited you to join {}".format(request.user, group),
                                   action_object=role,
                                   target=group)
             else:
@@ -410,7 +423,6 @@ class ViewTreeView(BaseTreeView):
         context.update({
                     'entry_list': entry_list,
                     'tag_list': tag_list,
-                    'has_writer_permission': self.user.has_group_writer_permission(self.group),
                   })
 
         return context
@@ -431,13 +443,47 @@ class ViewEntryView(BaseTreeView):
     template_name = 'tags/view_entry.html'
 
     def get_context_data(self, request, entry_id, **kwargs):
+
         context = super().get_context_data(request, **kwargs)
+
+        if not self.group.is_visible_to(request.user):
+            return context
 
         entry = get_object_or_404(Entry, pk=entry_id)
         context.update({
                     'entry': entry,
-                    'has_writer_permission': self.user.has_group_writer_permission(self.group),
+                    'has_writer_permission': self.group.has_write_permission_for(request.user),
                   })
+
+        return context
+
+class UpsertEntryView(BaseTreeView):
+
+    template_name = 'tags/upsert_entry.html'
+
+    def get_context_data(self, request, **kwargs):
+
+        context = super().get_context_data(request, **kwargs)
+
+        if not self.group.has_write_permission_for(request.user):
+            return context
+
+        # If user wants to edit an entry
+        if 'entry_id' in kwargs:
+            entry_id = kwargs['entry_id']
+            entry = get_object_or_404(Entry, pk=entry_id)
+
+            tags = ",".join([tag.name for tag in entry.tags.filter(group__id=self.group.id)])
+            data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
+        # If user wants to add a group
+        else:
+            data = {"entry_id": SpecialID['NEW_ID']}
+
+        form = EntryForm(initial=data)
+
+        context.update({
+                         'form': form,
+                     })
 
         return context
 
@@ -481,38 +527,13 @@ class ViewEntryView(BaseTreeView):
                 self.redirect_kwargs['tree_id'] = self.current_tree.id
                 self.redirect_kwargs['entry_id'] = entry.id
 
-class UpsertEntryView(BaseTreeView):
-
-    template_name = 'tags/upsert_entry.html'
-
-    def get_context_data(self, request, **kwargs):
-        context = super().get_context_data(request, **kwargs)
-
-        # If user wants to edit an entry
-        if 'entry_id' in kwargs:
-            entry_id = kwargs['entry_id']
-            entry = get_object_or_404(Entry, pk=entry_id)
-
-            tags = ",".join([tag.name for tag in entry.tags.filter(group__id=self.group.id)])
-            data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
-        # If user wants to add a group
-        else:
-            data = {"entry_id": SpecialID['NEW_ID']}
-
-        form = EntryForm(initial=data)
-
-        context.update({
-                         'form': form,
-                     })
-
-        return context
-
 ## About
 
-class AboutView(generic.TemplateView):
+class AboutView(BaseView):
     template_name = 'tags/about.html'
 
-    def get_context_data(self):
+    def get_context_data(self, request, **kwargs):
+
         context = {'current_page': 'about'}
         return context
 

@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<form class="contentForm" method="post" action="{% url 'tags:upsert_group' username=username %}">
+<form class="contentForm" method="post" action="{% url 'tags:upsert_group' %}">
   {% csrf_token %}
   <div class="errorMessage">{{ form.non_field_errors }}</div>
   {% for hidden in form.hidden_fields %}
@@ -16,9 +16,14 @@
       {{ form.name.label_tag }} {{ form.name }}
     </li>
     <li>
-      <div class="errorMessage">{{ form.group_visibility.errors }}</div>
-      {{ form.group_visibility.label_tag }}
-      <div class="select" >{{ form.group_visibility }}</div>
+      <div class="errorMessage">{{ form.listed_to_public.errors }}</div>
+      {{ form.listed_to_public.label_tag }}
+      <div class="select" >{{ form.listed_to_public }}</div>
+    </li>
+    <li>
+      <div class="errorMessage">{{ form.visible_to_public.errors }}</div>
+      {{ form.visible_to_public.label_tag }}
+      <div class="select" >{{ form.visible_to_public }}</div>
     </li>
     <br/>
     <li><input type="submit" name="upsert_group" value="Submit"></li>

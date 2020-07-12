@@ -14,11 +14,13 @@
 
   <nav><!--
     --><h1><a href="{% url 'tags:index' %}" >Tagforest</a></h1><!--
-    --><a href="{% url 'tags:index' %}" {% if current_page == 'index' %}class="activeLink" {% endif %}>Index</a><!--
+    --><a href="{% url 'tags:view_groups' %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>Groups</a><!--
     {% if logged_in %}
-      --><a href="{% url 'tags:manage_groups' username=username %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>Groups</a><!--
+      --><a href="{% url 'tags:index' %}" {% if current_page == 'personal_tree' %}class="activeLink" {% endif %}>Personal Trees</a><!--
       --><a href="{% url 'tags:profile' username=username %}" {% if current_page == 'profile' %}class="activeLink" {% endif %}>{{ username }}</a><!--
       --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}" {% if current_page == 'logout' %}class="activeLink" {% endif %}>Logout</a><!--
+    {% else %}
+      --><a href="{% url 'tags:login' %}?next={% url 'tags:index' %}" {% if current_page == 'login' %}class="activeLink" {% endif %}>Login</a><!--
     {% endif %}
     -->{% block nav_menu_tree_links %}{% endblock %}<!--
 
@@ -37,12 +39,12 @@
 	  {% if new_notification_count %}
 	    <h1>Notifications:</h1>
 	    {% for message, notification_id in new_notifications %}
-	      <a href="{% url 'tags:view_notification' username=username notification_id=notification_id %}">{{ message }}</a>
+	      <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a>
 	    {% endfor %}
 	  {% else %}
 	    <a href="">No new notifications</a>
 	  {% endif %}
-	  <a href="{% url 'tags:view_notifications' username=username %}"><b>View all notifications</b></a>
+	  <a href="{% url 'tags:view_notifications' %}"><b>View all notifications</b></a>
 	</div>
       </div></div><!--
     {% endif %}

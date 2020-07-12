@@ -5,15 +5,24 @@
 
 {% block content %}
 
-<p>
-  <b>Username: </b>{{ link_user.username }}<br/>
-  <b>Personal group visibility:</b> {{ group_visibility }}<br/>
+<h1>
+  {{ link_user.username }}
+
   {% if has_group_view_permission %}
+  <div class="separator"> </div>
   <a href="{% url 'tags:view_tree' group_name=link_user.username %}">Personal Group</a>
   {% endif %}
+</h1>
+
+<h3>Personal group visibility settings</h3>
+
+<p>
+Personal group is visible to <b>{{ group_visible_to }}</b> and listed to <b>{{ group_listed_to }}</b>
 </p>
 
 {% if has_edit_permission %}
+<h3>Edit profile</h3>
+
   <form class="contentForm" method="post" action="{% url "tags:profile" username=username %}">
     {% csrf_token %}
     <div class="errorMessage">{{ form.non_field_errors }}</div>
@@ -23,9 +32,14 @@
         {{ form.username.label_tag }} {{ form.username }}
       </li>
       <li>
-	<div class="errorMessage">{{ form.personal_group_visibility.errors }}</div>
-        {{ form.personal_group_visibility.label_tag }}
-        <div class="select" >{{ form.personal_group_visibility }}</div>
+	<div class="errorMessage">{{ form.listed_to_public.errors }}</div>
+        {{ form.listed_to_public.label_tag }}
+        <div class="select" >{{ form.listed_to_public }}</div>
+      </li>
+      <li>
+	<div class="errorMessage">{{ form.visible_to_public.errors }}</div>
+        {{ form.visible_to_public.label_tag }}
+        <div class="select" >{{ form.visible_to_public }}</div>
       </li>
       <br/>
       <li><input type="submit" name="edit_profile" value="Submit"></li>
