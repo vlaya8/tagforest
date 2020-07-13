@@ -55,18 +55,19 @@ Usage example:
 
 ## Tools / Languages / Frameworks used
 
-- Django is the main framework
-  * django modules used: django-notifications, django-dag (upcoming)
-- VueJS for small javascript apps throughout the website
-  * vue modules used: vue-markdown, vue-click-outside
-- Sass is used to preprocess CSS
-
-
-## Tools / Languages / Frameworks used
-
 ### Website developpment:
   - Languages: **Python 3, HTML, CSS, Javascript**
   - [Django](https://www.djangoproject.com/): main framework, django modules used: django-notifications-hq, django-dag (upcoming)</li>
   - [VueJS](https://vuejs.org/): for small javascript apps throughout the website, vue modules used: vue-markdown, vue-click-outside</li>
   - [Sass](https://sass-lang.com/): CSS preprocessing</li>
 
+## Git workflow
+
+feature git workflow is used:
+
+- Nothing is commited directly to master and dev, and these branches are never rebased
+- All other branches are rebased before each merge to ensure a clean history, and to ensure
+everything compiles at each commit
+- Other branches are either feature branches, hotfix or release, and end up being merged to dev
+- Commits are in english and imperative
+- Each merge to master is tagged as a new version
