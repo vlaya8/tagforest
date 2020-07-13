@@ -22,12 +22,7 @@ Django website to share and organize knowledge and ressources by classifying the
 
 ## Current state
 
-**v1.3 (2020/07/09)**
-
-Usage example: 
-
-![Index screenshot](readme_img/tagforest-index.png)
-![Index screenshot with tag selection](readme_img/tagforest-index-tags.png)
+**v1.4 (2020/07/13)**
 
 - User authentification system
 - Groups, Trees, Entries and Tags:
