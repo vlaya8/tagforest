@@ -59,9 +59,18 @@ class ProfileForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+
         username = cleaned_data.get("username")
         if username != self.user.username and User.objects.filter(username=username).exists():
             raise forms.ValidationError("{} is already taken".format(username))
+
+        listed_to_public = cleaned_data.get("listed_to_public")
+        visible_to_public = cleaned_data.get("visible_to_public")
+
+        if PUBLIC_CHOICES_ORDER[listed_to_public] > PUBLIC_CHOICES_ORDER[visible_to_public]:
+            raise forms.ValidationError("You asked to list the group to {} but it is only visible to {}".format(
+                                        PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
+                                        PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]))
 
         return cleaned_data
 
@@ -90,6 +99,7 @@ class GroupForm(forms.Form):
             raise forms.ValidationError("You asked to list the group to {} but it is only visible to {}".format(
                                         PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
                                         PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]))
+        return cleaned_data
 
 
 class MemberInvitationForm(forms.Form):
