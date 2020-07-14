@@ -7,38 +7,47 @@
   {% endif %}
 
   <!-- Vue js tree bar app -->
-  <nav id="tree_bar_app" ><!--
+  <div id="tree_bar_app">
+  <nav><!--
 
+ -->{{ tree_ids|json_script:"treeIds"}}
+    {{ nb_trees|json_script:"nbTrees"}}
+    {{ entry_display_choices|json_script:"entryDisplayChoices"}}
+    {{ initial_entry_display|json_script:"initialEntryDisplay"}}<!--
+
+    Group name
     {% if single_member %}
     --><a href="{% url 'tags:profile' username=group.name %}">{{ group.name }}></a><!--
     {% else %}
     --><a href="{% url 'tags:view_group' group_id=group.id %}">{{ group.name }}></a><!--
     {% endif %}
 
+    --><ul><!--
+
     Tree list
     {% if has_tree %}
-    {% for tree_name, tree_id, tree_edit_form, tree_delete_form, is_active in tree_list %}
+    {% for tree, tree_edit_form, tree_delete_form in tree_list %}
 
           Tree name link
-          --><a {% if is_active %}class="activeLink"{% endif %} v-if="!editTree[{{ tree_id }}] & !editMode" key="{{ tree_id }}" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}"><!--
-		-->{{ tree_name }}<!--
-	  --></a><!--
-          {% if has_writer_permission %}
+          --><li>
+            <a {% if current_tree.id == tree.id %}class="activeLink"{% endif %} v-if="!editTree[{{ tree.id }}] & !editMode" key="{{ tree.id }}" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree.id %}">{{ tree.name }}</a><!--
+
 	  Tree name edit icons
-	  --><div v-if="!editTree[{{ tree_id }}] & editMode" key="{{ tree_id }}" class="linkLike" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}"><!--
-	        --><span class="treeName" >{{ tree_name }}</span><!--
-		--><a v-if="editMode & !editTree[{{ tree_id }}]" v-on:click="enterEditTree({{ tree_id }})" class="innerButton" ><i class="fa fa-edit"></i></a><!--
-		--><form class="innerButton" v-if="editMode & !editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}" method="post"><!--
-		      -->{% csrf_token %}<!--
-		      -->{{ tree_delete_form.name}}<!--
-		      -->{{ tree_delete_form.delete_tree}}<!--
-		      -->{{ tree_delete_form.tree_id}}<!--
-		      --><button class="innerButton" name="tree_form" type="submit"><i class="fa fa-trash"></i></button><!--
-		--></form><!--
+          {% if has_writer_permission %}
+	  --><div v-if="!editTree[{{ tree.id }}] & editMode" key="{{ tree.id }}" class="linkLike" >
+	        <span class="treeName" >{{ tree.name }}</span>
+		<button tabindex=0 v-if="editMode & !editTree[{{ tree.id }}]" @click="enterEditTree({{ tree.id }})" @keyup.enter="enterEditTree({{ tree.id }})" class="innerButton" ><i class="fa fa-edit"></i></button>
+		<form class="inlineForm" v-if="editMode & !editTree[{{ tree.id }}]" class="innerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree.id %}" method="post">
+		      {% csrf_token %}
+		      {{ tree_delete_form.name}}
+		      {{ tree_delete_form.delete_tree}}
+		      {{ tree_delete_form.tree.id}}
+		      <button class="innerButton" name="tree_form" type="submit"><i class="fa fa-trash"></i></button>
+		</form><!--
 	  --></div><!--
 
-	  Tree form
-	  --><form v-if="editTree[{{ tree_id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree_id %}" method="post"><!--
+	  Tree Edit form
+	  --><form v-if="editTree[{{ tree.id }}]" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name tree_id=tree.id %}" method="post"><!--
 		-->{% csrf_token %}<!--
 		-->{{ tree_edit_form.non_field_errors}}<!--
 		-->{{ tree_edit_form.name.errors}}<!--
@@ -47,17 +56,21 @@
 		-->{{ tree_edit_form.tree_id}}<!--
 		--><button class="thinButton" name="tree_form" type="submit"><i class="fa fa-check" ></i></button><!--
 	  --></form><!--
-	  --><a v-if="editTree[{{ tree_id }}]" v-on:click="exitEditTree({{ tree_id }})" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+	  --><button tabindex=0 v-if="editTree[{{ tree.id }}]" @click="exitEditTree({{ tree.id }})" @keyup.enter="exitEditTree({{ tree.id }})" class="thinButton" ><i class="fa fa-close"></i></button>
           {% endif %}
+          </li><!--
 
     {% endfor %}
     {% endif %}
-    {% if has_writer_permission %}
-    --><a v-if="editMode" v-on:click="exitEditMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+    --></ul><!--
 
-    Mode selectors
-    --><a v-if="viewMode" v-on:click="enterAddMode()" class="mediumButton" ><i class="fa fa-plus"></i></a><!-- 
-    --><a v-if="viewMode" v-on:click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></a><!-- 
+    Global Add, Edit and Exit buttons
+    {% if has_writer_permission %}
+    --><button v-if="editMode" @click="exitEditMode()" class="thinButton" ><i class="fa fa-close"></i></button><!-- 
+
+    Add and Edit Mode selectors
+    --><button v-if="viewMode" @click="enterAddMode()" class="mediumButton" ><i class="fa fa-plus"></i></button><!-- 
+    --><button v-if="viewMode" @click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></button><!-- 
 
     Add form
     --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name %}" method="post"><!--
@@ -69,9 +82,37 @@
 	  -->{{ tree_add_form.tree_id}}<!--
 	  --><button class="thinButton" name="tree_form" type="submit"><i class="fa fa-check" ></i></button><!--
     --></form><!--
-    --><a v-if="addMode" v-on:click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></a><!-- 
+    --><button v-if="addMode" @click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></button><!-- 
+
+    Tree parameters dropdown
+    {% if has_tree %}
+    --><div class="alignRight"><div class="dropdown">
+      <button @click="toggleTreeParamDropdown" class="largeButton" >
+	<i class="fa fa-cog"></i>
+      </button>
+      <div v-if="treeParamDropdown" class="dropdown-content treeParamDropdown" >
+	<a @click="showTreeParam" >Tree parameters</a>
+        <form class="contentForm" >
+          <ul><li>
+	  <label>Entry display:</label>
+          <div class="select" >
+          <select v-model="entryDisplayShare.entryDisplay" >
+            <option v-for="entryDisplayChoice in entryDisplayChoices" v-bind:value="entryDisplayChoice.value">
+              [[ entryDisplayChoice.text ]]
+            </option>
+          </select>
+          </div>
+          </li></ul>
+        </form>
+      </div>
+    </div></div><!--
+
+    {% endif %}
+    
+
     {% endif %}
 
+    Save and Remove from save Button
     {% if not single_member and logged_in %}
       {% if saved_group %}
         --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
@@ -85,14 +126,41 @@
         --></form><!--
       {% endif %}
     {% endif %}
-
     -->
   </nav>
 
-{% endblock %}
+    <!--Tree parameters box-->
+    {% if has_tree %}
+    <div v-if="treeParam" class="page-mask"></div>
+    <div class="treeParamBox" v-if="treeParam">
+      <h2>Tree Parameters</h2>
+      <form class="contentForm" method="post">
+	{% csrf_token %}
+	<div class="errorMessage">{{ tree_param_form.non_field_errors }}</div>
+	<ul>
+	  <li>
+	    <div class="errorMessage">{{ tree_param_form.name.errors }}</div>
+	    {{ tree_param_form.name.label_tag }} {{ tree_param_form.name }}
+	  </li>
+	  <li>
+	    <div class="errorMessage">{{ tree_param_form.description.errors }}</div>
+	    {{ tree_param_form.description.label_tag }} {{ tree_param_form.description }}
+	  </li>
+	  <li>
+	    <div class="errorMessage">{{ tree_param_form.default_entry_display.errors }}</div>
+	    {{ tree_param_form.default_entry_display.label_tag }}
+	    <div class="select" >{{ tree_param_form.default_entry_display }}</div>
+	  </li>
+	  <br/>
+	  <li><button name="tree_param_form" >Submit</button></li>
+	  <li><button @click="hideTreeParam" >Cancel</button></li>
+	</ul>
+      </form>
+    </div>
+    {% endif %}
 
-{% block body_data %}
-tree_bar_data="{{ tree_bar_data }}"
+  </div>
+
 {% endblock %}
 
 {% block script_includes %}

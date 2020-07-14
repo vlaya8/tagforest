@@ -84,11 +84,12 @@ form {
   }
 }
 
-.headerForm {
+.inlineForm {
   display: inline;
 }
 
 form.headerForm {
+  display: inline;
   input[type=text], input[type=password] {
     margin-right: 1rem;
     margin-left: 1rem;
@@ -127,9 +128,14 @@ form.headerForm {
   select::-ms-expand {
     display: none;
   }
-  select:hover, .select select:focus {
+  select:hover {
     color: base.$font-color;
     background: color.adjust(base.$header-color, $lightness:5);
+  }
+  select:focus {
+    color: base.$font-color;
+    border: 1px solid base.$border-color;
+    border-radius: 4px;
   }
   select:disabled {
     opacity: 0.5;

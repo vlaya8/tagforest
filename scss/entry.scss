@@ -1,0 +1,169 @@
+@use 'base';
+@use "sass:color";
+
+ul.CPS, ul.CPM, ul.CPL {
+
+  padding: 0rem;
+
+  li {
+    list-style: none;
+
+    margin: 0rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+
+    display: inline-block;
+
+    vertical-align: bottom;
+    text-align: center;
+    max-width: 14rem;
+    height: 5rem;
+
+    a {
+
+      display: inline-block;
+      box-sizing: border-box;
+      text-align: center;
+
+      background-color: color.adjust(base.$background-color, $lightness: 5);
+      border: 1px solid color.adjust(base.$background-color, $lightness: 9);
+      border-width: 1px 1px 2px;
+
+      max-width: 14rem;
+      height: 5rem;
+      line-height: 5em;
+
+      padding: 0rem 0.6rem 0rem 0.6rem;
+
+      span {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: normal;
+        text-align: left;
+      }
+    }
+
+    a:hover {
+
+      background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
+      border: 1px solid color.adjust(base.$background-color, $alpha: -0.4);
+      border-width: 1px 1px 2px;
+    }
+  }
+
+}
+
+ul.CPS {
+
+  li {
+
+    max-width: 13rem;
+    height: 2rem;
+
+    a {
+
+      max-width: 13rem;
+      height: 2rem;
+      line-height: 2em;
+
+      padding: 0rem 0.6rem 0rem 0.6rem;
+
+    }
+  }
+}
+
+ul.CPM {
+
+  li {
+
+    max-width: 15rem;
+    height: 4rem;
+
+    a {
+
+      max-width: 15rem;
+      height: 4rem;
+      line-height: 4em;
+
+      padding: 0rem 0.6rem 0rem 0.6rem;
+
+    }
+  }
+}
+
+ul.CPL {
+
+  li {
+
+    max-width: 19rem;
+    height: 5.7rem;
+
+    a {
+
+      max-width: 19rem;
+      height: 5.7rem;
+      line-height: 5.7em;
+
+      padding: 0rem 0.6rem 0rem 0.6rem;
+
+    }
+  }
+}
+
+ul.LST {
+
+  padding: 0rem;
+
+  li {
+    list-style: none;
+
+    margin: 0rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+
+    display: block;
+
+    vertical-align: bottom;
+    max-width: 60rem;
+    height: 2rem;
+
+    a {
+
+      display: inline-block;
+      box-sizing: border-box;
+      text-align: center;
+
+      background-color: color.adjust(base.$background-color, $lightness: 5);
+      border: 1px solid color.adjust(base.$background-color, $lightness: 9);
+      border-width: 1px 1px 2px;
+
+      max-width: 60rem;
+      height: 2rem;
+      line-height: 2em;
+
+      padding: 0rem 0.6rem 0rem 0.6rem;
+
+      span {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: normal;
+        text-align: left;
+      }
+    }
+
+    a:hover {
+
+      background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
+      border: 1px solid color.adjust(base.$background-color, $alpha: -0.4);
+      border-width: 1px 1px 2px;
+    }
+  }
+
+}
+
+ul.CPS, ul.CPM, ul.CPL, ul.LST {
+  .selectedLink, .selectedLink:hover {
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.5);
+  }
+}
+

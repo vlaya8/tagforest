@@ -6,20 +6,26 @@
 
   {% if logged_in %}
     <h3>Saved groups:</h3>
+    <ul class="groupList" >
     {% for group, single_member, has_admin_permission in saved_groups %}
 	{% include "tags/blocks/group_block.html" %}
     {% endfor %}
+    </ul>
 
     <h3>Joined groups:</h3>
+    <ul class="groupList" >
     {% for group, single_member, has_admin_permission in joined_groups %}
 	{% include "tags/blocks/group_block.html" %}
     {% endfor %}
+    </ul>
   {% endif %}
 
   <h3>Public listed groups:</h3>
+  <ul class="groupList" >
   {% for group, single_member, has_admin_permission in listed_groups %}
       {% include "tags/blocks/group_block.html" %}
   {% endfor %}
+  </ul>
 
   {% if logged_in %}
     <article>

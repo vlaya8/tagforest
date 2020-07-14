@@ -17,8 +17,8 @@ from notifications.models import Notification
 
 from ..exceptions import UserError, FormError, LoginRequired, UserPermissionError
 from ..models import Entry,Tag,Tree
-from ..models import TreeUserGroup, Role, Member
-from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm
+from ..models import TreeUserGroup, Role, Member, ENTRY_DISPLAY_CHOICES_STR
+from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm, TreeParamForm
 from .utilities import *
 
 import json
@@ -187,37 +187,44 @@ class BaseTreeView(BaseView):
                 delete_form.fields['name'].widget = forms.HiddenInput()
                 tree_ids.append(tree.id)
 
-                tree_list.append((tree.name, tree.id, TreeForm(initial=add_data), delete_form, (tree == self.current_tree)))
+                tree_list.append((tree, TreeForm(initial=add_data), delete_form, ))
 
             context.update({
                         'tree_add_form': tree_add_form,
-                        'tree_bar_data': json.dumps({'nb_trees': len(tree_list), 'tree_ids': tree_ids}),
+                        'tree_ids': tree_ids,
+                        'nb_trees': len(tree_list),
                       })
+
+            if self.current_tree != None:
+                tree_param_form = TreeParamForm(initial={'name': self.current_tree.name,
+                                                         'description': self.current_tree.description,
+                                                         'default_entry_display': self.current_tree.entry_display,
+                })
+                context.update({'tree_param_form': tree_param_form})
         else:
 
             tree_list = []
             for tree in Tree.objects.filter(group__id=self.group.id):
-                tree_list.append((tree.name, tree.id, None, None, (tree == self.current_tree)))
+                tree_list.append((tree, None, None))
 
-        if self.current_tree == None:
-            current_tree_id = SpecialID['NONE']
-        else:
-            current_tree_id = self.current_tree.id
-
-        if self.group.name == request.user.username:
-            current_page = 'personal_tree'
-        else:
-            current_page = 'groups'
+        if self.current_tree != None:
+            context.update({
+                'entry_display_choices': [{'text': ENTRY_DISPLAY_CHOICES_STR[k], 'value': k} for k in ENTRY_DISPLAY_CHOICES_STR],
+                'initial_entry_display': self.current_tree.entry_display
+            })
 
         if request.user.is_authenticated:
             context.update({
                         'saved_group': request.user.profile.saved_groups.filter(pk=self.group.id).exists(),
                       })
 
+        current_tree_id = SpecialID['NONE'] if (self.current_tree == None) else self.current_tree.id
+        current_page = 'personal_tree' if (self.group.name == request.user.username) else 'groups'
+
         context.update({
                     'tree_list': tree_list,
                     'group': self.group,
-                    'current_tree_id': current_tree_id,
+                    'current_tree': self.current_tree,
                     'has_tree': (current_tree_id > 0),
                     'single_member': self.group.single_member,
                     'current_page': current_page,
@@ -231,7 +238,28 @@ class BaseTreeView(BaseView):
         self.redirect_kwargs['group_name'] = self.group.name
         self.redirect_url = 'tags:view_tree'
 
-        if 'tree_form' in request.POST:
+        if 'tree_param_form' in request.POST:
+            if not self.group.has_write_permission_for(request.user):
+                raise PermissionDenied("You don't have permission to edit in this group")
+
+            form = TreeParamForm(request.POST)
+
+            if form.is_valid():
+
+                tree_name = form.cleaned_data['name']
+                tree_description = form.cleaned_data['description']
+                entry_display = form.cleaned_data['default_entry_display']
+
+                self.current_tree.name = tree_name
+                self.current_tree.description = tree_description
+                self.current_tree.entry_display = entry_display
+
+                self.current_tree.save()
+
+            else:
+                self.redirect_url = 'tags:index'
+
+        elif 'tree_form' in request.POST:
             if not self.group.has_write_permission_for(request.user):
                 raise PermissionDenied("You don't have permission to edit in this group")
 

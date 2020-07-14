@@ -6,31 +6,52 @@
 {% block content %}
 {{ block.super }}
 
+  {% if has_tree %}
+
+  <div id="tree_description_app" class="markdown" >
+  <p><vue-markdown>{{ current_tree.description}}</vue-markdown></p>
+  </div>
+
   <!-- VueJS tag select app -->
-  <div id="tag_select_app">
+  <ul class="tagList" id="tag_select_app" >
     {% for tag_count, tag_name, selected_tags in tag_list %}
       {% include "tags/blocks/tag_block.html" with url_args=selected_tags %}
     {% endfor %}
-  </div>
-
-  <br/><br/>
+  </ul>
 
   <!-- Entries -->
-  {% for entry in entry_list %}
-    {% include "tags/blocks/entry_block.html" %}
-  {% endfor %}
+  <div id="entry_list_app" >
 
-  {% if has_tree %}
-  {% if has_writer_permission %}
-  <br/><br/>
-  <a href="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree_id %}" class="buttonLink" ><i class="fa fa-plus"></i></a>
+    {% include "tags/blocks/entry_manipulation.html" with position="top" %}
+
+    {{ entry_titles|json_script:"entryTitles"}}
+    <ul v-bind:class="entryDisplayShare.entryDisplay" >
+    {% for entry in entry_list %}
+      <li>
+	<a v-if="selectMode" @click="toggleEntry({{entry.id}})" v-bind:class="entryClass({{entry.id}})" >
+          <span v-html="entryTitle({{ entry.id }})" ></span>
+	</a>
+	<a v-if="!selectMode" href="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree.id entry_id=entry.id %}" class="buttonLink" >
+          <span v-html="entryTitle({{ entry.id }})" ></span>
+	</a>
+      </li>
+    {% endfor %}
+    </ul>
+
+    {% include "tags/blocks/entry_manipulation.html" with position="bottom" %}
+
+  </div>
   {% endif %}
-  {% endif %}
+
+  <br/>
 
 {% endblock %}
 
 {% block script_includes %}
 {{ block.super }}
   <!-- VueJS Script include -->
+  <script src="{% static 'tags/vue-markdown.js' %}"></script>
+  <script src="{% static 'tags/tree_description.js' %}"></script>
   <script src="{% static 'tags/tag_select.js' %}"></script>
+  <script src="{% static 'tags/entry_list.js' %}"></script>
 {% endblock %}

@@ -12,6 +12,10 @@
   <div class="separator"> </div>
   <a href="{% url 'tags:view_tree' group_name=link_user.username %}">Personal Group</a>
   {% endif %}
+  {% if has_edit_permission %}
+  <div class="separator"> </div>
+  <a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a>
+  {% endif %}
 </h1>
 
 <h3>Personal group visibility settings</h3>

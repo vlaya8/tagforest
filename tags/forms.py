@@ -1,5 +1,7 @@
 from django import forms
-from .models import Role, TreeUserGroup, PUBLIC_CHOICES, PUBLIC_CHOICES_ORDER, PUBLIC_CHOICES_STR_SENTENCE
+from .models import Role, TreeUserGroup
+from .models import PUBLIC_CHOICES, PUBLIC_CHOICES_ORDER, PUBLIC_CHOICES_STR_SENTENCE
+from .models import ENTRY_DISPLAY_CHOICES
 from django.contrib.auth.models import User
 
 def parse_tag(tags_string):
@@ -120,3 +122,29 @@ class MemberInvitationForm(forms.Form):
             raise forms.ValidationError("{} is already in {}".format(name, self.group))
 
         return cleaned_data
+
+class TreeParamForm(forms.Form):
+
+    name = forms.CharField(label = "Name", max_length=255)
+    description = forms.CharField(label = "Description", widget=forms.Textarea, required=False)
+
+    default_entry_display = forms.ChoiceField(
+                                      label = "Default entry display",
+                                      choices = ENTRY_DISPLAY_CHOICES,
+    )
+
+class ManipulateEntriesForm(forms.Form):
+
+    entries = forms.CharField(widget=forms.HiddenInput())
+
+    def clean_entries(self):
+        cleaned_data = super().clean()
+        entries = cleaned_data.get("entries")
+
+        try:
+            entries_ids = list(map(lambda x: int(x), entries.split(";")))
+        except ValueError:
+            raise forms.ValidationError("Error when selecting entries")
+
+        return entries_ids
+

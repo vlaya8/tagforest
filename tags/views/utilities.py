@@ -37,8 +37,28 @@ def get_selected_tag_list(request):
 # Generate all the elements to be displayed in the tag list
 def get_tag_list(group, tree_id, selected_tags):
     tag_list = []
+    tag_set = set()
+    first_iter = True
 
-    for tag in Tag.objects.filter(tree__id=tree_id).filter(group__id=group.id):
+    for tag_name in selected_tags:
+        tag_query = Tag.objects.filter(tree__id=tree_id).filter(group__id=group.id).filter(name=tag_name)
+        current_tag_set = set()
+
+        if tag_query.exists():
+            tag = tag_query.first()
+            for entry in tag.entry_set.all():
+                current_tag_set.update([entry_tag for entry_tag in entry.tags.all()])
+
+        if first_iter:
+            tag_set = current_tag_set
+            first_iter = False
+        else:
+            tag_set &= current_tag_set
+
+    if len(selected_tags) == 0:
+        tag_set = [tag for tag in Tag.objects.filter(tree__id=tree_id).filter(group__id=group.id)]
+
+    for tag in tag_set:
 
         tag_name = tag.name
         tag_count = tag.entry_set.count()

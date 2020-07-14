@@ -1,3 +1,7 @@
+/*
+ * Source: https://github.com/vue-bulma/click-outside#readme
+ */
+
 function validate(binding) {
   if (typeof binding.value !== 'function') {
     console.warn('[Vue-click-outside:] provided expression', binding.expression, 'is not a function.')

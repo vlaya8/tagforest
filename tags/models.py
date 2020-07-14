@@ -28,6 +28,20 @@ PUBLIC_CHOICES_ORDER = {
 
 PUBLIC_CHOICES = [(choice, PUBLIC_CHOICES_STR[choice]) for choice in PUBLIC_CHOICES_STR]
 
+ENTRY_DISPLAY_COMPACT_SMALL = 'CPS'
+ENTRY_DISPLAY_COMPACT_MEDIUM = 'CPM'
+ENTRY_DISPLAY_COMPACT_LARGE = 'CPL'
+ENTRY_DISPLAY_LIST = 'LST'
+
+ENTRY_DISPLAY_CHOICES_STR = {
+                        ENTRY_DISPLAY_COMPACT_SMALL: "Compact (small)",
+                        ENTRY_DISPLAY_COMPACT_MEDIUM: "Compact (medium)",
+                        ENTRY_DISPLAY_COMPACT_LARGE: "Compact (large)",
+                        ENTRY_DISPLAY_LIST: "List",
+}
+
+ENTRY_DISPLAY_CHOICES = [(choice, ENTRY_DISPLAY_CHOICES_STR[choice]) for choice in ENTRY_DISPLAY_CHOICES_STR]
+
 ## Groups
 
 # Can represent a group of users or a single user
@@ -38,6 +52,7 @@ class TreeUserGroup(models.Model):
         return self.name
 
     name = models.CharField('name', max_length=255, unique=True)
+
     single_member = models.BooleanField()
 
     listed_to_public = models.CharField(
@@ -122,6 +137,13 @@ class Tree(models.Model):
 
     name = models.CharField('name', max_length=255)
     group = models.ForeignKey(TreeUserGroup, on_delete=models.CASCADE, null=True)
+    description = models.TextField('description', default="", blank=True)
+
+    entry_display = models.CharField(
+            max_length=3,
+            choices=ENTRY_DISPLAY_CHOICES,
+            default=ENTRY_DISPLAY_COMPACT_LARGE,
+    )
 
     class Meta:
         unique_together = ('name', 'group')

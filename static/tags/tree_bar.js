@@ -1,20 +1,49 @@
+const treeIds = JSON.parse(document.getElementById('treeIds').textContent);
+const nbTrees = JSON.parse(document.getElementById('nbTrees').textContent);
+const initialEntryDisplay = JSON.parse(document.getElementById('initialEntryDisplay').textContent);
+const entryDisplayChoices = JSON.parse(document.getElementById('entryDisplayChoices').textContent);
+
+const entryDisplayShare = {
+  entryDisplay:null
+};
+
 var tree_bar_app = new Vue({
   delimiters: ['[[', ']]'],
   el: '#tree_bar_app',
   data: {
+    treeParamDropdown: false,
+    treeParam: false,
     addMode: false,
     editMode: false,
     viewMode: true,
-    tree_bar_data: {},
+    treeBarData: {},
     editTree: {},
+    entryDisplayChoices: {},
+    entryDisplayShare,
+  },
+  beforeMount: function() {
+    var entryDisplayData;
+
+    for(i = 0; i < nbTrees; i++) {
+      Vue.set(this.editTree, treeIds[i], false);
+    }
+
+    this.entryDisplayShare.entryDisplay = initialEntryDisplay;
+
+    this.entryDisplayChoices = entryDisplayChoices;
   },
   methods: {
-    beforeMount: function() {
-      this.tree_bar_data = JSON.parse(document.getElementsByTagName('body')[0].getAttribute('tree_bar_data') || '{}' );
-      for(i = 0; i < this.tree_bar_data['nb_trees']; i++) {
-	Vue.set(this.editTree, this.tree_bar_data['tree_ids'][i], false);
-      }
+
+    toggleTreeParamDropdown: function () {
+    	this.treeParamDropdown = !this.treeParamDropdown
     },
+    showTreeParam: function () {
+    	this.treeParam = true
+    },
+    hideTreeParam: function () {
+    	this.treeParam = false
+    },
+
     enterAddMode: function() {
       this.addMode = true;
       this.viewMode = false;
@@ -33,8 +62,8 @@ var tree_bar_app = new Vue({
     },
 
     enterEditTree: function(tree_id) {
-      for(i = 0; i < this.tree_bar_data['nb_trees']; i++) {
-	Vue.set(this.editTree, this.tree_bar_data['tree_ids'][i], false);
+      for(i = 0; i < nbTrees; i++) {
+	Vue.set(this.editTree, treeIds[i], false);
       }
       Vue.set(this.editTree, tree_id, true);
     },

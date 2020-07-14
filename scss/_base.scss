@@ -7,32 +7,61 @@ $header-color: #543864;     // Lighter purple
 $font-color: #DDDDDD;       // Gray
 $highlight-color: #FF6363;  // Red
 $light-highlight-color: color.adjust($background-color, $lightness: 10);
+$border-color: #3584e4;
 
-html, body {
-  height: 100%;
+$footer-height: 4rem;
+
+#bodyContent {
+  width: 80%;
+  margin: auto;
 }
 
-body {
-  width: 70%;
+@media screen and (max-width: 1700px) {
+  #bodyContent {
+    width: 85%;
+  }
 }
-@media screen and (max-width: 1000px) {
-  body {
+@media screen and (max-width: 1600px) {
+  #bodyContent {
     width: 90%;
   }
 }
-@media screen and (max-width: 800px) {
-  body {
+@media screen and (max-width: 1500px) {
+  #bodyContent {
+    width: 95%;
+  }
+}
+@media screen and (max-width: 1280px) {
+  #bodyContent {
     width: 100%;
   }
+}
+
+body, html {
+  padding: 0rem;
+  margin: 0rem;
+  overflow-x: hidden;
 }
 
 body {
   color: $font-color;
   font-family: $font-stack;
   background-color: $background-color;
-  margin: auto;
 }
 
-.bodyBlock {
-  display: block;
+#bodyBlock {
+  position: relative;
+  min-height: 100vh;
+}
+
+#bodyWrap {
+  padding-bottom: $footer-height;    /* Footer height */
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  height: $footer-height;            /* Footer height */
+  width: 100%;
+  box-sizing: border-box;
 }

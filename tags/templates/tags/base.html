@@ -8,57 +8,73 @@
     <title>Tagforest - {% block title %}{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'tags/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'tags/forms.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'tags/entry.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'tags/markdown.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
 
-  <nav><!--
-    --><h1><a href="{% url 'tags:index' %}" >Tagforest</a></h1><!--
-    --><a href="{% url 'tags:view_groups' %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>Groups</a><!--
-    {% if logged_in %}
-      --><a href="{% url 'tags:index' %}" {% if current_page == 'personal_tree' %}class="activeLink" {% endif %}>Personal Trees</a><!--
-      --><a href="{% url 'tags:profile' username=username %}" {% if current_page == 'profile' %}class="activeLink" {% endif %}>{{ username }}</a><!--
-      --><a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}" {% if current_page == 'logout' %}class="activeLink" {% endif %}>Logout</a><!--
-    {% else %}
-      --><a href="{% url 'tags:login' %}?next={% url 'tags:index' %}" {% if current_page == 'login' %}class="activeLink" {% endif %}>Login</a><!--
-    {% endif %}
-    -->{% block nav_menu_tree_links %}{% endblock %}<!--
+  <body>
+    <div id="bodyBlock" >
 
+      <div id="bodyWrap" >
+        <nav>
+          <ul>
+          <li><h1><a href="{% url 'tags:index' %}" >Tagforest</a></h1></li><!--
+          --><li><a href="{% url 'tags:view_groups' %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>Groups</a></li><!--
+          {% if logged_in %}
+            --><li><a href="{% url 'tags:index' %}" {% if current_page == 'personal_tree' %}class="activeLink" {% endif %}>Personal Trees</a></li><!--
+            --><li><a href="{% url 'tags:profile' username=username %}" {% if current_page == 'profile' %}class="activeLink" {% endif %}>{{ username }}</a></li><!--
+          {% else %}
+            --><li><a href="{% url 'tags:login' %}?next={% url 'tags:index' %}" {% if current_page == 'login' %}class="activeLink" {% endif %}>Login</a></li><!--
+          {% endif %}
+          {% block nav_menu_tree_links %}{% endblock %}
 
-    {% if logged_in %}
-      --><div class="alignRight"><div id="notification_menu_app" class="dropdown">
-	<button v-click-outside="hide" @click="toggle" >
-	  {% if new_notification_count %}
-	    <b><i class="fa fa-bell"></i></b>
-	    <div class="notificationCount"><b>{{ new_notification_count }}</b></div>
-	  {% else %}
-	    <i class="fa fa-bell"></i>
-	  {% endif %}
-	</button>
-	<div v-if="showMenu" class="dropdown-content" >
-	  {% if new_notification_count %}
-	    <h1>Notifications:</h1>
-	    {% for message, notification_id in new_notifications %}
-	      <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a>
-	    {% endfor %}
-	  {% else %}
-	    <a href="">No new notifications</a>
-	  {% endif %}
-	  <a href="{% url 'tags:view_notifications' %}"><b>View all notifications</b></a>
-	</div>
-      </div></div><!--
-    {% endif %}
+          --><li><a href="{% url 'tags:about' %}" {% if current_page == 'about' %}class="activeLink" {% endif %}>About</a></li><!--
+   
+          {% if logged_in %}
+            --><li>
+            <div class="alignRight"><div id="notification_menu_app" class="dropdown">
+              <button v-click-outside="hide" @click="toggle" >
+                {% if new_notification_count %}
+                  <b><i class="fa fa-bell"></i></b>
+                  <div class="notificationCount"><b>{{ new_notification_count }}</b></div>
+                {% else %}
+                  <i class="fa fa-bell"></i>
+                {% endif %}
+              </button>
+              <div v-if="showMenu" class="dropdown-content notificationDropdown" >
+                {% if new_notification_count %}
+                  <h1>Notifications:</h1>
+                  {% for message, notification_id in new_notifications %}
+                    <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a>
+                  {% endfor %}
+                {% else %}
+                  <a href="">No new notifications</a>
+                {% endif %}
+                <a href="{% url 'tags:view_notifications' %}"><b>View all notifications</b></a>
+              </div>
+            </div></div>
+            </li><!--
+          {% endif %}
 
-    --><a href="{% url 'tags:about' %}" {% if current_page == 'about' %}class="activeLink" {% endif %}>About</a><!--
-  --></nav>
+	  --></ul>
 
-  {% block nav_content %}
-  {% endblock %}
+        </nav>
 
-  <body {% block body_data %}{% endblock %} >
-    <div class="bodyBlock">
-    {% block content %}
-    {% endblock %}
+        {% block nav_content %}
+        {% endblock %}
+
+        <div id="bodyContent" >
+        {% block content %}
+        {% endblock %}
+        </div>
+      </div>
+
+      <footer>
+        v1.4.1 - <a class="buttonLink" href="https://github.com/vlaya8/tagforest" >Tagforest Github</a> - 
+        <a class="buttonLink" href="{%url 'tags:about' %}">About</a>
+      </footer>
+
     </div>
 
     {% block script_includes %}
@@ -70,10 +86,6 @@
 
   </body>
   
-  <footer>
-    v1.4.1 - <a class="buttonLink" href="https://github.com/vlaya8/tagforest" >Tagforest Github</a> - 
-    <a class="buttonLink" href="{%url 'tags:about' %}">About</a>
-  </footer>
 
 
 </html>

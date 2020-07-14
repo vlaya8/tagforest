@@ -18,9 +18,11 @@ from notifications.models import Notification
 from ..exceptions import UserError, FormError, LoginRequired, UserPermissionError
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
-from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm
+from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm, ManipulateEntriesForm
 from .utilities import *
 from .base_views import *
+
+import json
 
 def handler404(request, exception):
 
@@ -420,9 +422,14 @@ class ViewTreeView(BaseTreeView):
             entry_list = []
             tag_list = []
 
+        entry_titles = {entry.pk: entry.name for entry in entry_list}
+
         context.update({
                     'entry_list': entry_list,
+                    'entry_titles': json.dumps(entry_titles),
                     'tag_list': tag_list,
+                    'selected_entries_form': ManipulateEntriesForm(initial={"entries": ""}),
+                    'quick_add_form': EntryForm(initial={"entry_id": SpecialID['NEW_ID']}),
                   })
 
         return context
@@ -432,11 +439,50 @@ class ViewTreeView(BaseTreeView):
         super().process_post(request, **kwargs)
 
         # Process an entry which got deleted
-        if 'delete_entry_id' in request.POST:
-            entry_id = int(request.POST['delete_entry_id'])
+        if 'delete_entries' in request.POST:
 
-            entry = get_object_or_404(Entry, pk=entry_id)
-            entry.delete()
+            form = ManipulateEntriesForm(request.POST)
+
+            if form.is_valid():
+
+                entries_ids = form.cleaned_data['entries']
+
+                for pk in entries_ids:
+                    entry = get_object_or_404(Entry, pk=pk)
+                    entry.delete()
+
+            else:
+                raise FormError({'selected_entries_form': form})
+
+        # Process an entry got added
+        if 'add_entry' in request.POST:
+
+            form = EntryForm(request.POST)
+
+            if form.is_valid():
+
+                entry_name = form.cleaned_data['name']
+                entry_id = form.cleaned_data['entry_id']
+
+                entry = Entry.objects.create(name=entry_name, tree=self.current_tree, added_date=timezone.now(), group=self.group)
+
+                tags_name = parse_tags(form.cleaned_data['tags'])
+
+                for tag_name in tags_name:
+
+                    tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree=self.current_tree, group=self.group)
+                    tag_obj.save()
+
+                    entry.tags.add(tag_obj)
+
+                entry.save()
+            else:
+                raise FormError({'quick_add_form': form})
+
+        self.redirect_url = 'tags:view_tree'
+        self.redirect_kwargs['group_name'] = self.group.name
+        self.redirect_kwargs['tree_id'] = self.current_tree.id
+
 
 class ViewEntryView(BaseTreeView):
 
@@ -475,7 +521,7 @@ class UpsertEntryView(BaseTreeView):
 
             tags = ",".join([tag.name for tag in entry.tags.filter(group__id=self.group.id)])
             data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
-        # If user wants to add a group
+        # If user wants to add an entry
         else:
             data = {"entry_id": SpecialID['NEW_ID']}
 

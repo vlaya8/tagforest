@@ -1,89 +1,18 @@
 @use 'base';
 @use "sass:color";
 
-a:hover {
-  cursor: pointer;
-}
-
-html {
-  font-size: 130%;
-}
-
 $nav-bar-link-padding: 0rem;
 $nav-bar-height: 2.3rem;
 $nav-bar-padding: 0.9rem;
 $nav-bar-button-padding: 1.7rem;
 
-
-/*
- * Dropdown menu
- */
-
-$dropdown-width: 20rem;
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-  i {
-    font-size: 150%;
-  }
+html {
+  font-size: 120%;
 }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-
-  background-color: color.adjust(base.$header-color, $alpha: 0);
-  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
-  border-width: 1px 1px 3px;
-
-  width: $dropdown-width;
-  right: 0;
-
-  top: $nav-bar-height + 2 * $nav-bar-padding;
-
-  a, h1 {
-    padding-left: 0.8rem;
-    padding-right: 0rem;
-    display: block;
-    font-size: 80%;
-    font-weight: normal;
-    width: $dropdown-width - 0.8rem;
-  }
-
-  a:nth-of-type(odd) {
-    background-color: color.adjust(base.$header-color, $hue: 0.35);
-  }
-
-  h1 {
-    padding-top: 0.5rem;
-    padding-bottom: 0.2rem;
-    font-weight: bold;
-  }
-
-}
-
-.dropdown .dropdown-content {
-  display: block;
-}
-
-.notificationCount {
-  position: Absolute;
-
-  background-color: base.$highlight-color;
-  border-radius: 0.25rem;
-
-  top: $nav-bar-height / 2 + 0.75rem;
-  left: $nav-bar-height / 2 + 1.3rem;
-  padding-left: 0.25rem;
-  padding-right: 0.35rem;
-  padding-top: 0.10rem;
-  padding-bottom: 0.10rem;
-  line-height: normal;
-
-  font-size: 90%;
+button {
+  border: none;
+  cursor: pointer;
 }
 
 a {
@@ -91,6 +20,9 @@ a {
   color: base.$font-color;
   text-decoration: none;
   font-weight: bold;
+}
+a:hover {
+  cursor: pointer;
 }
 
 %link-block {
@@ -105,11 +37,6 @@ a {
   background-color: color.adjust(base.$background-color, $lightness: 5);
 }
 
-// Adjust icons to be aligned with the text
-.iconLink {
-  padding-top: 0.37em;
-}
-
 %link-block:hover {
   background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
 }
@@ -118,62 +45,17 @@ a {
   background-color: color.adjust(base.$background-color, $lightness: 20);
 }
 
+// Adjust icons to be aligned with the text
+.iconLink {
+  padding-top: 0.37em;
+}
+
 .buttonLink {
   @extend %link-block;
 }
 
-.buttonLink:visited {
-}
-
 .buttonLink:active {
   background-color: color.adjust(base.$highlight-color, $hue: 10);
-}
-
-h1, footer {
-  background-color: base.$header-color;
-  padding: 0.7rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
-  border-width: 1px 1px 3px;
-  font-size: 125%;
-}
-
-.separator {
-  display: inline;
-  border-left: 1px solid color.adjust(base.$header-color, $lightness: 10);
-  margin: 1rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-h1 a {
-  display: inline-block;
-
-  background-color: color.adjust(base.$header-color, $lightness: 5);
-  padding: 0.5rem;
-  margin-left: 0.2rem;
-  margin-right: 0.2rem;
-  line-height: initial;
-}
-
-h1 a:hover {
-  background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
-}
-
-@for $i from 2 through 6 {
-
-  h#{$i} {
-    background-color: color.adjust(base.$background-color, $lightness: 3);
-    padding: 0.5rem;
-    border: 1px solid color.adjust(base.$background-color, $lightness: 5);
-    border-width: 1px 1px 3px;
-  }
-}
-
-article {
-  margin-top: 0.2rem;
-  margin-bottom: 0.2rem;
 }
 
 .inlineDeleteForm {
@@ -204,44 +86,34 @@ article {
 
 p {
   padding-bottom: 0.5rem;
+  padding: 0rem;
 }
 
-.dialogBox {
-  position: absolute;
-  display: block;
-  z-index: 1;
-  left: 50%;
-  top: 50%;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translateX(-50%) translateY(-50%);
-  -moz-transform: translateX(-50%) translateY(-50%);
-  -ms-transform: translateX(-50%) translateY(-50%);
-  transform: translateX(-50%) translateY(-50%);
+/* Navigation bar */
 
-  padding: 2rem;
-
-  background-color: color.adjust(base.$header-color, $lightness: 5);
-  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
-  border-width: 1px 1px 3px;
-
-  -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
-  -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
-  box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
-}
-
-.errorMessage {
-  font-weight: bold;
-  color: base.$highlight-color;
-}
-
-nav {
+nav, .optionBar {
   background-color: base.$header-color;
   border: 1px solid color.adjust(base.$header-color, $lightness: 10);
   border-width: 1px 1px 3px;
-  margin-bottom: 1rem;
   font-size: 120%;
 
+  ul {
+    list-style-type: none;
+    display: inline;
+    padding: 0rem;
+    margin: 0rem;
+  }
+  ul li {
+    display: inline;
+    padding: 0rem;
+    margin: 0rem;
+  }
+
+  i {
+    font-size: 130%;
+  }
+
+  /* Navigation links */
   h1, a, input, button, .linkLike {
     color: base.$font-color;
     display: inline-block;
@@ -267,11 +139,13 @@ nav {
     padding-right: $nav-bar-button-padding - 2*$nav-bar-link-padding;
     padding-left: $nav-bar-button-padding - 2*$nav-bar-link-padding;
   }
+
   h1 a, h1 a:hover {
     padding: $nav-bar-link-padding;
     background-color: initial;
     border: initial;
   }
+
   .linkLike {
 
     padding-right: 0.3rem;
@@ -281,48 +155,77 @@ nav {
       margin-right: 0.4rem;
     }
   }
+
   a:hover, input[type=submit]:hover, button:hover {
     cursor: pointer;
     background-color: color.adjust(base.$highlight-color, $alpha: -0.73);
   }
+
+  .largeButton {
+    padding-left: 1.3rem;
+    padding-right: 1.3rem;
+    font-size: 85%;
+  }
+
   .thinButton {
     padding-left: 0.8rem;
     padding-right: 0.8rem;
+    font-size: 85%;
   }
-  .mediumButton {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  .innerButton {
-    padding: 0.4rem;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
 
-    margin: 0.1rem;
+  .mediumButton {
+
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+    font-size: 85%;
+  }
+
+  .innerButton {
+
+    font-size: 80%;
+
+    margin: 0rem;
+    padding: 0rem;
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
 
     display: inline;
     background-color: transparent;
     z-index: 10;
     border: none;
 
-    background-color: color.adjust(base.$highlight-color, $alpha: -0.93);
     border-radius: 0.3rem;
   }
-  form.innerButton {
+  .innerButton:hover {
     background-color: transparent;
-  }
-  .innerButton button {
-    margin: 0rem;
-    padding: 0rem;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
+    color: color.adjust(base.$highlight-color, $alpha: -0.10);
   }
 
   .alignRight {
     float: right;
   }
+
   .activeLink {
     background-color: color.adjust(base.$highlight-color, $alpha: -0.70);
+  }
+
+  label {
+    margin-right: 1rem;
+  }
+
+  .select {
+    width: 6rem;
+    margin: 0rem;
+  }
+}
+
+.optionBar {
+  font-size: 100%;
+
+  .linkLike {
+    padding: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 }
 
@@ -332,11 +235,261 @@ ul {
   }
 }
 
+ul.entryList, ul.tagList, ul.groupList {
+
+  list-style-type: none;
+  padding: 0rem;
+  margin-bottom: 2rem;
+
+  li {
+    list-style: none;
+
+    margin: 0rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
+
+}
+
+/* Headers */
+
+h1, footer {
+  background-color: base.$header-color;
+  padding: 0.7rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+  font-size: 125%;
+
+  .separator {
+    display: inline;
+    border-left: 1px solid color.adjust(base.$header-color, $lightness: 10);
+    margin: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
 footer {
   font-size: 100%;
-  margin-top: 2rem;
-  float: bottom;
   .buttonLink {
     background-color: base.$header-color;
   }
 }
+
+h1 {
+  a {
+    display: inline-block;
+
+    background-color: color.adjust(base.$header-color, $lightness: 5);
+    padding: 0.5rem;
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+    line-height: initial;
+  }
+  a:hover {
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.7);
+  }
+}
+
+@for $i from 2 through 6 {
+
+  h#{$i} {
+    background-color: color.adjust(base.$background-color, $lightness: 3);
+    padding: 0.5rem;
+    border: 1px solid color.adjust(base.$background-color, $lightness: 5);
+    border-width: 1px 1px 3px;
+  }
+}
+
+/* Dialog Box */
+
+.dialogBox {
+  position: absolute;
+  display: block;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+
+  padding: 2rem;
+
+  background-color: color.adjust(base.$header-color, $lightness: 5);
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+
+  -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+}
+
+/* Error Message */
+
+.errorMessage {
+  font-weight: bold;
+  color: base.$highlight-color;
+}
+
+/* Dropdown Menu */
+
+$dropdown-width: 20rem;
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  i {
+    font-size: 150%;
+  }
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+
+  background-color: color.adjust(base.$header-color, $alpha: 0);
+  border: 1px solid color.adjust(base.$header-color, $lightness: 10);
+  border-width: 1px 1px 3px;
+
+  width: $dropdown-width;
+  right: 0;
+
+  top: $nav-bar-height + 2 * $nav-bar-padding;
+}
+
+.notificationDropdown {
+  a, h1 {
+    padding-left: 0.8rem;
+    padding-right: 0rem;
+    display: block;
+    font-size: 80%;
+    font-weight: normal;
+    width: $dropdown-width - 0.8rem;
+  }
+
+  a:nth-of-type(odd) {
+    background-color: color.adjust(base.$header-color, $hue: 0.35);
+  }
+
+  h1 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.2rem;
+    font-weight: bold;
+  }
+}
+
+.dropdown .dropdown-content {
+  display: block;
+}
+
+.notificationCount {
+  position: Absolute;
+
+  background-color: base.$highlight-color;
+  border-radius: 0.25rem;
+
+  top: $nav-bar-height / 2 + 0.75rem;
+  left: $nav-bar-height / 2 + 1.3rem;
+  padding-left: 0.25rem;
+  padding-right: 0.35rem;
+  padding-top: 0.10rem;
+  padding-bottom: 0.10rem;
+  line-height: normal;
+
+  font-size: 90%;
+}
+
+.treeParamDropdown {
+  font-size: 75%;
+  width: 10rem;
+  padding: 0.8rem;
+  a {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 0.6rem;
+
+    width: 100%;
+
+    background-color: color.adjust(base.$header-color, $lightness: 4);
+    border: none;
+    line-height: initial;
+  }
+  a:hover {
+    background-color: color.adjust(base.$highlight-color, $alpha: -0.9);
+    border: none;
+  }
+  form {
+
+    label {
+      padding-left: 0.4rem;
+      padding-bottom: 0.6rem;
+    }
+
+    width: 100%;
+    box-sizing: border-box;
+
+    .select {
+    	width: 100%;
+    	box-sizing: border-box;
+    }
+    select {
+    	background-color: color.adjust(base.$header-color, $lightness: 4);
+    }
+    select:hover {
+    	background-color: color.adjust(base.$highlight-color, $alpha: -0.9);
+    }
+  }
+}
+
+.treeParamBox {
+  font-size: 100%;
+
+  width: 60%;
+
+  position: absolute;
+  display: block;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+
+  padding: 2rem;
+
+  background-color: color.adjust(base.$background-color, $lightness: 0);
+  border: 1px solid color.adjust(base.$background-color, $lightness: 3);
+  border-width: 1px 1px 3px;
+  border-radius: 1rem;
+
+  -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+  box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
+
+  z-index: 999;
+}
+
+.page-mask {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 998;
+}
+.disabledLink, .disabledLink:hover {
+  cursor: default;
+  background-color: color.adjust(base.$background-color, $lightness: 2);
+}
+

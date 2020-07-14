@@ -1,0 +1,33 @@
+{% if has_writer_permission %}
+<a href="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree.id %}" class="buttonLink" ><i class="fa fa-plus"></i> Add</a>
+
+<button @click="toggleQuickAdd('{{ position }}')" class="buttonLink" ><i class="fa fa-plus"></i> Quick add</button>
+
+<button @click="toggleSelectMode()" class="buttonLink" ><i class="fa fa-dot-circle-o"></i> Select</button>
+
+<form v-if="selectMode" method="post" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" class="inlineForm">
+  {% csrf_token %}
+  <input type="hidden" name="entries" id="id_entries" v-bind:value="getSelectedEntriesIds()" >
+  <button name="delete_entries" class="buttonLink" ><i class="fa fa-trash"></i> Remove</button>
+</form>
+<button v-if="!selectMode" name="delete_entries" class="buttonLink disabledLink" ><i class="fa fa-trash"></i> Remove</button>
+
+<div class="errorMessage">{{ quick_add_form.non_field_errors }}</div>
+
+<form v-if="displayQuickAdd('{{ position }}')" class="contentForm" method="post" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" >
+{% csrf_token %}
+<ul>
+  <li>
+    <div class="errorMessage">{{ quick_add_form.name.errors }}</div>
+    {{ quick_add_form.name.label_tag }} {{ quick_add_form.name }}
+  </li>
+  <li>
+    <div class="errorMessage">{{ quick_add_form.tags.errors }}</div>
+    {{ quick_add_form.tags.label_tag }} {{ quick_add_form.tags }}
+  </li>
+  <li><button type="submit" name="add_entry" >Submit</button></li>
+</ul>
+{{ quick_add_form.entry_id }}
+</form>
+
+{% endif %}
