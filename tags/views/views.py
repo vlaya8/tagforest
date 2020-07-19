@@ -32,15 +32,33 @@ def handler500(request):
 
     return render(request,'tags/500.html')
 
-def signup(request):
-    if request.method == 'POST':
+class SignupView(BaseView):
+
+    template_name = 'tags/registration/signup.html'
+
+    def get_context_data(self, request, **kwargs):
+
+        return {
+                 'form': UserCreationForm(),
+                 'current_page': login,
+        }
+
+    def process_post(self, request, **kwargs):
+
         form = UserCreationForm(request.POST)
+
         if form.is_valid():
+
             form.save()
-            return HttpResponseRedirect(reverse('tags:index'))
-    else:
-        form = UserCreationForm()
-    return render(request, 'tags/registration/signup.html', {'form': form})
+            self.redirect_url = 'tags:signup_success'
+
+class SignupSuccessView(BaseView):
+
+    template_name = 'tags/registration/signup_success.html'
+
+    def get_context_data(self, request, **kwargs):
+
+        return {'current_page': 'login'}
 
 ## Index
 

@@ -1,0 +1,11 @@
+{% extends 'tags/base.html' %}
+
+{% block title %}Successful registration{% endblock %}
+
+{% block content %}
+
+<p>
+Registration successful, you may now <a href="{% url 'tags:login' %}?next={% url 'tags:index' %}" >login</a>.
+</p>
+
+{% endblock %}

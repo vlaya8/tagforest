@@ -47,7 +47,8 @@ urlpatterns = [
         path('accounts/', include([
             path('password_change/', views.ChangePasswordView.as_view()),
             path('login/', login_view),
-            path('signup/', views.signup, name="signup"),
+            path('signup/', views.SignupView.as_view(), name="signup"),
+            path('signup/success', views.SignupSuccessView.as_view(), name="signup_success"),
             path('', include('django.contrib.auth.urls')),
         ])),
 ]

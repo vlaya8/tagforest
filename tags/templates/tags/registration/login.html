@@ -26,6 +26,6 @@
   <input type="hidden" name="next" value="{{ next }}">
 </form>
 
-<p><a href="{% url 'tags:signup' %}">Sign Up</a></p>
+<p><a href="{% url 'tags:signup' %}?next={% url 'tags:login' %}?next={% url 'tags:index' %}">Sign Up</a></p>
 
 {% endblock %}
