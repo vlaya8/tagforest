@@ -451,6 +451,10 @@ class ViewTreeView(BaseTreeView):
                     entry = get_object_or_404(Entry, pk=pk)
                     entry.delete()
 
+                self.redirect_url = 'tags:view_tree'
+                self.redirect_kwargs['group_name'] = self.group.name
+                self.redirect_kwargs['tree_id'] = self.current_tree.id
+
             else:
                 raise FormError({'selected_entries_form': form})
 
@@ -476,12 +480,13 @@ class ViewTreeView(BaseTreeView):
                     entry.tags.add(tag_obj)
 
                 entry.save()
+
+                self.redirect_url = 'tags:view_tree'
+                self.redirect_kwargs['group_name'] = self.group.name
+                self.redirect_kwargs['tree_id'] = self.current_tree.id
+
             else:
                 raise FormError({'quick_add_form': form})
-
-        self.redirect_url = 'tags:view_tree'
-        self.redirect_kwargs['group_name'] = self.group.name
-        self.redirect_kwargs['tree_id'] = self.current_tree.id
 
 
 class ViewEntryView(BaseTreeView):
