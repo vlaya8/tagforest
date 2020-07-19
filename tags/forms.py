@@ -30,8 +30,8 @@ class TagField(forms.CharField):
 class EntryForm(forms.Form):
 
     name = forms.CharField(label = "Name", max_length=255)
-    text = forms.CharField(label = "Text", widget=forms.Textarea, required=False)
-    tags = forms.CharField(label = "Tags", max_length=255, required=False)
+    text = forms.CharField(label = "Text (markdown formatted)", widget=forms.Textarea, required=False)
+    tags = forms.CharField(label = "Tags (separated by commas: tag1,tag2,tag3...)", max_length=255, required=False)
 
     entry_id = forms.IntegerField(widget=forms.HiddenInput())
 
