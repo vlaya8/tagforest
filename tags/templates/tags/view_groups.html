@@ -18,13 +18,26 @@
 	{% include "tags/blocks/group_block.html" %}
     {% endfor %}
     </ul>
+  {% else %}
+    <p>
+      <a href="{% url 'tags:login' %}?next={% url 'tags:index' %}" >Login or sign up</a> to create trees, groups, and add tags and ressources
+    </p>
+    <p>
+      See the <a href="{% url 'tags:about' %}" >About</a> section for information on this website
+    </p>
   {% endif %}
 
   <h3>Public listed groups:</h3>
   <ul class="groupList" >
-  {% for group, single_member, has_admin_permission in listed_groups %}
-      {% include "tags/blocks/group_block.html" %}
-  {% endfor %}
+  {% if listed_groups %}
+    {% for group, single_member, has_admin_permission in listed_groups %}
+	{% include "tags/blocks/group_block.html" %}
+    {% endfor %}
+  {% else %}
+    <p>
+      There are no public groups at the moment
+    </p>
+  {% endif %}
   </ul>
 
   {% if logged_in %}
