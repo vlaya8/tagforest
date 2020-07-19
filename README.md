@@ -22,7 +22,7 @@ Django website to share and organize knowledge and ressources by classifying the
 
 ## Current state
 
-**v1.4.1 (2020/07/13)**
+**v1.5.0 (2020/07/19)**
 
 - User authentification system
 - Groups, Trees, Entries and Tags:
@@ -35,6 +35,7 @@ Django website to share and organize knowledge and ressources by classifying the
 
 ## Upcoming:
 
+- Public link generation: generate a link for a single tree or a set of trees, to have full control over what you share
 - Tag name fuzzyness: each tag has a set of names which will be considered to lead to the same tag
 - Directed Acyclic Graph (DAG) of tags: tags are related to each other through a DAG
 - More fields for each entry, and different types of tags
