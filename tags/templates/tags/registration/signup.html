@@ -6,6 +6,11 @@
 
 <p><b>Sign-up</b></p>
 
+<p>
+Passwords are hashed using <a href="https://en.wikipedia.org/wiki/PBKDF2" >PBKDF2</a>, which ensures no one can view it, even with access to the website's database<br/>
+More information on how passwords are stored can be found <a href="https://docs.djangoproject.com/en/3.0/topics/auth/passwords/" >here</a>
+</p>
+
 <form method="post" class="contentForm" >
   {% csrf_token %}
   <ul>
