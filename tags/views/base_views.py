@@ -259,6 +259,10 @@ class BaseTreeView(BaseView):
             else:
                 self.redirect_url = 'tags:index'
 
+            self.redirect_url = 'tags:view_tree'
+            self.redirect_kwargs['group_name'] = self.group.name
+            self.redirect_kwargs['tree_id'] = self.current_tree.id
+
         elif 'tree_form' in request.POST:
             if not self.group.has_write_permission_for(request.user):
                 raise PermissionDenied("You don't have permission to edit in this group")
@@ -295,8 +299,16 @@ class BaseTreeView(BaseView):
             request.user.profile.saved_groups.add(self.group)
             request.user.save()
 
+            self.redirect_url = 'tags:view_tree'
+            self.redirect_kwargs['group_name'] = self.group.name
+            self.redirect_kwargs['tree_id'] = self.current_tree.id
+
         elif 'unsave_group' in request.POST:
 
             request.user.profile.saved_groups.remove(self.group)
             request.user.save()
+
+            self.redirect_url = 'tags:view_tree'
+            self.redirect_kwargs['group_name'] = self.group.name
+            self.redirect_kwargs['tree_id'] = self.current_tree.id
 

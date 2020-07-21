@@ -22,6 +22,7 @@
   <!-- Entries -->
   <div id="entry_list_app" >
 
+    <div class="errorMessage">{{ entry_upsert_error }}</div>
     {% include "tags/blocks/entry_manipulation.html" with position="top" %}
 
     {{ entry_titles|json_script:"entryTitles"}}

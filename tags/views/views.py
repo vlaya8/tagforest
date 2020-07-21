@@ -486,6 +486,10 @@ class ViewTreeView(BaseTreeView):
                 entry_name = form.cleaned_data['name']
                 entry_id = form.cleaned_data['entry_id']
 
+                # Check if an entry with the same name in the same tree already exists
+                if Entry.objects.filter(tree=self.current_tree).filter(name=entry_name).exists():
+                    raise UserError("You already have an entry named {}".format(entry_name), "entry_upsert_error")
+
                 entry = Entry.objects.create(name=entry_name, tree=self.current_tree, added_date=timezone.now(), group=self.group)
 
                 tags_name = parse_tags(form.cleaned_data['tags'])
@@ -570,6 +574,10 @@ class UpsertEntryView(BaseTreeView):
                 entry_name = form.cleaned_data['name']
                 entry_text = form.cleaned_data['text']
                 entry_id = form.cleaned_data['entry_id']
+
+                # Check if an entry with the same name in the same tree already exists
+                if Entry.objects.filter(tree=self.current_tree).filter(name=entry_name).exists():
+                    raise UserError("You already have an entry named {}".format(entry_name), "entry_upsert_error")
 
                 # If the entry has been edited
                 if entry_id != SpecialID['NEW_ID']:

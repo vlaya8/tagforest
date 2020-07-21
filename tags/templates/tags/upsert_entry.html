@@ -11,6 +11,7 @@ Entry text can be formatted in <a href="https://www.markdownguide.org/getting-st
 Here is an example to quickly understand what markdown means: <a href="https://www.tagforest.fr/group/Examples/tree/9/entry/173/view/?" class="buttonLink" >Markdown example</a>
 </p>
 
+<div class="errorMessage">{{ entry_upsert_error }}</div>
 <form class="contentForm" action="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree.id %}" method="post">
   {% csrf_token %}
   <ul>

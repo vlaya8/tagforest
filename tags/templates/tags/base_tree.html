@@ -115,12 +115,12 @@
     Save and Remove from save Button
     {% if not single_member and logged_in %}
       {% if saved_group %}
-        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
+        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" method="post" ><!--
               -->{% csrf_token %}<!--
              --><button class="thinButton" name="unsave_group" type="submit">Remove from saved</button><!--
         --></form><!--
       {% else %}
-        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name %}" method="post" ><!--
+        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" method="post" ><!--
               -->{% csrf_token %}<!--
              --><button class="thinButton" name="save_group" type="submit">Save Group</button><!--
         --></form><!--
@@ -134,7 +134,7 @@
     <div v-if="treeParam" class="page-mask"></div>
     <div class="treeParamBox" v-if="treeParam">
       <h2>Tree Parameters</h2>
-      <form class="contentForm" method="post">
+      <form class="contentForm" method="post" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" >
 	{% csrf_token %}
 	<div class="errorMessage">{{ tree_param_form.non_field_errors }}</div>
 	<ul>
