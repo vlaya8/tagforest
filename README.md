@@ -22,7 +22,7 @@ Django website to share and organize knowledge and ressources by classifying the
 
 ## Current state
 
-**v1.5.6 (2020/07/19)**
+**v1.5.7 (2020/07/21)**
 
 - User authentification system
 - Groups, Trees, Entries and Tags:

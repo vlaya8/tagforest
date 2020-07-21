@@ -115,12 +115,12 @@
     Save and Remove from save Button
     {% if not single_member and logged_in %}
       {% if saved_group %}
-        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" method="post" ><!--
+    --><form class="alignRight" action="{% if has_tree %}{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}{% else %}{% url 'tags:view_tree' group_name=group.name %}{% endif %}" method="post" ><!--
               -->{% csrf_token %}<!--
              --><button class="thinButton" name="unsave_group" type="submit">Remove from saved</button><!--
         --></form><!--
       {% else %}
-        --><form class="alignRight" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" method="post" ><!--
+        --><form class="alignRight" action="{% if has_tree %}{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}{% else %}{% url 'tags:view_tree' group_name=group.name %}{% endif %}" method="post" ><!--
               -->{% csrf_token %}<!--
              --><button class="thinButton" name="save_group" type="submit">Save Group</button><!--
         --></form><!--
