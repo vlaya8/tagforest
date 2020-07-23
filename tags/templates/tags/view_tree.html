@@ -29,11 +29,14 @@
     <ul v-bind:class="entryDisplayShare.entryDisplay" >
     {% for entry in entry_list %}
       <li>
-	<a v-if="selectMode" @click="toggleEntry({{entry.id}})" v-bind:class="entryClass({{entry.id}})" >
+	<a v-cloak v-if="selectMode" @click="toggleEntry({{entry.id}})" v-bind:class="entryClass({{entry.id}})" >
           <span v-html="entryTitle({{ entry.id }})" ></span>
 	</a>
-	<a v-if="!selectMode" href="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree.id entry_id=entry.id %}" class="buttonLink" >
+	<a v-cloak v-if="!selectMode" href="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree.id entry_id=entry.id %}" class="buttonLink" >
           <span v-html="entryTitle({{ entry.id }})" ></span>
+	</a>
+	<a v-if="hideAfterLoad" href="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree.id entry_id=entry.id %}" class="buttonLink" >
+          {{ entry.name }}
 	</a>
       </li>
     {% endfor %}

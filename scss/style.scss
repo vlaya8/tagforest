@@ -449,12 +449,13 @@ $dropdown-width: 20rem;
 }
 
 .treeParamBox {
+
+
   font-size: 100%;
 
   width: 60%;
 
   position: absolute;
-  display: block;
   z-index: 1;
   left: 50%;
   top: 50vh;
@@ -475,6 +476,7 @@ $dropdown-width: 20rem;
   box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.36);
 
   z-index: 999;
+
 }
 
 .page-mask {
@@ -489,5 +491,10 @@ $dropdown-width: 20rem;
 .disabledLink, .disabledLink:hover {
   cursor: default;
   background-color: color.adjust(base.$background-color, $lightness: 2);
+}
+
+[v-cloak] {
+   display: none;
+   visibility: hidden;
 }
 

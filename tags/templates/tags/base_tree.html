@@ -32,6 +32,8 @@
           --><li>
             <a {% if current_tree.id == tree.id %}class="activeLink"{% endif %} v-if="!editTree[{{ tree.id }}] & !editMode" key="{{ tree.id }}" href="{% url 'tags:view_tree' group_name=group.name tree_id=tree.id %}">{{ tree.name }}</a><!--
 
+	  --><span v-cloak><!--
+
 	  Tree name edit icons
           {% if has_writer_permission %}
 	  --><div v-if="!editTree[{{ tree.id }}] & editMode" key="{{ tree.id }}" class="linkLike" >
@@ -58,6 +60,9 @@
 	  --></form><!--
 	  --><button tabindex=0 v-if="editTree[{{ tree.id }}]" @click="exitEditTree({{ tree.id }})" @keyup.enter="exitEditTree({{ tree.id }})" class="thinButton" ><i class="fa fa-close"></i></button>
           {% endif %}
+
+	  </span>
+
           </li><!--
 
     {% endfor %}
@@ -72,6 +77,8 @@
     --><button v-if="viewMode" @click="enterAddMode()" class="mediumButton" ><i class="fa fa-plus"></i></button><!-- 
     --><button v-if="viewMode" @click="enterEditMode()" class="mediumButton" ><i class="fa fa-edit"></i></button><!-- 
 
+    --><span v-cloak><!--
+
     Add form
     --><form v-if="addMode" class="headerForm" action="{% url 'tags:view_tree' group_name=group.name %}" method="post"><!--
 	  -->{% csrf_token %}<!--
@@ -84,13 +91,15 @@
     --></form><!--
     --><button v-if="addMode" @click="exitAddMode()" class="thinButton" ><i class="fa fa-close"></i></button><!-- 
 
+    --></span><!--
+
     Tree parameters dropdown
     {% if has_tree %}
     --><div class="alignRight"><div class="dropdown">
       <button @click="toggleTreeParamDropdown" class="largeButton" >
 	<i class="fa fa-cog"></i>
       </button>
-      <div v-if="treeParamDropdown" class="dropdown-content treeParamDropdown" >
+      <div v-cloak v-if="treeParamDropdown" class="dropdown-content treeParamDropdown" >
 	<a @click="showTreeParam" >Tree parameters</a>
         <form class="contentForm" >
           <ul><li>
@@ -131,8 +140,8 @@
 
     <!--Tree parameters box-->
     {% if has_tree %}
-    <div v-if="treeParam" class="page-mask"></div>
-    <div class="treeParamBox" v-if="treeParam">
+    <div v-cloak v-if="treeParam" class="page-mask" ></div>
+    <div v-cloak class="treeParamBox" v-if="treeParam" >
       <h2>Tree Parameters</h2>
       <form class="contentForm" method="post" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" >
 	{% csrf_token %}
