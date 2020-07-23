@@ -32,6 +32,19 @@ var tree_bar_app = new Vue({
 
     this.entryDisplayChoices = entryDisplayChoices;
   },
+  mounted() {
+    if (sessionStorage.entryDisplay) {
+      this.entryDisplayShare.entryDisplay = sessionStorage.entryDisplay
+    }
+  },
+  watch: {
+    entryDisplayShare: {
+      handler: function (entryDisplayShare, newEntryDisplayShare) {
+                sessionStorage.entryDisplay = newEntryDisplayShare.entryDisplay;
+              },
+      deep: true
+    }
+  },
   methods: {
 
     toggleTreeParamDropdown: function () {
