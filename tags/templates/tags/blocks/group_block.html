@@ -1,10 +1,12 @@
+{% load i18n %}
+
 <li>
   <a href="{% url 'tags:view_tree' group_name=group.name %}" class="buttonLink" >{{ group.name }}</a>
 
   {% if single_member %}
-    <a class="buttonLink" href="{% url 'tags:profile' username=group.name %}">View profile</a>
+  <a class="buttonLink" href="{% url 'tags:profile' username=group.name %}">{% trans "View profile" %}</a>
   {% else %}
-    <a class="buttonLink" href="{% url 'tags:view_group' group_id=group.id %}">View group info</a>
+  <a class="buttonLink" href="{% url 'tags:view_group' group_id=group.id %}">{% trans "View group info" %}</a>
   {% endif %}
   {% if has_admin_permission and not single_member %}
     <form class="inlineDeleteForm" action="{% url 'tags:view_groups' %}" method="post">

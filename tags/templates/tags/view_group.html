@@ -1,19 +1,21 @@
 {% extends "tags/base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ group.name }}{% endblock %}
 
 {% block content %}
   <h1>
     {{ group.name }}
-    {% if has_admin_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' group_id=group.id %}" >Edit</a>{% endif %}
-    <div class="separator"> </div><a href="{% url 'tags:view_tree' group_name=group.name %}" >View trees</a>
+    {% if has_admin_permission %}<div class="separator"> </div><a href="{% url 'tags:upsert_group' group_id=group.id %}" >{% trans "Edit" %}</a>{% endif %}
+    <div class="separator"> </div><a href="{% url 'tags:view_tree' group_name=group.name %}" >{% trans "View trees" %}</a>
   </h1>
 
   {% if group_error %}
     <div class="errorMessage">{{ group_error }}</div>
   {% endif %}
 
+  {% blocktrans %}
   <h2>Personal group visibility settings</h2>
 
   <p>
@@ -21,6 +23,7 @@
   </p>
 
   <h2>Members</h2>
+  {% endblocktrans %}
 
   <ul>
   {% for member in members %}
@@ -42,7 +45,7 @@
   </ul>
 
   {% if has_admin_permission and not group.single_member %}
-  <h2>Invite a member:</h2>
+  <h2>{% trans "Invite a member:" %}</h2>
   <form class="contentForm" action="{% url 'tags:view_group' group_id=group.id %}" method="post">
     {% csrf_token %}
     <div class="errorMessage">{{ invite_form.non_field_errors }}</div>
@@ -58,7 +61,7 @@
         <div class="select">{{ invite_form.role }}</div>
       </li>
       <br/>
-      <li><input type="submit" name="invite_member" value="Submit"></li>
+      <li><input type="submit" name="invite_member" value="{% trans "Submit" %}"></li>
     </ul>
   </form>
   {% endif %}

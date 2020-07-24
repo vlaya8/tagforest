@@ -1,8 +1,11 @@
 {% extends "tags/base.html" %}
+{% load i18n %}
 
-{% block title %}About{% endblock %}
+{% block title %}{% trans "About" %}{% endblock %}
 
 {% block content %}
+
+{% blocktrans %}
 <p>
 <b>Source code:</b> <a class="buttonLink" href="https://github.com/vlaya8/tagforest">https://github.com/vlaya8/tagforest</a>
 <br/></br>
@@ -107,5 +110,6 @@
   <li>HTTP server with <a class="buttonLink" href="https://gunicorn.org/" >Gunicorn</a></li>
   <li>Static files are served with <a class="buttonLink" href="http://nginx.org/" >Nginx</a></li>
 </ul>
+{% endblocktrans %}
 
 {% endblock %}

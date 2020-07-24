@@ -1,5 +1,6 @@
 {% extends "tags/base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{% trans "Profile" %}{% endblock %}
 
@@ -21,11 +22,11 @@
 <h3>{% trans "Personal group visibility settings" %}</h3>
 
 <p>
-{% blocktrans %}Personal group is visible to <b>{{ group_visible_to }}</b> and listed to <b>{{ group_listed_to }}{% endblocktrans %}</b>
+{% blocktrans %}Personal group is visible to <b>{{ group_visible_to }}</b> and listed to <b>{{ group_listed_to }}</b>{% endblocktrans %}
 </p>
 
 {% if has_edit_permission %}
-<h3>Edit profile</h3>
+<h3>{% trans "Edit profile" %}</h3>
 
   <form class="contentForm" method="post" action="{% url "tags:profile" username=username %}">
     {% csrf_token %}
@@ -51,10 +52,10 @@
         <div class="select" >{{ form.visible_to_public }}</div>
       </li>
       <br/>
-      <li><input type="submit" name="edit_profile" value="Submit"></li>
+      <li><input type="submit" name="edit_profile" value="{% trans "Submit" %}"></li>
     </ul>
   </form>
-  <p><a href="{% url "tags:password_change" %}">Change password</a></p>
+  <p><a href="{% url "tags:password_change" %}">{% trans "Change password" %}</a></p>
 {% endif %}
 
 {% endblock %}

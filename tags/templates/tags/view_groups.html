@@ -1,33 +1,42 @@
 {% extends "tags/base.html" %}
+{% load i18n %}
 
-{% block title %}Manage groups{% endblock %}
+{% block title %}{% trans "Manage groups" %}{% endblock %}
 
 {% block content %}
 
   {% if logged_in %}
-    <h3>Saved groups:</h3>
+  <h3>{% trans "Saved groups:" %}</h3>
     <ul class="groupList" >
     {% for group, single_member, has_admin_permission in saved_groups %}
 	{% include "tags/blocks/group_block.html" %}
     {% endfor %}
     </ul>
 
-    <h3>Joined groups:</h3>
+      <h3>{% trans "Joined groups:" %}</h3>
     <ul class="groupList" >
     {% for group, single_member, has_admin_permission in joined_groups %}
 	{% include "tags/blocks/group_block.html" %}
     {% endfor %}
     </ul>
   {% else %}
+
+    {% url 'tags:login' as login_url %}
+    {% url 'tags:post_login' as post_login_url %}
+    {% url 'tags:about' as about_url %}
+
+    {% blocktrans %}
     <p>
-      <a href="{% url 'tags:login' %}?next={% url 'tags:post_login' %}" >Login or sign up</a> to create trees, groups, and add tags and ressources
+    <a href="{{ login_url }}?next={{ post_login_url }}" >Login or sign up</a> to create trees, groups, and add tags and ressources
     </p>
     <p>
-      See the <a href="{% url 'tags:about' %}" >About</a> section for information on this website
+    See the <a href="{{ about_url}}" >About</a> section for information on this website
     </p>
+    {% endblocktrans %}
+
   {% endif %}
 
-  <h3>Public listed groups:</h3>
+  <h3>{% trans "Public listed groups:" %}</h3>
   <ul class="groupList" >
   {% if listed_groups %}
     {% for group, single_member, has_admin_permission in listed_groups %}
@@ -35,7 +44,7 @@
     {% endfor %}
   {% else %}
     <p>
-      There are no public groups at the moment
+    {% trans "There are no public groups at the moment" %}
     </p>
   {% endif %}
   </ul>

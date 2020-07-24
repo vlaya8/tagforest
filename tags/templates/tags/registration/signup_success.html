@@ -1,11 +1,16 @@
 {% extends 'tags/base.html' %}
+{% load i18n %}
 
-{% block title %}Successful registration{% endblock %}
+{% block title %}{% trans "Successful registration" %}{% endblock %}
 
 {% block content %}
 
+{% url 'tags:login' as login_url %}
+{% url 'tags:post_login' as post_login_url %}
+
+
 <p>
-Registration successful, you may now <a href="{% url 'tags:login' %}?next={% url 'tags:post_login' %}" >login</a>.
+{% blocktrans %}Registration successful, you may now <a href="{{ login_url }}?next={{ post_login_url }}" >login</a>.{% endblocktrans %}
 </p>
 
 {% endblock %}

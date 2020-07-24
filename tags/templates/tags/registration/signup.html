@@ -1,21 +1,26 @@
 {% extends 'tags/base.html' %}
+{% load i18n %}
 
-{% block title %}Sign-up{% endblock %}
+{% trans "Sign-up" as sign_up %}
+
+{% block title %}{{ sign_up }}{% endblock %}
 
 {% block content %}
 
-<p><b>Sign-up</b></p>
+<p><b>{{ sign_up }}</b></p>
 
+{% blocktrans %}
 <p>
 Passwords are hashed using <a href="https://en.wikipedia.org/wiki/PBKDF2" >PBKDF2</a>, which ensures no one can view it, even with access to the website's database<br/>
 More information on how passwords are stored can be found <a href="https://docs.djangoproject.com/en/3.0/topics/auth/passwords/" >here</a>
 </p>
+{% endblocktrans %}
 
 <form method="post" class="contentForm" >
   {% csrf_token %}
   <ul>
     {{ form.as_ul }}
-    <li><input type="submit" value="Sign-up"></li>
+    <li><input type="submit" value="{% comment %}Sign-up button{% endcomment %}{% trans 'Sign-up' %}"></li>
   </ul>
 </form>
 

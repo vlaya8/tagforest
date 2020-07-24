@@ -1,23 +1,25 @@
 {% extends "tags/base_tree.html" %}
 {% load i18n %}
 
-{% block title %}Add entry{% endblock %}
+{% block title %}{% trans "Add entry" %}{% endblock %}
 
 {% block content %}
 
+{% blocktrans %}
 <h2>Add an entry</h2>
 
 <p>
 Entry text can be formatted in <a href="https://www.markdownguide.org/getting-started/" >markdown</a><br/>
 Here is an example to quickly understand what markdown means: <a href="https://www.tagforest.fr/group/Examples/tree/9/entry/173/view/?" class="buttonLink" >Markdown example</a>
 </p>
+{% endblocktrans %}
 
 <div class="errorMessage">{{ entry_upsert_error }}</div>
 <form class="contentForm" action="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree.id %}" method="post">
   {% csrf_token %}
   <ul>
   {{ form.as_ul }}
-  <li><input type="submit" name="upsert_entry" value="Submit"></li>
+  <li><input type="submit" name="upsert_entry" value="{% trans "Submit" %}"></li>
   </ul>
 </form>
 

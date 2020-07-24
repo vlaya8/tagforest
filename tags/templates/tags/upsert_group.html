@@ -1,6 +1,7 @@
 {% extends "tags/base.html" %}
+{% load i18n %}
 
-{% block title %}Add group{% endblock %}
+{% block title %}{% trans "Add group" %}{% endblock %}
 
 {% block content %}
 
@@ -26,7 +27,7 @@
       <div class="select" >{{ form.visible_to_public }}</div>
     </li>
     <br/>
-    <li><input type="submit" name="upsert_group" value="Submit"></li>
+    <li><input type="submit" name="upsert_group" value="{% trans "Submit" %}"></li>
   </ul>
 </form>
 

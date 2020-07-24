@@ -1,6 +1,7 @@
 {% extends "tags/base.html" %}
+{% load i18n %}
 
-{% block title %}Notification{% endblock %}
+{% block title %}{% trans "Notification" %}{% endblock %}
 
 {% block content %}
 
@@ -8,8 +9,8 @@
 
 <form action="{% url "tags:view_notification" notification_id=notification.id %}" method="post">
   {% csrf_token %}
-  <button class="backgroundButton" name="accept_notification" type="submit" ><i class="fa fa-check"></i> Accept</button>
-  <button class="backgroundButton" name="decline_notification" type="submit" ><i class="fa fa-close"></i> Decline</button>
+  <button class="backgroundButton" name="accept_notification" type="submit" ><i class="fa fa-check"></i> {% trans "Accept" %}</button>
+  <button class="backgroundButton" name="decline_notification" type="submit" ><i class="fa fa-close"></i> {% trans "Decline" %}</button>
 </form>
 
 {% endblock %}

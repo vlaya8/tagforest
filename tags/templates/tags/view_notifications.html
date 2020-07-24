@@ -1,15 +1,18 @@
 {% extends "tags/base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Notifications{% endblock %}
+{% trans "Notifications" as notifications_str %}
+
+{% block title %}{{ notifications_str }}{% endblock %}
 
 {% block content %}
 
-  <h1>Notifications:</h1>
+  <h1>{{ notifications_str }}:</h1>
   <div id="view_notifications_app">
   {% if unread_notification_count %}
     <p>
-      <b>Unread:</b><br/><br/>
+    <b>{% trans "Unread:" %}</b><br/><br/>
       {% for message, notification_id, target_group in unread_notifications %}
         {% if target_group %}
 	  <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a><br/>
@@ -21,12 +24,12 @@
   {% endif %}
   {% if read_notification_count %}
     <p>
-      <b>Read:</b><br/><br/>
+    <b>{% trans "Read:" %}</b><br/><br/>
       {% for message, notification_id, target_group in read_notifications %}
         {% if target_group %}
 	  <a href="{% url 'tags:view_tree' group_name=target_group.name %}">{{ message }}</a><br/>
         {% else %}
-	  <a v-click-outside="hide" @click.stop="showDialog('This group doesn\'t exist anymore')">{{ message }}</a><br/>
+          <a v-click-outside="hide" @click.stop="showDialog('{% trans "This group doesn\'t exist anymore" %}')">{{ message }}</a><br/>
         {% endif %}
       {% endfor %}
     </p>
