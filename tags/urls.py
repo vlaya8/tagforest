@@ -44,6 +44,7 @@ urlpatterns = [
             ])),
         ])),
         path('about/', views.AboutView.as_view(), name="about"),
+        path('post_login/', views.post_login, name="post_login"),
         path('accounts/', include([
             path('password_change/', views.ChangePasswordView.as_view()),
             path('login/', login_view),

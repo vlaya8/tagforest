@@ -4,6 +4,10 @@ from .models import PUBLIC_CHOICES, PUBLIC_CHOICES_ORDER, PUBLIC_CHOICES_STR_SEN
 from .models import ENTRY_DISPLAY_CHOICES
 from django.contrib.auth.models import User
 
+from django.utils.translation import gettext as _
+
+from tagforest import settings
+
 def parse_tag(tags_string):
 
   tags_list = []
@@ -29,9 +33,16 @@ class TagField(forms.CharField):
 
 class EntryForm(forms.Form):
 
-    name = forms.CharField(label = "Name", max_length=255)
-    text = forms.CharField(label = "Text (markdown formatted)", widget=forms.Textarea, required=False)
-    tags = forms.CharField(label = "Tags (separated by commas: tag1,tag2,tag3...)", max_length=255, required=False)
+    # Translators: Label for the entry form
+    name_label = _("Name")
+    # Translators: Label for the entry form
+    text_label = _("Text (markdown formatted)")
+    # Translators: Label for the entry form
+    tags_label = _("Tags (separated by commas: tag1,tag2,tag3...)")
+
+    name = forms.CharField(label = name_label, max_length=255)
+    text = forms.CharField(label = text_label, widget=forms.Textarea, required=False)
+    tags = forms.CharField(label = tags_label, max_length=255, required=False)
 
     entry_id = forms.IntegerField(widget=forms.HiddenInput())
 
@@ -49,6 +60,8 @@ class ProfileForm(forms.Form):
         self.user = user
 
     username = forms.CharField(label = "Username", max_length=255)
+
+    language = forms.ChoiceField(label = "Default langue", choices=settings.LANGUAGES)
 
     listed_to_public = forms.ChoiceField(
                                       label = "Public to which your personal group is listed",

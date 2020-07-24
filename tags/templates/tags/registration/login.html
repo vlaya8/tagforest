@@ -5,15 +5,16 @@
 {% block content %}
 
 {% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
+<p>{% trans "Your username and password didn't match. Please try again." %}</p>
 {% endif %}
 
 {% if next %}
     {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
+    <p>
+    {% blocktrans %}Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.{% endblocktrans %}</p>
     {% else %}
-    <p>Please login to see this page.</p>
+    <p>{% trans "Please login to see this page." %}</p>
     {% endif %}
 {% endif %}
 
@@ -21,11 +22,11 @@
   {% csrf_token %}
   <ul>
   {{ form.as_ul }}
-  <li><input type="submit" value="login"></li>
+  <li><input type="submit" value="{% trans "Login" %}"></li>
   </ul>
   <input type="hidden" name="next" value="{{ next }}">
 </form>
 
-<p><a href="{% url 'tags:signup' %}?next={% url 'tags:login' %}?next={% url 'tags:index' %}">Sign Up</a></p>
+<p><a href="{% url 'tags:signup' %}?next={% url 'tags:login' %}?next={% url 'tags:post_login' %}">{% trans "Sign Up" %}</a></p>
 
 {% endblock %}

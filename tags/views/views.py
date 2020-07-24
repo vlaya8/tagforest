@@ -11,6 +11,8 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.utils import translation
 
 from notifications.signals import notify
 from notifications.models import Notification
@@ -74,6 +76,16 @@ def index(request):
                 )
     else:
         return HttpResponseRedirect(reverse('tags:view_groups'))
+
+@login_required
+def post_login(request):
+
+    user_language = request.user.profile.language
+    translation.activate(user_language)
+    response = HttpResponseRedirect(reverse('tags:index'))
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, user_language)
+
+    return response
 
 @method_decorator(login_required, name='dispatch')
 class ViewNotificationsView(BaseView):
@@ -142,16 +154,15 @@ class ProfileView(BaseView):
 
         context = {}
 
-        if request.user.is_authenticated:
-            has_edit_permission = (request.user.username == self.link_user.username)
-        else:
-            has_edit_permission = False
+        has_edit_permission = request.user.is_authenticated and (request.user.username == self.link_user.username)
+
         if has_edit_permission:
 
             group = request.user.get_user_group()
             if form == None:
                 form = ProfileForm(request.user, initial={
                                              'username': request.user.username,
+                                             'language': request.user.profile.language,
                                              'listed_to_public': group.listed_to_public,
                                              'visible_to_public': group.visible_to_public,
                                            })
@@ -189,6 +200,7 @@ class ProfileView(BaseView):
 
 
                 username = form.cleaned_data['username']
+                language = form.cleaned_data['language']
                 listed_to_public = form.cleaned_data['listed_to_public']
                 visible_to_public = form.cleaned_data['visible_to_public']
 
@@ -202,11 +214,28 @@ class ProfileView(BaseView):
                 request.user.username = username
                 request.user.save()
 
+                request.user.profile.language = language
+                request.user.profile.save()
 
                 self.redirect_url = 'tags:profile'
                 self.redirect_kwargs['username'] = request.user.username
             else:
                 raise FormError({'form': form})
+
+    @method_decorator(login_required)
+    def post_return(self, request, **kwargs):
+
+
+        user_language = request.user.profile.language
+        translation.activate(user_language)
+        response = redirect_with_get_params(
+                    self.redirect_url,
+                    get_params=self.redirect_get_params,
+                    kwargs=self.redirect_kwargs,
+                )
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, user_language)
+
+        return response
 
 class ChangePasswordView(auth_views.PasswordChangeView):
 

@@ -1,7 +1,9 @@
 {% extends "tags/base_tree.html" %}
 {% load static %}
 
-{% block title %}Index{% endblock %}
+{% block title %}
+{{ group.name }}, {{ current_tree.name }}
+{% endblock %}
 
 {% block content %}
 {{ block.super }}

@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 
 <!doctype html>
 <html lang="fr">
@@ -20,16 +21,42 @@
         <nav>
           <ul>
           <li><h1><a href="{% url 'tags:index' %}" >Tagforest</a></h1></li><!--
-          --><li><a href="{% url 'tags:view_groups' %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>Groups</a></li><!--
+          --><li><a href="{% url 'tags:view_groups' %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>
+              {% trans "Groups" %}
+          </a></li><!--
           {% if logged_in %}
-            --><li><a href="{% url 'tags:index' %}" {% if current_page == 'personal_tree' %}class="activeLink" {% endif %}>Personal Trees</a></li><!--
+            --><li><a href="{% url 'tags:index' %}" {% if current_page == 'personal_tree' %}class="activeLink" {% endif %}>
+                {% trans "Personal Trees" %}
+          </a></li><!--
             --><li><a href="{% url 'tags:profile' username=username %}" {% if current_page == 'profile' %}class="activeLink" {% endif %}>{{ username }}</a></li><!--
           {% else %}
-            --><li><a href="{% url 'tags:login' %}?next={% url 'tags:index' %}" {% if current_page == 'login' %}class="activeLink" {% endif %}>Login</a></li><!--
+            --><li><a href="{% url 'tags:login' %}?next={% url 'tags:post_login' %}" {% if current_page == 'login' %}class="activeLink" {% endif %}>
+                {% trans "Login" %}
+            </a></li><!--
           {% endif %}
           {% block nav_menu_tree_links %}{% endblock %}
 
-          --><li><a href="{% url 'tags:about' %}" {% if current_page == 'about' %}class="activeLink" {% endif %}>About</a></li><!--
+          --><li><a href="{% url 'tags:about' %}" {% if current_page == 'about' %}class="activeLink" {% endif %}>
+              {% trans "About" %}
+            </a></li><!--
+
+
+          --><li><!--
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as languages %}
+
+          --><div id="language_menu_app" class="dropdown">
+              <button class="buttonResize" v-click-outside="hide" @click="toggle" >Language ({{ LANGUAGE_CODE }})</button>
+              <div v-if="showMenu" class="dropdown-content languageDropdown" >
+                {% for language in languages %}
+                    {% language language.code %}
+                    <a href="{% url 'tags:index' %}" >{{ language.name_local }} ({{ language.code }})</a>
+                    {% endlanguage %}
+                {% endfor %}
+              </div>
+            </div>
+          </li><!--
    
           {% if logged_in %}
             --><li>
@@ -49,9 +76,9 @@
                     <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a>
                   {% endfor %}
                 {% else %}
-                  <a href="">No new notifications</a>
+                  <a href="">{% trans "No new notifications" %}</a>
                 {% endif %}
-                <a href="{% url 'tags:view_notifications' %}"><b>View all notifications</b></a>
+                <a href="{% url 'tags:view_notifications' %}"><b>{% trans "View all notifications" %}</b></a>
               </div>
             </div></div>
             </li><!--
@@ -73,7 +100,7 @@
       <footer>
         <b>v1.5.7 (19/17/21)</b> - 
         <a class="buttonLink" href="https://github.com/vlaya8/tagforest" >Tagforest Github</a> - 
-        <a class="buttonLink" href="{%url 'tags:about' %}">About</a>
+        <a class="buttonLink" href="{%url 'tags:about' %}">{% trans "About" %}</a>
       </footer>
 
     </div>
@@ -83,6 +110,7 @@
       <script src="{% static 'tags/vue.js' %}"></script>
       <script src="{% static 'tags/vue-click-outside.js' %}"></script>
       <script src="{% static 'tags/notification_menu.js' %}"></script>
+      <script src="{% static 'tags/language_menu.js' %}"></script>
       <script src="{% static 'tags/hide_after_load.js' %}"></script>
     {% endblock %}
 

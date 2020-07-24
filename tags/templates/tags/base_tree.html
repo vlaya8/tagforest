@@ -1,5 +1,10 @@
 {% extends "tags/base.html" %}
 {% load static %}
+{% load i18n %}
+
+{% block title %}
+{{ group.name }}, {{ current_tree.name }}
+{% endblock %}
 
 {% block nav_content %}
   {% if tree_bar_error %}
@@ -100,10 +105,10 @@
 	<i class="fa fa-cog"></i>
       </button>
       <div v-cloak v-if="treeParamDropdown" class="dropdown-content treeParamDropdown" >
-	<a @click="showTreeParam" >Tree parameters</a>
+	<a @click="showTreeParam" >{% trans "Tree parameters" %}</a>
         <form class="contentForm" >
           <ul><li>
-	  <label>Entry display:</label>
+	      <label>{% trans "Entry display:" %}</label>
           <div class="select" >
           <select v-model="entryDisplayShare.entryDisplay" >
             <option v-for="entryDisplayChoice in entryDisplayChoices" v-bind:value="entryDisplayChoice.value">
@@ -126,12 +131,12 @@
       {% if saved_group %}
     --><form class="alignRight" action="{% if has_tree %}{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}{% else %}{% url 'tags:view_tree' group_name=group.name %}{% endif %}" method="post" ><!--
               -->{% csrf_token %}<!--
-             --><button class="thinButton" name="unsave_group" type="submit">Remove from saved</button><!--
+	      --><button class="thinButton" name="unsave_group" type="submit">{% trans "Remove from saved" %}</button><!--
         --></form><!--
       {% else %}
         --><form class="alignRight" action="{% if has_tree %}{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}{% else %}{% url 'tags:view_tree' group_name=group.name %}{% endif %}" method="post" ><!--
               -->{% csrf_token %}<!--
-             --><button class="thinButton" name="save_group" type="submit">Save Group</button><!--
+	      --><button class="thinButton" name="save_group" type="submit">{% trans "Save Group" %}</button><!--
         --></form><!--
       {% endif %}
     {% endif %}
@@ -142,7 +147,7 @@
     {% if has_tree %}
     <div v-cloak v-if="treeParam" class="page-mask" ></div>
     <div v-cloak class="treeParamBox" v-if="treeParam" >
-      <h2>Tree Parameters</h2>
+      <h2>{% trans "Tree Parameters" %}</h2>
       <form class="contentForm" method="post" action="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" >
 	{% csrf_token %}
 	<div class="errorMessage">{{ tree_param_form.non_field_errors }}</div>
@@ -161,8 +166,8 @@
 	    <div class="select" >{{ tree_param_form.default_entry_display }}</div>
 	  </li>
 	  <br/>
-	  <li><button name="tree_param_form" >Submit</button></li>
-	  <li><button @click="hideTreeParam" >Cancel</button></li>
+	  <li><button name="tree_param_form" >{% trans "Submit" %}</button></li>
+	  <li><button @click="hideTreeParam" >{% trans "Cancel" %}</button></li>
 	</ul>
       </form>
     </div>

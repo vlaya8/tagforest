@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 from django_dag.models import *
 
+from tagforest import settings
+
 INVITE = 'INV'
 USERS = 'USR'
 ALL = 'ALL'
@@ -186,6 +188,8 @@ class Profile(models.Model):
         return "{}'s profile".format(self.user)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+
+    language = models.CharField(max_length=10, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE)
 
     public_user = models.BooleanField(default=False)
     listed_user = models.BooleanField(default=False)

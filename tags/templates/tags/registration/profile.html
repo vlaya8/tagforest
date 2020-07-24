@@ -1,7 +1,7 @@
 {% extends "tags/base.html" %}
 {% load static %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}{% trans "Profile" %}{% endblock %}
 
 {% block content %}
 
@@ -10,18 +10,18 @@
 
   {% if has_group_view_permission %}
   <div class="separator"> </div>
-  <a href="{% url 'tags:view_tree' group_name=link_user.username %}">Personal Group</a>
+  <a href="{% url 'tags:view_tree' group_name=link_user.username %}">{% trans "Personal Group" %}</a>
   {% endif %}
   {% if has_edit_permission %}
   <div class="separator"> </div>
-  <a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">Logout</a>
+  <a href="{% url 'tags:logout' %}?next={% url 'tags:index' %}">{% trans "Logout" %}</a>
   {% endif %}
 </h1>
 
-<h3>Personal group visibility settings</h3>
+<h3>{% trans "Personal group visibility settings" %}</h3>
 
 <p>
-Personal group is visible to <b>{{ group_visible_to }}</b> and listed to <b>{{ group_listed_to }}</b>
+{% blocktrans %}Personal group is visible to <b>{{ group_visible_to }}</b> and listed to <b>{{ group_listed_to }}{% endblocktrans %}</b>
 </p>
 
 {% if has_edit_permission %}
@@ -34,6 +34,11 @@ Personal group is visible to <b>{{ group_visible_to }}</b> and listed to <b>{{ g
       <li>
         <div class="errorMessage">{{ form.username.errors }}</div>
         {{ form.username.label_tag }} {{ form.username }}
+      </li>
+      <li>
+	<div class="errorMessage">{{ form.language.errors }}</div>
+        {{ form.language.label_tag }}
+        <div class="select" >{{ form.language }}</div>
       </li>
       <li>
 	<div class="errorMessage">{{ form.listed_to_public.errors }}</div>
