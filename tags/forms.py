@@ -4,7 +4,8 @@ from .models import PUBLIC_CHOICES, PUBLIC_CHOICES_ORDER, PUBLIC_CHOICES_STR_SEN
 from .models import ENTRY_DISPLAY_CHOICES
 from django.contrib.auth.models import User
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
 
 from tagforest import settings
 
@@ -48,7 +49,7 @@ class EntryForm(forms.Form):
 
 class TreeForm(forms.Form):
 
-    name = forms.CharField(label = "Name", max_length=255)
+    name = forms.CharField(label = _("Name"), max_length=255)
 
     delete_tree = forms.BooleanField(required=False, widget=forms.HiddenInput())
     tree_id = forms.IntegerField(widget=forms.HiddenInput())
@@ -59,16 +60,16 @@ class ProfileForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.user = user
 
-    username = forms.CharField(label = "Username", max_length=255)
+    username = forms.CharField(label = _("Username"), max_length=255)
 
-    language = forms.ChoiceField(label = "Default langue", choices=settings.LANGUAGES)
+    language = forms.ChoiceField(label = _("Default langue"), choices=settings.LANGUAGES)
 
     listed_to_public = forms.ChoiceField(
-                                      label = "Public to which your personal group is listed",
+                                      label = _("Public to which your personal group is listed"),
                                       choices = PUBLIC_CHOICES,
     )
     visible_to_public = forms.ChoiceField(
-                                      label = "Public to which your personal group is accessible",
+                                      label = _("Public to which your personal group is accessible"),
                                       choices = PUBLIC_CHOICES,
     )
 
@@ -77,28 +78,28 @@ class ProfileForm(forms.Form):
 
         username = cleaned_data.get("username")
         if username != self.user.username and User.objects.filter(username=username).exists():
-            raise forms.ValidationError("{} is already taken".format(username))
+            raise forms.ValidationError(gettext("%(username)s is already taken") % {'username': username})
 
         listed_to_public = cleaned_data.get("listed_to_public")
         visible_to_public = cleaned_data.get("visible_to_public")
 
         if PUBLIC_CHOICES_ORDER[listed_to_public] > PUBLIC_CHOICES_ORDER[visible_to_public]:
-            raise forms.ValidationError("You asked to list the group to {} but it is only visible to {}".format(
-                                        PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
-                                        PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]))
+            raise forms.ValidationError(gettext("You asked to list the group to %(listed_public)s but it is only visible to %(visible_public)s")
+                                        % {'listed_public':  PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
+                                           'visible_public': PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]})
 
         return cleaned_data
 
 class GroupForm(forms.Form):
 
-    name = forms.CharField(label = "Name", max_length=255)
+    name = forms.CharField(label = _("Name"), max_length=255)
 
     listed_to_public = forms.ChoiceField(
-                                      label = "Public to which the group is listed",
+                                      label = _("Public to which the group is listed"),
                                       choices = PUBLIC_CHOICES,
     )
     visible_to_public = forms.ChoiceField(
-                                      label = "Public to which the group is accessible",
+                                      label = _("Public to which the group is accessible"),
                                       choices = PUBLIC_CHOICES,
     )
 
@@ -111,9 +112,9 @@ class GroupForm(forms.Form):
         visible_to_public = cleaned_data.get("visible_to_public")
 
         if PUBLIC_CHOICES_ORDER[listed_to_public] > PUBLIC_CHOICES_ORDER[visible_to_public]:
-            raise forms.ValidationError("You asked to list the group to {} but it is only visible to {}".format(
-                                        PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
-                                        PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]))
+            raise forms.ValidationError(gettext("You asked to list the group to %(listed_public)s but it is only visible to %(visible_public)s")
+                                        % {'listed_public':  PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
+                                           'visible_public': PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]})
         return cleaned_data
 
 
@@ -130,19 +131,19 @@ class MemberInvitationForm(forms.Form):
         cleaned_data = super().clean()
         name = cleaned_data.get("name")
         if not User.objects.filter(username=name).exists():
-            raise forms.ValidationError("There is no user named {}".format(name))
+            raise forms.ValidationError(gettext("There is no user named %(username)s") % {'username': name})
         if self.group.member_set.filter(user__username=name).exists():
-            raise forms.ValidationError("{} is already in {}".format(name, self.group))
+            raise forms.ValidationError("%(username)s is already in %(group)s" % {'username': name, 'group': self.group})
 
         return cleaned_data
 
 class TreeParamForm(forms.Form):
 
-    name = forms.CharField(label = "Name", max_length=255)
-    description = forms.CharField(label = "Description", widget=forms.Textarea, required=False)
+    name = forms.CharField(label = _("Name"), max_length=255)
+    description = forms.CharField(label = _("Description"), widget=forms.Textarea, required=False)
 
     default_entry_display = forms.ChoiceField(
-                                      label = "Default entry display",
+                                      label = _("Default entry display"),
                                       choices = ENTRY_DISPLAY_CHOICES,
     )
 
@@ -157,7 +158,7 @@ class ManipulateEntriesForm(forms.Form):
         try:
             entries_ids = list(map(lambda x: int(x), entries.split(";")))
         except ValueError:
-            raise forms.ValidationError("Error when selecting entries")
+            raise forms.ValidationError(gettext("Error when selecting entries"))
 
         return entries_ids
 

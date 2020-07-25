@@ -2,13 +2,11 @@
 {% load static %}
 {% load i18n %}
 
-{% trans "Notifications" as notifications_str %}
-
-{% block title %}{{ notifications_str }}{% endblock %}
+{% block title %}{% trans "Notifications" %}{% endblock %}
 
 {% block content %}
 
-  <h1>{{ notifications_str }}:</h1>
+  <h1>{% trans "Notifications" %}:</h1>
   <div id="view_notifications_app">
   {% if unread_notification_count %}
     <p>

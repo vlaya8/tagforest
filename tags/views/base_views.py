@@ -11,6 +11,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
 
 from notifications.signals import notify
 from notifications.models import Notification
@@ -169,7 +170,7 @@ class BaseTreeView(BaseView):
         context = {}
 
         if not self.group.is_visible_to(request.user):
-            raise UserPermissionError("You don't have permission to view this group's trees")
+            raise UserPermissionError(_("You don't have permission to view this group's trees"))
 
         has_writer_permission = self.group.has_write_permission_for(request.user)
 
@@ -240,7 +241,7 @@ class BaseTreeView(BaseView):
 
         if 'tree_param_form' in request.POST:
             if not self.group.has_write_permission_for(request.user):
-                raise PermissionDenied("You don't have permission to edit in this group")
+                raise PermissionDenied(_("You don't have permission to edit in this group"))
 
             form = TreeParamForm(request.POST)
 
@@ -265,7 +266,7 @@ class BaseTreeView(BaseView):
 
         elif 'tree_form' in request.POST:
             if not self.group.has_write_permission_for(request.user):
-                raise PermissionDenied("You don't have permission to edit in this group")
+                raise PermissionDenied(_("You don't have permission to edit in this group"))
 
             form = TreeForm(request.POST)
 
@@ -285,7 +286,7 @@ class BaseTreeView(BaseView):
                         tree.save()
                 else:
                     if Tree.objects.filter(name=tree_name, group=self.group).exists():
-                        raise UserError("Your group already contains a tree named {}".format(tree_name), "tree_bar_error")
+                        raise UserError(_("Your group already contains a tree named %s(treename)s") % {'treename': tree_name}, "tree_bar_error")
                     tree = Tree.objects.create(name=tree_name, group=self.group)
 
                 if not delete_tree:

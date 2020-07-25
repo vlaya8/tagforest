@@ -13,6 +13,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import translation
+from django.utils.translation import gettext as _
 
 from notifications.signals import notify
 from notifications.models import Notification
@@ -25,6 +26,7 @@ from .utilities import *
 from .base_views import *
 
 import json
+
 
 def handler404(request, exception):
 
@@ -53,6 +55,8 @@ class SignupView(BaseView):
 
             form.save()
             self.redirect_url = 'tags:signup_success'
+        else:
+            raise FormError({'form': form})
 
 class SignupSuccessView(BaseView):
 
@@ -196,7 +200,7 @@ class ProfileView(BaseView):
             if form.is_valid():
 
                 if request.user.username != self.link_user.username:
-                    raise PermissionDenied("You don't have permission to edit this profile")
+                    raise PermissionDenied(_("You don't have permission to edit this profile"))
 
 
                 username = form.cleaned_data['username']
@@ -288,10 +292,10 @@ class ViewGroupsView(BaseView):
             group = get_object_or_404(TreeUserGroup, pk=group_id)
 
             if not group.has_write_permission_for(request.user):
-                raise PermissionDenied("You don't have permission to delete this group")
+                raise PermissionDenied(_("You don't have permission to delete this group"))
 
             if group.single_member:
-                raise PermissionDenied("You can't delete this group")
+                raise PermissionDenied(_("You can't delete this group"))
 
             group.delete()
 
@@ -310,7 +314,7 @@ class UpsertGroupView(BaseView):
             group = get_object_or_404(TreeUserGroup, pk=group_id)
 
             if not group.has_write_permission_for(request.user):
-                raise PermissionDenied("You don't have permission to edit this group")
+                raise PermissionDenied(_("You don't have permission to edit this group"))
 
             data = {
                      "name": group.name,
@@ -350,7 +354,7 @@ class UpsertGroupView(BaseView):
                     group = get_object_or_404(TreeUserGroup, pk=group_id)
 
                     if not group.has_write_permission_for(request.user):
-                        raise PermissionDenied("You don't have permission to edit this group")
+                        raise PermissionDenied(_("You don't have permission to edit this group"))
 
                     group.name = group_name
                     group.listed_to_public = listed_to_public
@@ -378,7 +382,7 @@ class ViewGroupView(BaseView):
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
         if not group.is_visible_to(request.user):
-            raise UserPermissionError("You don't have permission to view this group")
+            raise UserPermissionError(_("You don't have permission to view this group"))
 
         members = group.member_set.all()
 
@@ -404,13 +408,13 @@ class ViewGroupView(BaseView):
         group = get_object_or_404(TreeUserGroup, pk=group_id)
 
         if not group.has_admin_permission_for(request.user):
-            raise PermissionDenied("You don't have admin permission for this group")
+            raise PermissionDenied(_("You don't have admin permission for this group"))
 
         # If a member has been deleted
         if 'delete_member_id' in request.POST:
 
             if group.member_set.count() == 1:
-                raise UserError("The last member of the group can't be deleted (delete the group instead)", "group_error")
+                raise UserError(_("The last member of the group can't be deleted (delete the group instead)", "group_error"))
 
             member = get_object_or_404(Member, pk=request.POST['delete_member_id'])
 
@@ -433,7 +437,7 @@ class ViewGroupView(BaseView):
                 target_user = get_object_or_404(User, username=member_name)
 
                 notify.send(request.user, recipient=target_user,
-                                  verb="{} invited you to join {}".format(request.user, group),
+                                  verb=_("%s(user)s invited you to join %(group)s") % {'user': request.user, 'group': group},
                                   action_object=role,
                                   target=group)
             else:
@@ -606,7 +610,7 @@ class UpsertEntryView(BaseTreeView):
 
                 # Check if an entry with the same name in the same tree already exists
                 if Entry.objects.filter(tree=self.current_tree).filter(name=entry_name).exists():
-                    raise UserError("You already have an entry named {}".format(entry_name), "entry_upsert_error")
+                    raise UserError(_("You already have an entry named %(entryname)s") % {'entryname': entry_name}, "entry_upsert_error")
 
                 # If the entry has been edited
                 if entry_id != SpecialID['NEW_ID']:

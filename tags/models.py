@@ -5,21 +5,23 @@ from django_dag.models import *
 
 from tagforest import settings
 
+from django.utils.translation import gettext
+
 INVITE = 'INV'
 USERS = 'USR'
 ALL = 'ALL'
 
 PUBLIC_CHOICES_STR = { 
-                        INVITE: 'Only invited users',
-                        USERS:  'Only users',
-                        ALL:    'Everyone',
+                        INVITE: gettext('Only invited users'),
+                        USERS:  gettext('Only users'),
+                        ALL:    gettext('Everyone'),
                      }
 
 # String that can be integrated in a sentence
 PUBLIC_CHOICES_STR_SENTENCE = { 
-                        INVITE: 'invited users',
-                        USERS:  'users',
-                        ALL:    'everyone',
+                        INVITE: gettext('invited users'),
+                        USERS:  gettext('users'),
+                        ALL:    gettext('everyone'),
                      }
 
 PUBLIC_CHOICES_ORDER = { 
@@ -36,10 +38,10 @@ ENTRY_DISPLAY_COMPACT_LARGE = 'CPL'
 ENTRY_DISPLAY_LIST = 'LST'
 
 ENTRY_DISPLAY_CHOICES_STR = {
-                        ENTRY_DISPLAY_COMPACT_SMALL: "Compact (small)",
-                        ENTRY_DISPLAY_COMPACT_MEDIUM: "Compact (medium)",
-                        ENTRY_DISPLAY_COMPACT_LARGE: "Compact (large)",
-                        ENTRY_DISPLAY_LIST: "List",
+                        ENTRY_DISPLAY_COMPACT_SMALL: gettext("Compact (small)"),
+                        ENTRY_DISPLAY_COMPACT_MEDIUM: gettext("Compact (medium)"),
+                        ENTRY_DISPLAY_COMPACT_LARGE: gettext("Compact (large)"),
+                        ENTRY_DISPLAY_LIST: gettext("List"),
 }
 
 ENTRY_DISPLAY_CHOICES = [(choice, ENTRY_DISPLAY_CHOICES_STR[choice]) for choice in ENTRY_DISPLAY_CHOICES_STR]

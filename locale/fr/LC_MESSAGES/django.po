@@ -1,14 +1,11 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Vlaya <vlaya8@protonmail.com>, 2020.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-24 23:24+0200\n"
+"POT-Creation-Date: 2020-07-25 02:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,32 +24,129 @@ msgid "French"
 msgstr "français"
 
 #. Translators: Label for the entry form
-#: tags/forms.py:37
+#: tags/forms.py:38 tags/forms.py:52 tags/forms.py:95 tags/forms.py:142
 msgid "Name"
 msgstr "Nom"
 
 #. Translators: Label for the entry form
-#: tags/forms.py:39
+#: tags/forms.py:40
 msgid "Text (markdown formatted)"
-msgstr "Texte"
+msgstr "Texte (formatté en markdown)"
 
 #. Translators: Label for the entry form
-#: tags/forms.py:41
+#: tags/forms.py:42
 msgid "Tags (separated by commas: tag1,tag2,tag3...)"
-msgstr "Tags"
+msgstr "Tags (séparé par des virgules: tag1,tag2,tag3...)"
+
+#: tags/forms.py:63
+msgid "Username"
+msgstr ""
+
+#: tags/forms.py:65
+msgid "Default langue"
+msgstr ""
+
+#: tags/forms.py:68
+msgid "Public to which your personal group is listed"
+msgstr ""
+
+#: tags/forms.py:72
+msgid "Public to which your personal group is accessible"
+msgstr ""
+
+#: tags/forms.py:81
+#, python-format
+msgid "%(username)s is already taken"
+msgstr "%(username)s est déjà pris"
+
+#: tags/forms.py:87 tags/forms.py:115
+#, python-format
+msgid ""
+"You asked to list the group to %(listed_public)s but it is only visible to "
+"%(visible_public)s"
+msgstr ""
+
+#: tags/forms.py:98
+#, fuzzy
+#| msgid "Public listed groups:"
+msgid "Public to which the group is listed"
+msgstr "Groupes publics"
+
+#: tags/forms.py:102
+msgid "Public to which the group is accessible"
+msgstr ""
+
+#: tags/forms.py:134
+#, python-format
+msgid "There is no user named %(username)s"
+msgstr ""
+
+#: tags/forms.py:143
+msgid "Description"
+msgstr ""
+
+#: tags/forms.py:146
+#, fuzzy
+#| msgid "Entry display:"
+msgid "Default entry display"
+msgstr "Affichage des entrées"
+
+#: tags/forms.py:161
+msgid "Error when selecting entries"
+msgstr ""
+
+#: tags/models.py:15
+msgid "Only invited users"
+msgstr ""
+
+#: tags/models.py:16
+msgid "Only users"
+msgstr ""
+
+#: tags/models.py:17
+msgid "Everyone"
+msgstr ""
+
+#: tags/models.py:22
+msgid "invited users"
+msgstr ""
+
+#: tags/models.py:23
+msgid "users"
+msgstr ""
+
+#: tags/models.py:24
+msgid "everyone"
+msgstr ""
+
+#: tags/models.py:41
+msgid "Compact (small)"
+msgstr ""
+
+#: tags/models.py:42
+msgid "Compact (medium)"
+msgstr ""
+
+#: tags/models.py:43
+msgid "Compact (large)"
+msgstr ""
+
+#: tags/models.py:44
+msgid "List"
+msgstr ""
 
 #: tags/templates/tags/404.html:4
 msgid "404 Error"
-msgstr ""
+msgstr "Erreur 404"
 
 #: tags/templates/tags/500.html:4
 msgid "500 Error"
-msgstr ""
+msgstr "Erreur 500"
 
 #: tags/templates/tags/about.html:4 tags/templates/tags/base.html:40
 #: tags/templates/tags/base.html:103
 msgid "About"
-msgstr ""
+msgstr "A propos"
 
 #: tags/templates/tags/about.html:8
 msgid ""
@@ -61,13 +155,33 @@ msgid ""
 "<b>Source code:</b> <a class=\"buttonLink\" href=\"https://github.com/vlaya8/"
 "tagforest\">https://github.com/vlaya8/tagforest</a>\n"
 "<br/></br>\n"
+"<b>Contact haha:</b> tagforest@protonmail.com\n"
+"</p>\n"
+msgstr ""
+"\n"
+"<p>\n"
+"<b>Code source:</b> <a class=\"buttonLink\" href=\"https://github.com/vlaya8/"
+"tagforest\">https://github.com/vlaya8/tagforest</a>\n"
+"<br/></br>\n"
 "<b>Contact:</b> tagforest@protonmail.com\n"
 "</p>\n"
+
+#: tags/templates/tags/about.html:16
+msgid ""
 "\n"
 "<h2>Description</h2>\n"
 "\n"
 "<p>Tagforest aims to share and organize knowledge and ressources by "
 "classifying them with tags</p>\n"
+msgstr ""
+"\n"
+"<h2>Description</h2>\n"
+"\n"
+"<p>Tagforest a pour but d'organiser et partager des ressources en "
+"lesclassifiant avec des tags</p>\n"
+
+#: tags/templates/tags/about.html:22
+msgid ""
 "\n"
 "<h2>Goals</h2>\n"
 "\n"
@@ -81,14 +195,26 @@ msgid ""
 "way they connect to each other</li>\n"
 "  <li>[In Progress] Merge your set of ressources and categories with someone "
 "else, or see what ressource you have in common</li>\n"
-"  <li>[In Progress] Website accessibility:\n"
-"    <ul>\n"
-"      <li>should be as accessible as possible to disabled people (send a "
-"mail to tagforest@protonmail.com if you see something that could be made "
-"more accessible)</li>\n"
-"      <li>should be as easy as possible to understand</li>\n"
-"    </ul>\n"
 "</ul>\n"
+msgstr ""
+"\n"
+"<h2>Buts</h2>\n"
+"\n"
+"<ul>\n"
+"  <li>Tracker, classifier et prendre des notes des ressources que vous avez "
+"lu / vue sur différents sujets tout au même endroit</li>\n"
+"  <li>Les visualiser en un seul endroit, et partager un ensemble de "
+"connaissance d'un sujet aux autres en un seul lien</li>\n"
+"  <li>Créer des groupes pour organiser collaborativement des ressources "
+"ensemble</li>\n"
+"  <li>[En cours] Visualiser les différents mouvements / catégories et la "
+"manière dont ils sont liés</li>\n"
+"  <li>[En cours] Fusionner votre ensemble de connaissance et de catégories "
+"avec quelqu'un , et / ou voir ce que vous avez en commun</li>\n"
+"</ul>\n"
+
+#: tags/templates/tags/about.html:34
+msgid ""
 "\n"
 "<h2>Usage Example</h2>\n"
 "\n"
@@ -97,6 +223,18 @@ msgid ""
 "tagforest.fr/group/vlaya/tree/3/view/\" class=\"buttonLink\" >Music Tree</"
 "a>\n"
 "</p>\n"
+msgstr ""
+"\n"
+"<h2>Exemple d'usage</h2>\n"
+"\n"
+"<p>\n"
+"  Un exemple d'un arbre contenant de la musique: <a href=\"https://www."
+"tagforest.fr/group/vlaya/tree/3/view/\" class=\"buttonLink\" >Arbre de "
+"musique</a>\n"
+"</p>\n"
+
+#: tags/templates/tags/about.html:42
+msgid ""
 "\n"
 "<h2>Accessibility, Privacy, Security, Content</h2>\n"
 "\n"
@@ -123,9 +261,45 @@ msgid ""
 "    </ul>\n"
 "  </li>\n"
 "</ul>\n"
+msgstr ""
 "\n"
-"<p>If something could be made more accessible, if you see a privacy / "
-"security issue, send a mail to tagforest@protonmail.com</p>\n"
+"<h2>Accessibilité, Vie privée, Sécurité, Contenu</h2>\n"
+"\n"
+"<ul>\n"
+"  <li>\n"
+"    [En cours] Accessibilité du site:\n"
+"    <ul>\n"
+"      <li>devrait être aussi accessible que possible aux personnes "
+"handicapées</li>\n"
+"      <li>devrait être aussi facile que possible à comprendre</li>\n"
+"    </ul>\n"
+"  </li>\n"
+"  <li>\n"
+"    [En cours] Vie privée et sécurité:\n"
+"    <ul>\n"
+"      <li>Le contenu privé de l'utilisateur ne devrait pas être sujet à de "
+"l'espionnage gouvernementale</li>\n"
+"    </ul>\n"
+"  </li>\n"
+"  <li>\n"
+"    [En cours] Contenu:\n"
+"    <ul>\n"
+"      <li>Le contenu politique radical ne devrait pas être censuré, "
+"cependant le contenu oppressif n'est pas autorisé</li>\n"
+"    </ul>\n"
+"  </li>\n"
+"</ul>\n"
+
+#: tags/templates/tags/about.html:68
+msgid ""
+"If something could be made more accessible, if you see a privacy / security "
+"issue, send a mail to tagforest@protonmail.com"
+msgstr ""
+"Si quelque chose pourrait être rendu plus accessible, si vous voyez un "
+"soucis de vie privée / sécurité , envoyez un mail à tagforest@protonmail.com"
+
+#: tags/templates/tags/about.html:70
+msgid ""
 "\n"
 "<h2>Current state</h2>\n"
 "\n"
@@ -147,6 +321,31 @@ msgid ""
 "    </ul>\n"
 "  </li>\n"
 "</ul>\n"
+msgstr ""
+"\n"
+"<h2>Etat actuel</h2>\n"
+"\n"
+"<b>v1.5.7 (2020/07/21)</b>\n"
+"\n"
+"<ul>\n"
+"  <li>Système d'authentification</li>\n"
+"  <li>Groupes, arbres, entrées et tags</li>\n"
+"  <li>\n"
+"    <ul>\n"
+"      <li> Un groupe contient plusieurs utilisateur</li>\n"
+"      <li> Des arbres peuvent ajoutés à un groupe</li>\n"
+"      <li> Un arbre contient une liste d'entrées et de tags</li>\n"
+"      <li> Chaque entrée peut avoir plusieurs tags</li>\n"
+"      <li> Dans un arbre, les entrées peuvent être triées par tags, et les "
+"tags sont triés par nombre d'entrées</li>\n"
+"      <li> Une entrée peut contenir du texte formatté en markdown, et le "
+"markdown est rendu lorsqu'on la visualise</li>\n"
+"    </ul>\n"
+"  </li>\n"
+"</ul>\n"
+
+#: tags/templates/tags/about.html:91
+msgid ""
 "\n"
 "<h2>Upcoming</h2>\n"
 "\n"
@@ -160,7 +359,23 @@ msgid ""
 "  <li>More fields for each entry, and different types of tags</li>\n"
 "  <li>Multiple color schemes</li>\n"
 "</ul>\n"
+msgstr ""
 "\n"
+"<h2>A venir</h2>\n"
+"\n"
+"<ul>\n"
+"  <li>Génération de lien public: générer un lien pour un arbre ou un "
+"ensemble d'arbres, pour avoir un total contrôle sur ce qu'on partage</li>\n"
+"  <li>Noms de tags approximatifs: chaque tag a un ensemble de noms "
+"considérés comme menant au même tag</li>\n"
+"  <li>Graphe acyclique orienté (DAG) de tags: les tags sont liés entre eux à "
+"travers un DAG</li>\n"
+"  <li>Plus de champs pour les entrées, et différents types de tags</li>\n"
+"  <li>Plusieurs thèmes de couleurs</li>\n"
+"</ul>\n"
+
+#: tags/templates/tags/about.html:103
+msgid ""
 "\n"
 "<h2>Tools / Languages / Frameworks used</h2>\n"
 "\n"
@@ -189,6 +404,33 @@ msgid ""
 "nginx.org/\" >Nginx</a></li>\n"
 "</ul>\n"
 msgstr ""
+"\n"
+"<h2>Outils / Langages / Frameworks utilisés</h2>\n"
+"\n"
+"<b>Développement du site:</b>\n"
+"<ul>\n"
+"  <li>Langages: <b>Python 3, HTML, CSS, Javascript</b></li>\n"
+"  <li><a class=\"buttonLink\" href=\"https://www.djangoproject.com/\" "
+">Django:</a> framework principal, modules django modules utilisés: django-"
+"notifications-hq, django-dag (à venir)</li>\n"
+"  <li><a class=\"buttonLink\" href=\"https://vuejs.org/\" >VueJS:</a> pour "
+"de petites apps javascript à diverses endroits du site, modules vue "
+"utilisés: vue-markdown, vue-click-outside</li>\n"
+"  <li><a class=\"buttonLink\" href=\"https://sass-lang.com/\" >Sass:</a> "
+"prétraitement CSS </li>\n"
+"</ul>\n"
+"\n"
+"<b>Serveur:</b>\n"
+"<ul>\n"
+"  <li>OS: <a class=\"buttonLink\" href=\"https://www.debian.org/\" >Debian "
+"Buster 10</a></li>\n"
+"  <li>Hébergé par <a class=\"buttonLink\" href=\"https://www.ovh.com/\" "
+">OVH</a> sur un serveur privé virtuel</li>\n"
+"  <li>serveur HTTP avec <a class=\"buttonLink\" href=\"https://gunicorn.org/"
+"\" >Gunicorn</a></li>\n"
+"  <li>Fichiers statiques servis par <a class=\"buttonLink\" href=\"http://"
+"nginx.org/\" >Nginx</a></li>\n"
+"</ul>\n"
 
 #: tags/templates/tags/base.html:25
 msgid "Groups"
@@ -196,43 +438,41 @@ msgstr "Groupes"
 
 #: tags/templates/tags/base.html:29
 msgid "Personal Trees"
-msgstr ""
+msgstr "Arbres personels"
 
 #: tags/templates/tags/base.html:34
 #: tags/templates/tags/registration/login.html:4
 #: tags/templates/tags/registration/login.html:26
 msgid "Login"
-msgstr ""
+msgstr "Se connecter"
 
 #: tags/templates/tags/base.html:79
 msgid "No new notifications"
-msgstr ""
+msgstr "Aucune nouvelle notification"
 
 #: tags/templates/tags/base.html:81
 msgid "View all notifications"
-msgstr ""
+msgstr "Voir toutes les notifications"
 
 #: tags/templates/tags/base_tree.html:108
 msgid "Tree parameters"
-msgstr ""
+msgstr "Paramètres de l'arbre"
 
 #: tags/templates/tags/base_tree.html:111
 msgid "Entry display:"
-msgstr ""
+msgstr "Affichage des entrées"
 
 #: tags/templates/tags/base_tree.html:134
 msgid "Remove from saved"
-msgstr ""
+msgstr "Enlever des groupes sauvegardées"
 
 #: tags/templates/tags/base_tree.html:139
-#, fuzzy
-#| msgid "Groups"
 msgid "Save Group"
-msgstr "Groupes"
+msgstr "Sauvegarder le groupe"
 
 #: tags/templates/tags/base_tree.html:150
 msgid "Tree Parameters"
-msgstr ""
+msgstr "Paramètres de l'arbre"
 
 #: tags/templates/tags/base_tree.html:169
 #: tags/templates/tags/blocks/entry_manipulation.html:32
@@ -242,79 +482,83 @@ msgstr ""
 #: tags/templates/tags/upsert_group.html:30
 #: tags/templates/tags/view_group.html:64
 msgid "Submit"
-msgstr ""
+msgstr "Soumettre"
 
 #: tags/templates/tags/base_tree.html:170
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: tags/templates/tags/blocks/entry_manipulation.html:6
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 #: tags/templates/tags/blocks/entry_manipulation.html:8
 msgid "Quick add"
-msgstr ""
+msgstr "Ajout rapide"
 
 #: tags/templates/tags/blocks/entry_manipulation.html:10
 msgid "Select"
-msgstr ""
+msgstr "Selectionner"
 
 #: tags/templates/tags/blocks/entry_manipulation.html:15
 #: tags/templates/tags/blocks/entry_manipulation.html:17
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 #: tags/templates/tags/blocks/group_block.html:7
 msgid "View profile"
-msgstr ""
+msgstr "Voir le profile"
 
 #: tags/templates/tags/blocks/group_block.html:9
 msgid "View group info"
-msgstr ""
+msgstr "Voir les infos du groupe"
 
 #: tags/templates/tags/permission_error.html:3
 msgid "Permission error"
-msgstr ""
+msgstr "Erreur de permission"
 
 #: tags/templates/tags/registration/login.html:9
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
+"Votre nom d'utilisateur et mot de passe ne correspondent pas. Veuillez "
+"essayer à nouveau."
 
 #: tags/templates/tags/registration/login.html:15
 msgid ""
 "Your account doesn't have access to this page. To proceed,\n"
 "    please login with an account that has access."
 msgstr ""
+"Votre compte n'a pas accès à cette page. Pour continuer,\n"
+"    veuillez de vous connecter avec un compte qui a accès."
 
 #: tags/templates/tags/registration/login.html:18
 msgid "Please login to see this page."
-msgstr ""
+msgstr "Veullez vous connecter pour voir cette page"
 
 #: tags/templates/tags/registration/login.html:31
 msgid "Sign Up"
-msgstr ""
+msgstr "S'inscrire"
 
 #: tags/templates/tags/registration/password_change.html:4
 #: tags/templates/tags/registration/profile.html:58
 msgid "Change password"
-msgstr ""
+msgstr "Changer le mot de passe"
 
 #: tags/templates/tags/registration/profile.html:5
 msgid "Profile"
-msgstr ""
+msgstr "Profile"
 
 #: tags/templates/tags/registration/profile.html:14
 msgid "Personal Group"
-msgstr ""
+msgstr "Group personel"
 
 #: tags/templates/tags/registration/profile.html:18
 msgid "Logout"
-msgstr ""
+msgstr "Se déconnecter"
 
 #: tags/templates/tags/registration/profile.html:22
 msgid "Personal group visibility settings"
-msgstr ""
+msgstr "Paramètres de visibilité du groupe personel"
 
 #: tags/templates/tags/registration/profile.html:25
 #, python-format
@@ -322,15 +566,17 @@ msgid ""
 "Personal group is visible to <b>%(group_visible_to)s</b> and listed to <b>"
 "%(group_listed_to)s</b>"
 msgstr ""
+"Le groupe personel est visible <b>%(group_visible_to)s</b> et listé <b>"
+"%(group_listed_to)s</b>"
 
 #: tags/templates/tags/registration/profile.html:29
 msgid "Edit profile"
-msgstr ""
+msgstr "Editer le profile"
 
 #: tags/templates/tags/registration/signup.html:4
 #: tags/templates/tags/registration/signup.html:24
 msgid "Sign-up"
-msgstr ""
+msgstr "S'inscrire"
 
 #: tags/templates/tags/registration/signup.html:12
 msgid ""
@@ -343,10 +589,19 @@ msgid ""
 "docs.djangoproject.com/en/3.0/topics/auth/passwords/\" >here</a>\n"
 "</p>\n"
 msgstr ""
+"\n"
+"<p>\n"
+"Les mots de passes sont hashés avec <a href=\"https://en.wikipedia.org/wiki/"
+"PBKDF2\" >PBKDF2</a>, ce qui assure que personne ne peut le voir, même en "
+"ayant accès à là base de donnée du site<br/>\n"
+"Plus d'informations sur comment les mots de passes sont stockés peuvent être "
+"trouvées <a href=\"https://docs.djangoproject.com/en/3.0/topics/auth/"
+"passwords/\" >ici</a>\n"
+"</p>\n"
 
 #: tags/templates/tags/registration/signup_success.html:4
 msgid "Successful registration"
-msgstr ""
+msgstr "Inscription réussie"
 
 #: tags/templates/tags/registration/signup_success.html:13
 #, python-format
@@ -354,10 +609,12 @@ msgid ""
 "Registration successful, you may now <a href=\"%(login_url)s?next="
 "%(post_login_url)s\" >login</a>."
 msgstr ""
+"Inscription réussie, vous pouvez maintenant <a href=\"%(login_url)s?next="
+"%(post_login_url)s\" >vous connecter</a>."
 
 #: tags/templates/tags/upsert_entry.html:4
 msgid "Add entry"
-msgstr ""
+msgstr "Ajouter une entrée"
 
 #: tags/templates/tags/upsert_entry.html:8
 msgid ""
@@ -372,54 +629,70 @@ msgid ""
 "\"buttonLink\" >Markdown example</a>\n"
 "</p>\n"
 msgstr ""
+"\n"
+"<h2>Ajouter une entrée</h2>\n"
+"\n"
+"<p>\n"
+"Le texte peut être formatté en <a href=\"https://www.markdownguide.org/"
+"getting-started/\" >markdown</a><br/>\n"
+"Voici un exemple pour rapidement comprendre ce qu'est le markdown: <a href="
+"\"https://www.tagforest.fr/group/Examples/tree/9/entry/173/view/?\" class="
+"\"buttonLink\" >Exemple de markdown</a>\n"
+"</p>\n"
 
 #: tags/templates/tags/upsert_group.html:4
 msgid "Add group"
-msgstr ""
+msgstr "Ajouter un groupe"
 
 #: tags/templates/tags/view_entry.html:19
 #: tags/templates/tags/view_group.html:10
 msgid "Edit"
-msgstr ""
+msgstr "Editer"
 
 #: tags/templates/tags/view_group.html:11
 msgid "View trees"
-msgstr ""
+msgstr "Voir les arbres"
 
 #: tags/templates/tags/view_group.html:18
 #, python-format
 msgid ""
 "\n"
-"  <h2>Personal group visibility settings</h2>\n"
+"  <h2>Group visibility settings</h2>\n"
 "\n"
 "  <p>\n"
-"  Personal group is visible to <b>%(group_visible_to)s</b> and listed to <b>"
+"  Group is visible to <b>%(group_visible_to)s</b> and listed to <b>"
 "%(group_listed_to)s</b>\n"
 "  </p>\n"
 "\n"
 "  <h2>Members</h2>\n"
 "  "
 msgstr ""
+"\n"
+"  <h2>Paramètres de visibilité du groupe</h2>\n"
+"\n"
+"  <p>\n"
+"  Le groupe est visible <b>%(group_visible_to)s</b> et listé <b>"
+"%(group_listed_to)s</b>\n"
+"  </p>\n"
+"\n"
+"  <h2>Membres</h2>\n"
+"  "
 
 #: tags/templates/tags/view_group.html:48
 msgid "Invite a member:"
-msgstr ""
+msgstr "Invité un membre"
 
 #: tags/templates/tags/view_groups.html:4
-#, fuzzy
-#| msgid "Groups"
 msgid "Manage groups"
-msgstr "Groupes"
+msgstr "Gérer les groupes"
 
 #: tags/templates/tags/view_groups.html:9
-#, fuzzy
-#| msgid "Groups"
 msgid "Saved groups:"
-msgstr "Groupes"
+msgstr "Groupes sauvegardés"
 
 #: tags/templates/tags/view_groups.html:16
 msgid "Joined groups:"
-msgstr ""
+msgstr "Groupes rejoints"
 
 #: tags/templates/tags/view_groups.html:28
 #, python-format
@@ -435,39 +708,102 @@ msgid ""
 "    </p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>\n"
+"    <a href=\"%(login_url)s?next=%(post_login_url)s\" >Connectez vous ou "
+"inscrivez vous</a> pour pouvoir créer des arbres, groupes, et ajouter des "
+"tags et ressources\n"
+"    </p>\n"
+"    <p>\n"
+"    Regardez la section <a href=\"%(about_url)s\" >A propos</a> pour plus "
+"d'informations sur ce site\n"
+"    </p>\n"
+"    "
 
 #: tags/templates/tags/view_groups.html:39
 msgid "Public listed groups:"
-msgstr ""
+msgstr "Groupes publics"
 
 #: tags/templates/tags/view_groups.html:47
 msgid "There are no public groups at the moment"
-msgstr ""
+msgstr "Il n'y a pas de groupes publics pour l'instant"
 
 #: tags/templates/tags/view_notification.html:4
 msgid "Notification"
-msgstr ""
+msgstr "Notification"
 
 #: tags/templates/tags/view_notification.html:12
 msgid "Accept"
-msgstr ""
+msgstr "Accepter"
 
 #: tags/templates/tags/view_notification.html:13
 msgid "Decline"
-msgstr ""
+msgstr "Refuser"
 
 #: tags/templates/tags/view_notifications.html:5
+#: tags/templates/tags/view_notifications.html:9
 msgid "Notifications"
-msgstr ""
+msgstr "Notifications"
 
-#: tags/templates/tags/view_notifications.html:15
+#: tags/templates/tags/view_notifications.html:13
 msgid "Unread:"
-msgstr ""
+msgstr "Non lus"
 
-#: tags/templates/tags/view_notifications.html:27
+#: tags/templates/tags/view_notifications.html:25
 msgid "Read:"
+msgstr "Lus:"
+
+#: tags/templates/tags/view_notifications.html:30
+msgid "This group doesn\\'t exist anymore"
+msgstr "Ce groupe n\\'existe plus"
+
+#: tags/views/base_views.py:173
+msgid "You don't have permission to view this group's trees"
 msgstr ""
 
-#: tags/templates/tags/view_notifications.html:32
-msgid "This group doesn\\'t exist anymore"
+#: tags/views/base_views.py:244 tags/views/base_views.py:269
+msgid "You don't have permission to edit in this group"
+msgstr ""
+
+#: tags/views/base_views.py:289
+#, python-format
+msgid "Your group already contains a tree named %s(treename)s"
+msgstr ""
+
+#: tags/views/views.py:203
+msgid "You don't have permission to edit this profile"
+msgstr ""
+
+#: tags/views/views.py:295
+msgid "You don't have permission to delete this group"
+msgstr ""
+
+#: tags/views/views.py:298
+msgid "You can't delete this group"
+msgstr ""
+
+#: tags/views/views.py:317 tags/views/views.py:357
+msgid "You don't have permission to edit this group"
+msgstr ""
+
+#: tags/views/views.py:385
+msgid "You don't have permission to view this group"
+msgstr ""
+
+#: tags/views/views.py:411
+msgid "You don't have admin permission for this group"
+msgstr ""
+
+#: tags/views/views.py:417
+msgid ""
+"The last member of the group can't be deleted (delete the group instead)"
+msgstr ""
+
+#: tags/views/views.py:440
+msgid "%s(user)s invited you to join %(group)s"
+msgstr ""
+
+#: tags/views/views.py:613
+#, python-format
+msgid "You already have an entry named %(entryname)s"
 msgstr ""
