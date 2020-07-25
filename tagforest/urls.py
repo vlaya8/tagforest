@@ -9,5 +9,7 @@ urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
 )
 
+urlpatterns += [path('', tags.views.index)]
+
 handler404 = 'tags.views.handler404'
 handler500 = 'tags.views.handler500'

@@ -1,14 +1,12 @@
 {% extends "tags/base.html" %}
 {% load i18n %}
 
-{% trans "404 Error" as 404_error %}
-
-{% block title %}{{ 404_error }}{% endblock %}
+{% block title %}{% trans "404 error" %}{% endblock %}
 
 {% block content %}
   <br/>
   <p>
-  <b>{{ 404_error }}</b>
+  <b>{% trans "404 error" %}</b>
   </p>
   <br/>
 {% endblock %}

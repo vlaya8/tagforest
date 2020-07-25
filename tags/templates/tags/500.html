@@ -1,14 +1,12 @@
 {% extends "tags/base.html" %}
 {% load i18n %}
 
-{% trans "500 Error" as 500_error %}
-
-{% block title %}{{ 500_error }}{% endblock %}
+{% block title %}{% trans "500 error" %}{% endblock %}
 
 {% block content %}
   <br/>
   <p>
-  <b>{{ 500_error }}</b>
+  <b>{% trans "500 error" %}</b>
   </p>
   <br/>
 {% endblock %}

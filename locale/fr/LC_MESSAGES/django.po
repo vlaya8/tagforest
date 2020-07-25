@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-25 18:29+0200\n"
+"POT-Creation-Date: 2020-07-25 18:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -150,12 +150,12 @@ msgstr "Ecrivain·e"
 msgid "Reader"
 msgstr "Lecteur·ice"
 
-#: tags/templates/tags/404.html:4
-msgid "404 Error"
+#: tags/templates/tags/404.html:4 tags/templates/tags/404.html:9
+msgid "404 error"
 msgstr "Erreur 404"
 
-#: tags/templates/tags/500.html:4
-msgid "500 Error"
+#: tags/templates/tags/500.html:4 tags/templates/tags/500.html:9
+msgid "500 error"
 msgstr "Erreur 500"
 
 #: tags/templates/tags/about.html:4 tags/templates/tags/base.html:40
