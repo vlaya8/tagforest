@@ -1,0 +1,18 @@
+{% extends "tags/base_tree.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Export entries" %}{% endblock %}
+
+{% block content %}
+
+<h2>{% trans "Export entries" %}</h2>
+
+<p>{% trans "You can then import these entries back in any tree you want" %}</p>
+
+<form class="contentForm">
+  <ul>
+    <li><textarea rows="30" cols="50">{{ export_str }}</textarea></li>
+  </ul>
+</form>
+
+{% endblock %}

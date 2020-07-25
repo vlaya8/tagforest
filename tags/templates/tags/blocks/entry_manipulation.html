@@ -5,7 +5,7 @@
 {% if has_writer_permission %}
 <a href="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree.id %}" class="buttonLink" ><i class="fa fa-plus"></i> {% trans "Add" %}</a>
 
-<button @click="toggleQuickAdd('{{ position }}')" class="buttonLink" ><i class="fa fa-plus"></i> {% trans "Quick add" %}</button>
+<button @click="toggleQuickAdd('{{ position }}')" class="buttonLink" ><i class="fa fa-flash"></i> {% trans "Quick add" %}</button>
 
 <button @click="toggleSelectMode()" class="buttonLink" ><i class="fa fa-dot-circle-o"></i> {% trans "Select" %}</button>
 
@@ -15,6 +15,9 @@
   <button name="delete_entries" class="buttonLink" ><i class="fa fa-trash"></i> {% trans "Remove" %}</button>
 </form>
 <button v-if="!selectMode" name="delete_entries" class="buttonLink disabledLink" ><i class="fa fa-trash"></i> {% trans "Remove" %}</button>
+
+<a href="{% url 'tags:import_entries' group_name=group.name tree_id=current_tree.id %}" class="buttonLink" ><i class="fa fa-download"></i> {% trans "Import entries" %}</a>
+<a href="{% url 'tags:export_entries' group_name=group.name tree_id=current_tree.id %}?selected_tags={{ selected_tags }}" class="buttonLink" ><i class="fa fa-upload"></i> {% trans "Export entries" %}</a>
 
 <div class="errorMessage">{{ quick_add_form.non_field_errors }}</div>
 

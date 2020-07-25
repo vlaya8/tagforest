@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-25 19:47+0200\n"
+"POT-Creation-Date: 2020-07-26 02:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,51 +15,51 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: tagforest/server_settings.py:125 tagforest/settings.py:114
+#: tagforest/server_settings.py:125 tagforest/settings.py:106
 msgid "English"
 msgstr "anglais"
 
-#: tagforest/server_settings.py:126 tagforest/settings.py:115
+#: tagforest/server_settings.py:126 tagforest/settings.py:107
 msgid "French"
 msgstr "français"
 
 #. Translators: Label for the entry form
-#: tags/forms.py:38 tags/forms.py:52 tags/forms.py:95 tags/forms.py:142
+#: tags/forms.py:41 tags/forms.py:55 tags/forms.py:98 tags/forms.py:145
 msgid "Name"
 msgstr "Nom"
 
 #. Translators: Label for the entry form
-#: tags/forms.py:40
+#: tags/forms.py:43
 msgid "Text (markdown formatted)"
 msgstr "Texte (formatté en markdown)"
 
 #. Translators: Label for the entry form
-#: tags/forms.py:42
+#: tags/forms.py:45
 msgid "Tags (separated by commas: tag1,tag2,tag3...)"
 msgstr "Tags (séparé par des virgules: tag1,tag2,tag3...)"
 
-#: tags/forms.py:63
+#: tags/forms.py:66
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: tags/forms.py:65
+#: tags/forms.py:68
 msgid "Default language"
 msgstr "Langage par défaut"
 
-#: tags/forms.py:68
+#: tags/forms.py:71
 msgid "Public to which your personal group is listed"
 msgstr "Public auquel votre groupe personel est listé"
 
-#: tags/forms.py:72
+#: tags/forms.py:75
 msgid "Public to which your personal group is accessible"
 msgstr "Public auquel votre groupe personel est accessible"
 
-#: tags/forms.py:81
+#: tags/forms.py:84
 #, python-format
 msgid "%(username)s is already taken"
 msgstr "%(username)s est déjà pris"
 
-#: tags/forms.py:87 tags/forms.py:115
+#: tags/forms.py:90 tags/forms.py:118
 #, python-format
 msgid ""
 "You asked to list the group to %(listed_public)s but it is only visible to "
@@ -68,85 +68,94 @@ msgstr ""
 "Vous avez défini votre groupe comme listé %(listed_public)s mais il est "
 "seulement visible %(visible_public)s"
 
-#: tags/forms.py:98
+#: tags/forms.py:101
 msgid "Public to which the group is listed"
 msgstr "Public auquel votre groupe est listé"
 
-#: tags/forms.py:102
+#: tags/forms.py:105
 msgid "Public to which the group is accessible"
 msgstr "Public auquel votre groupe est accessible"
 
-#: tags/forms.py:134
+#: tags/forms.py:137
 #, python-format
 msgid "There is no user named %(username)s"
 msgstr "Il n'y a pas d'utilisateur nommé %(username)s"
 
-#: tags/forms.py:136
+#: tags/forms.py:139
 #, python-format
 msgid "%(username)s is already in %(group)s"
 msgstr "%(username)s est déjà dans %(group)s"
 
-#: tags/forms.py:143
+#: tags/forms.py:146
 msgid "Description"
 msgstr "Description"
 
-#: tags/forms.py:146
+#: tags/forms.py:149
 msgid "Default entry display"
 msgstr "Affichage des entrées par défaut"
 
-#: tags/forms.py:161
+#: tags/forms.py:164
 msgid "Error when selecting entries"
 msgstr "Erreur en selectionnant les entrées"
 
-#: tags/models.py:16
+#: tags/forms.py:170
+msgid "Data to import"
+msgstr "Données à importer"
+
+#: tags/forms.py:180
+#, python-format
+msgid "Parsing failed starting from line %(linenumber)s"
+msgstr "L'import a échoué à partir de la ligne %(linenumber)s"
+
+#: tags/models.py:17
 msgid "Only invited users"
 msgstr "Seulement les utilisateurs invités"
 
-#: tags/models.py:17
+#: tags/models.py:18
 msgid "Only users"
 msgstr "Seulement les utilisateurs"
 
-#: tags/models.py:18
+#: tags/models.py:19
 msgid "Everyone"
 msgstr "Tout le monde"
 
-#: tags/models.py:23
+#: tags/models.py:24
 msgid "invited users"
 msgstr "aux utilisateurs invités"
 
-#: tags/models.py:24
+#: tags/models.py:25
 msgid "users"
 msgstr "à tous les utilisateurs"
 
-#: tags/models.py:25
+#: tags/models.py:26
 msgid "everyone"
 msgstr "à tout le monde"
 
-#: tags/models.py:42
+#: tags/models.py:43
 msgid "Compact (small)"
 msgstr "Compact (petit)"
 
-#: tags/models.py:43
+#: tags/models.py:44
 msgid "Compact (medium)"
 msgstr "Compact (moyen)"
 
-#: tags/models.py:44
+#: tags/models.py:45
 msgid "Compact (large)"
 msgstr "Compact (large)"
 
-#: tags/models.py:45
+#: tags/models.py:46
 msgid "List"
 msgstr "Liste"
 
-#: tags/models.py:120
+#: tags/models.py:121
 msgid "Admin"
 msgstr "Admin"
 
-#: tags/models.py:122
+#: tags/models.py:123
 msgid "Writer"
 msgstr "Ecrivain·e"
 
-#: tags/models.py:124
+#: tags/models.py:125
 msgid "Reader"
 msgstr "Lecteur·ice"
 
@@ -491,7 +500,8 @@ msgid "Tree Parameters"
 msgstr "Paramètres de l'arbre"
 
 #: tags/templates/tags/base_tree.html:169
-#: tags/templates/tags/blocks/entry_manipulation.html:32
+#: tags/templates/tags/blocks/entry_manipulation.html:35
+#: tags/templates/tags/import_entries.html:30
 #: tags/templates/tags/registration/password_change.html:20
 #: tags/templates/tags/registration/profile.html:55
 #: tags/templates/tags/upsert_entry.html:22
@@ -521,6 +531,18 @@ msgstr "Selectionner"
 msgid "Remove"
 msgstr "Supprimer"
 
+#: tags/templates/tags/blocks/entry_manipulation.html:19
+#: tags/templates/tags/import_entries.html:4
+#: tags/templates/tags/import_entries.html:8
+msgid "Import entries"
+msgstr "Importer des entrées"
+
+#: tags/templates/tags/blocks/entry_manipulation.html:20
+#: tags/templates/tags/export_entries.html:4
+#: tags/templates/tags/export_entries.html:8
+msgid "Export entries"
+msgstr "Exporter les entrées"
+
 #: tags/templates/tags/blocks/group_block.html:7
 msgid "View profile"
 msgstr "Voir le profile"
@@ -528,6 +550,39 @@ msgstr "Voir le profile"
 #: tags/templates/tags/blocks/group_block.html:9
 msgid "View group info"
 msgstr "Voir les infos du groupe"
+
+#: tags/templates/tags/export_entries.html:10
+msgid "You can then import these entries back in any tree you want"
+msgstr "Vous pouvez ensuite importer ces entrées dans l'arbre que vous voulez"
+
+#: tags/templates/tags/import_entries.html:10
+msgid ""
+"Format for importing entries (you can export a tree to see more examples):"
+msgstr "Format pour importer des entrées (vous pouvez exporter un arbre pour voir plus d'exemples):"
+
+#: tags/templates/tags/import_entries.html:14
+msgid "Entry name"
+msgstr "Nom de l'entrée"
+
+#: tags/templates/tags/import_entries.html:16
+msgid "Entry text"
+msgstr "Texte de l'entrée"
+
+#: tags/templates/tags/import_entries.html:18
+msgid "tag1,tag2,tag3"
+msgstr "tag1,tag2,tag3"
+
+#: tags/templates/tags/import_entries.html:19
+msgid "Next entry"
+msgstr "Entrée suivante"
+
+#: tags/templates/tags/import_entries.html:23
+msgid ""
+"(In the case you want to somehow import four single guillemets on a single "
+"line in the entry text, you'll have to escape it with a backslash: \\<<<<)"
+msgstr ""
+"(Dans le cas ou vous voulez importer 4 chevrons successifs sur une seule "
+"ligne dans un texte d'entrée, il faudra l'échapper avec un antislash: \\<<<<)"
 
 #: tags/templates/tags/permission_error.html:4
 msgid "Permission error"
@@ -795,42 +850,43 @@ msgstr "<Groupe supprimé>"
 msgid "%(user)s invited you to join %(group)s"
 msgstr "%(user)s vous a invité à rejoindre %(group)s"
 
-#: tags/views/views.py:127
+#: tags/views/views.py:123
 msgid "The group you were invited to got deleted"
-msgstr ""
+msgstr "Le groupe auquel vous aviez été invité a été supprimé"
 
-#: tags/views/views.py:214
+#: tags/views/views.py:210
 msgid "You don't have permission to edit this profile"
 msgstr "Vous n'avez pas la permission d'éditer ce profil"
 
-#: tags/views/views.py:306
+#: tags/views/views.py:302
 msgid "You don't have permission to delete this group"
 msgstr "Vous n'avez pas la permission de supprimer ce groupe"
 
-#: tags/views/views.py:309
+#: tags/views/views.py:305
 msgid "You can't delete this group"
 msgstr "Vous ne pouvez pas supprimer ce groupe"
 
-#: tags/views/views.py:328 tags/views/views.py:368
+#: tags/views/views.py:324 tags/views/views.py:364
 msgid "You don't have permission to edit this group"
 msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 
-#: tags/views/views.py:396
+#: tags/views/views.py:392
 msgid "You don't have permission to view this group"
 msgstr "Vous n'avez pas la permission de voir ce groupe"
 
-#: tags/views/views.py:422
+#: tags/views/views.py:418
 msgid "You don't have admin permission for this group"
 msgstr "Vous n'avez pas de permission admin pour ce groupe"
 
-#: tags/views/views.py:428
+#: tags/views/views.py:424
 msgid ""
 "The last member of the group can't be deleted (delete the group instead)"
 msgstr ""
 "Le dernier membre du groupe ne peut pas être supprimé (supprimez plutôt le "
 "groupe)"
 
-#: tags/views/views.py:535 tags/views/views.py:633 tags/views/views.py:642
+#: tags/views/views.py:533 tags/views/views.py:631 tags/views/views.py:640
+#: tags/views/views.py:696
 #, python-format
 msgid "You already have an entry named %(entryname)s"
 msgstr "Vous avez déjà une entrée nommée %(entryname)s"

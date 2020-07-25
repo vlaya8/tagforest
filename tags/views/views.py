@@ -18,10 +18,10 @@ from django.utils.translation import ugettext as _
 from notifications.signals import notify
 from notifications.models import Notification
 
-from ..exceptions import UserError, FormError, LoginRequired, UserPermissionError
+from ..exceptions import UserError, FormError, LoginRequired, UserPermissionError, EntryParseError
 from ..models import Entry,Tag,Tree
 from ..models import TreeUserGroup, Role, Member
-from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm, ManipulateEntriesForm
+from ..forms import EntryForm, TreeForm, GroupForm, MemberInvitationForm, ProfileForm, ManipulateEntriesForm, ImportForm
 from .utilities import *
 from .base_views import *
 
@@ -73,11 +73,7 @@ def index(request):
     if request.user.is_authenticated:
         group = request.user.get_user_group()
 
-        return redirect_with_get_params(
-                    'tags:view_tree',
-                    get_params={'selected_tags': request.GET.get('selected_tags', '')},
-                    kwargs={'group_name': group.name}
-                )
+        return HttpResponseRedirect(reverse('tags:view_tree', kwargs={'group_name': group.name}))
     else:
         return HttpResponseRedirect(reverse('tags:view_groups'))
 
@@ -483,6 +479,7 @@ class ViewTreeView(BaseTreeView):
 
             entry_list = []
             tag_list = []
+            selected_tags = []
 
         entry_titles = {entry.pk: entry.name for entry in entry_list}
 
@@ -490,6 +487,7 @@ class ViewTreeView(BaseTreeView):
                     'entry_list': entry_list,
                     'entry_titles': json.dumps(entry_titles),
                     'tag_list': tag_list,
+                    'selected_tags': ",".join(selected_tags),
                     'selected_entries_form': ManipulateEntriesForm(initial={"entries": ""}),
                     'quick_add_form': EntryForm(initial={"entry_id": SpecialID['NEW_ID']}),
                   })
@@ -661,6 +659,105 @@ class UpsertEntryView(BaseTreeView):
 
             else:
                 raise FormError({'form': form})
+
+class ImportEntriesView(BaseTreeView):
+
+    template_name = 'tags/import_entries.html'
+
+    def get_context_data(self, request, **kwargs):
+
+        context = super().get_context_data(request, **kwargs)
+
+        form = ImportForm(initial={})
+
+        context.update({
+                         'form': form
+        })
+
+        return context
+
+    def process_post(self, request, **kwargs):
+
+        super().process_post(request, **kwargs)
+
+        # Process an entry which got deleted
+        if 'import_entries' in request.POST:
+
+            form = ImportForm(request.POST)
+
+            if form.is_valid():
+
+                entries = form.cleaned_data['data']
+
+                for entry_dict in entries:
+
+                    # Check if an entry with the same name in the same tree already exists
+                    if Entry.objects.filter(tree=self.current_tree).filter(name=entry_dict["name"]).exists():
+                        raise UserError(_("You already have an entry named %(entryname)s") % {'entryname': entry_dict["name"]}, "entry_upsert_error")
+
+                for entry_dict in entries:
+
+                    entry = Entry.objects.create(name=entry_dict["name"], text=entry_dict.get("text","aaa"), tree=self.current_tree, added_date=timezone.now(), group=self.group)
+
+                    tags_name = parse_tags(entry_dict.get("tags") or "")
+
+                    for tag_name in tags_name:
+
+                        tag_obj, tag_exists = Tag.objects.get_or_create(name=tag_name, tree=self.current_tree, group=self.group)
+                        tag_obj.save()
+
+                        entry.tags.add(tag_obj)
+
+                    entry.save()
+
+                self.redirect_url = 'tags:view_tree'
+                self.redirect_kwargs['group_name'] = self.group.name
+                self.redirect_kwargs['tree_id'] = self.current_tree.id
+
+            else:
+                raise FormError({'form': form})
+
+class ExportEntriesView(BaseTreeView):
+
+    template_name = 'tags/export_entries.html'
+
+    def get_context_data(self, request, **kwargs):
+
+        context = super().get_context_data(request, **kwargs)
+
+        if self.current_tree != None:
+
+            # Get selected tags from GET url parameters
+            selected_tags = get_selected_tag_list(request)
+            # Generate all the elements to be displayed in the tag list
+            tag_list = get_tag_list(self.group, self.current_tree.id, selected_tags)
+
+            # Generate the entries to be displayed
+            if len(selected_tags) > 0:
+                entry_list = Entry.objects.all()
+                
+                for tag in selected_tags:
+                    entry_list &= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=self.current_tree.id).filter(group__id=self.group.id)
+
+                entry_list = entry_list.distinct()
+            else:
+                entry_list = Entry.objects.filter(tree__id=self.current_tree.id).filter(group__id=self.group.id)
+        else:
+
+            entry_list = []
+            tag_list = []
+
+        export_str = ""
+
+        for entry in entry_list:
+            export_str += entry.export()
+
+        context.update({
+                         'export_str': export_str
+        })
+
+        return context
+
 
 ## About
 

@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
+from .exceptions import EntryParseError
+from .models import Entry
+
 from tagforest import settings
 
 def parse_tag(tags_string):
@@ -162,3 +165,18 @@ class ManipulateEntriesForm(forms.Form):
 
         return entries_ids
 
+class ImportForm(forms.Form):
+
+    data_label = _("Data to import")
+    data = forms.CharField(label = data_label, widget=forms.Textarea, required=True)
+
+    def clean_data(self):
+        cleaned_data = super().clean()
+        data = cleaned_data.get("data")
+
+        try:
+            entries = Entry.parse_data(data)
+        except EntryParseError as e:
+            raise forms.ValidationError(ugettext("Parsing failed starting from line %(linenumber)s") % {'linenumber': e.line_number})
+
+        return entries

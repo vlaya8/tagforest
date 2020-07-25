@@ -19,3 +19,9 @@ class FormError(Exception):
     def __init__(self, invalid_form):
 
         self.invalid_form = invalid_form
+
+class EntryParseError(Exception):
+
+    def __init__(self, line_number):
+
+        self.line_number = line_number

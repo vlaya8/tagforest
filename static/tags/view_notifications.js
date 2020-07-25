@@ -9,12 +9,10 @@ var view_notifications_app = new Vue({
   },
   methods:{
     showDialog: function (dialog_message) {
-        console.log("showDialog")
     	this.dialogVisible = true
         this.dialogMessage = dialog_message
     },
     hide: function () {
-        console.log("hide")
     	this.dialogVisible = false
     },
   },

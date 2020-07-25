@@ -17,6 +17,8 @@ tree_urlpatterns = [
                 path('add/', views.UpsertEntryView.as_view(), name="upsert_entry"),
                 path('<int:entry_id>/edit/', views.UpsertEntryView.as_view(), name="upsert_entry"),
             ])),
+            path('import/', views.ImportEntriesView.as_view(), name="import_entries"),
+            path('export/', views.ExportEntriesView.as_view(), name="export_entries"),
         ])),
     ])),
 ]

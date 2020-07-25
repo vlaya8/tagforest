@@ -1,0 +1,34 @@
+{% extends "tags/base_tree.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Import entries" %}{% endblock %}
+
+{% block content %}
+
+<h2>{% trans "Import entries" %}</h2>
+
+<p>{% trans "Format for importing entries (you can export a tree to see more examples):" %}</p>
+
+<div class="markdown" >
+<code>
+  name> {% trans "Entry name" %}<br/>
+  text>>>><br/>
+  {% trans "Entry text" %}<br/>
+  <<<<<br/>
+  tags> {% trans "tag1,tag2,tag3" %}<br/>
+  name> {% trans "Next entry" %}<br/>
+</code>
+</div>
+
+<p>{% trans "(In the case you want to somehow import four single guillemets on a single line in the entry text, you'll have to escape it with a backslash: \<<<<)" %}</p>
+
+<div class="errorMessage">{{ entry_upsert_error }}</div>
+<form class="contentForm" action="{% url 'tags:import_entries' group_name=group.name tree_id=current_tree.id %}" method="post">
+  {% csrf_token %}
+  <ul>
+  {{ form.as_ul }}
+  <li><input type="submit" name="import_entries" value="{% trans "Submit" %}"></li>
+  </ul>
+</form>
+
+{% endblock %}

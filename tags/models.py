@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
-
 from django_dag.models import *
-
-from tagforest import settings
-
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+
+from tagforest import settings
+from .exceptions import EntryParseError
+
+import re
 
 INVITE = 'INV'
 USERS = 'USR'
@@ -183,7 +184,7 @@ class Entry(models.Model):
 
     name = models.CharField('name', max_length=255)
     added_date = models.DateTimeField('date added')
-    text = models.TextField('text', blank=True)
+    text = models.TextField('text', null=True)
 
     tags = models.ManyToManyField(Tag, blank=True)
 
@@ -192,6 +193,54 @@ class Entry(models.Model):
 
     class Meta:
         unique_together = ('name', 'group', 'tree')
+
+    def export_field(field_name, field_data):
+        if field_data:
+            return "{}> {}\n".format(field_name, field_data)
+        else:
+            return ""
+
+    def export_multiline_field(field_name, field_data):
+        if field_data:
+            return "{}>>>>\n{}\n<<<<\n".format(field_name, field_data.replace('\n<<<<\r\n', '\n\<<<<\n'))
+        else:
+            return ""
+
+    def export(self):
+
+        data =  Entry.export_field("name", self.name)
+        data += Entry.export_field("tags", ",".join([tag.name for tag in self.tags.all()]))
+        data += Entry.export_multiline_field("text", self.text)
+
+        return data
+
+    def field_pattern(field_name, required=False):
+        pattern = fr"{field_name}>[ \t](?P<{field_name}>.*?)[\r]*?\n"
+        return pattern if required else (r"(" + pattern + r")?")
+
+    def field_multiline_pattern(field_name, required=False):
+        pattern = fr"{field_name}>>>>[\r]*?\n(?P<{field_name}>[\s\S]+?)[\r]*?\n<<<<[\r]*?\n"
+        return pattern if required else (r"(" + pattern + r")?")
+
+    def parse_data(data):
+
+        entries = []
+        matched_chars = 0
+        data += "\r\n"
+
+        while matched_chars < len(data):
+            pattern = re.compile(Entry.field_pattern("name", False) + Entry.field_pattern("tags") + Entry.field_multiline_pattern("text"),
+                                 re.VERBOSE)
+            match = pattern.match(data[matched_chars:])
+            matched_string, entry_dict = match.group(), match.groupdict()
+            if not matched_string:
+                raise EntryParseError(data.count("\n", 0, matched_chars) + 1)
+            matched_chars += len(matched_string)
+            entry_dict["text"] = (entry_dict.get("text") or "").replace('\n\<<<<\r\n', '\n<<<<\n')
+            entries.append(entry_dict)
+
+        return entries
+
 
 ## User
 
