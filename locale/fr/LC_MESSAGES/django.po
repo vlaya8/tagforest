@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-25 19:31+0200\n"
+"POT-Creation-Date: 2020-07-25 19:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -748,11 +748,11 @@ msgstr "Il n'y a pas de groupes publics pour l'instant"
 msgid "Notification"
 msgstr "Notification"
 
-#: tags/templates/tags/view_notification.html:12
+#: tags/templates/tags/view_notification.html:14
 msgid "Accept"
 msgstr "Accepter"
 
-#: tags/templates/tags/view_notification.html:13
+#: tags/templates/tags/view_notification.html:15
 msgid "Decline"
 msgstr "Refuser"
 
@@ -773,11 +773,6 @@ msgstr "Lus:"
 msgid "This group doesn't exist anymore"
 msgstr "Ce groupe n'existe plus"
 
-#: tags/views/base_views.py:63 tags/views/utilities.py:26
-#, python-format
-msgid "%(user)s invited you to join %(group)s"
-msgstr "%(user)s vous a invité à rejoindre %(group)s"
-
 #: tags/views/base_views.py:177
 msgid "You don't have permission to view this group's trees"
 msgstr "Vous n'avez pas la permission de voir les arbres de ce groupe"
@@ -791,42 +786,51 @@ msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 msgid "Your group already contains a tree named %s(treename)s"
 msgstr "Votre groupe contient déjà un arbre nommé %s(treename)s"
 
-#: tags/views/utilities.py:22
+#: tags/views/utilities.py:23
 msgid "<Removed group>"
 msgstr "<Groupe supprimé>"
 
-#: tags/views/views.py:206
+#: tags/views/utilities.py:27
+#, python-format
+msgid "%(user)s invited you to join %(group)s"
+msgstr "%(user)s vous a invité à rejoindre %(group)s"
+
+#: tags/views/views.py:127
+msgid "The group you were invited to got deleted"
+msgstr ""
+
+#: tags/views/views.py:214
 msgid "You don't have permission to edit this profile"
 msgstr "Vous n'avez pas la permission d'éditer ce profil"
 
-#: tags/views/views.py:298
+#: tags/views/views.py:306
 msgid "You don't have permission to delete this group"
 msgstr "Vous n'avez pas la permission de supprimer ce groupe"
 
-#: tags/views/views.py:301
+#: tags/views/views.py:309
 msgid "You can't delete this group"
 msgstr "Vous ne pouvez pas supprimer ce groupe"
 
-#: tags/views/views.py:320 tags/views/views.py:360
+#: tags/views/views.py:328 tags/views/views.py:368
 msgid "You don't have permission to edit this group"
 msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 
-#: tags/views/views.py:388
+#: tags/views/views.py:396
 msgid "You don't have permission to view this group"
 msgstr "Vous n'avez pas la permission de voir ce groupe"
 
-#: tags/views/views.py:414
+#: tags/views/views.py:422
 msgid "You don't have admin permission for this group"
 msgstr "Vous n'avez pas de permission admin pour ce groupe"
 
-#: tags/views/views.py:420
+#: tags/views/views.py:428
 msgid ""
 "The last member of the group can't be deleted (delete the group instead)"
 msgstr ""
 "Le dernier membre du groupe ne peut pas être supprimé (supprimez plutôt le "
 "groupe)"
 
-#: tags/views/views.py:527 tags/views/views.py:625 tags/views/views.py:634
+#: tags/views/views.py:535 tags/views/views.py:633 tags/views/views.py:642
 #, python-format
 msgid "You already have an entry named %(entryname)s"
 msgstr "Vous avez déjà une entrée nommée %(entryname)s"
