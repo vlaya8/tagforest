@@ -58,7 +58,11 @@ class BaseView(View):
 
             logout_next = reverse('tags:index')
 
-            new_notifications = [(n.verb, n.id) for n in request.user.notifications.unread()]
+            new_notifications = []
+            for n in request.user.notifications.unread():
+                message = _("%(user)s invited you to join %(group)s") % {'user': n.recipient, 'group': n.target}
+                new_notifications.append((message, n.id))
+
             new_notification_count = len(new_notifications)
 
             context.update({

@@ -62,7 +62,7 @@ class ProfileForm(forms.Form):
 
     username = forms.CharField(label = _("Username"), max_length=255)
 
-    language = forms.ChoiceField(label = _("Default langue"), choices=settings.LANGUAGES)
+    language = forms.ChoiceField(label = _("Default language"), choices=settings.LANGUAGES)
 
     listed_to_public = forms.ChoiceField(
                                       label = _("Public to which your personal group is listed"),
@@ -133,7 +133,7 @@ class MemberInvitationForm(forms.Form):
         if not User.objects.filter(username=name).exists():
             raise forms.ValidationError(gettext("There is no user named %(username)s") % {'username': name})
         if self.group.member_set.filter(user__username=name).exists():
-            raise forms.ValidationError("%(username)s is already in %(group)s" % {'username': name, 'group': self.group})
+            raise forms.ValidationError(gettext("%(username)s is already in %(group)s") % {'username': name, 'group': self.group})
 
         return cleaned_data
 

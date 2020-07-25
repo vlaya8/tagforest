@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-25 02:07+0200\n"
+"POT-Creation-Date: 2020-07-25 03:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,19 +40,19 @@ msgstr "Tags (séparé par des virgules: tag1,tag2,tag3...)"
 
 #: tags/forms.py:63
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: tags/forms.py:65
-msgid "Default langue"
-msgstr ""
+msgid "Default language"
+msgstr "Langage par défaut"
 
 #: tags/forms.py:68
 msgid "Public to which your personal group is listed"
-msgstr ""
+msgstr "Public auquel votre groupe personel est listé"
 
 #: tags/forms.py:72
 msgid "Public to which your personal group is accessible"
-msgstr ""
+msgstr "Public auquel votre groupe personel est accessible"
 
 #: tags/forms.py:81
 #, python-format
@@ -65,75 +65,78 @@ msgid ""
 "You asked to list the group to %(listed_public)s but it is only visible to "
 "%(visible_public)s"
 msgstr ""
+"Vous avez défini votre groupe comme listé %(listed_public)s mais il est "
+"seulement visible %(visible_public)s"
 
 #: tags/forms.py:98
-#, fuzzy
-#| msgid "Public listed groups:"
 msgid "Public to which the group is listed"
-msgstr "Groupes publics"
+msgstr "Public auquel votre groupe est listé"
 
 #: tags/forms.py:102
 msgid "Public to which the group is accessible"
-msgstr ""
+msgstr "Public auquel votre groupe est accessible"
 
 #: tags/forms.py:134
 #, python-format
 msgid "There is no user named %(username)s"
-msgstr ""
+msgstr "Il n'y a pas d'utilisateur nommé %(username)s"
+
+#: tags/forms.py:136
+#, python-format
+msgid "%(username)s is already in %(group)s"
+msgstr "%(username)s est déjà dans %(group)s"
 
 #: tags/forms.py:143
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: tags/forms.py:146
-#, fuzzy
-#| msgid "Entry display:"
 msgid "Default entry display"
-msgstr "Affichage des entrées"
+msgstr "Affichage des entrées par défaut"
 
 #: tags/forms.py:161
 msgid "Error when selecting entries"
-msgstr ""
+msgstr "Erreur en selectionnant les entrées"
 
 #: tags/models.py:15
 msgid "Only invited users"
-msgstr ""
+msgstr "Seulement les utilisateurs invités"
 
 #: tags/models.py:16
 msgid "Only users"
-msgstr ""
+msgstr "Seulement les utilisateurs"
 
 #: tags/models.py:17
 msgid "Everyone"
-msgstr ""
+msgstr "Tout le monde"
 
 #: tags/models.py:22
 msgid "invited users"
-msgstr ""
+msgstr "aux utilisateurs invités"
 
 #: tags/models.py:23
 msgid "users"
-msgstr ""
+msgstr "à tous les utilisateurs"
 
 #: tags/models.py:24
 msgid "everyone"
-msgstr ""
+msgstr "à tout le monde"
 
 #: tags/models.py:41
 msgid "Compact (small)"
-msgstr ""
+msgstr "Compact (petit)"
 
 #: tags/models.py:42
 msgid "Compact (medium)"
-msgstr ""
+msgstr "Compact (moyen)"
 
 #: tags/models.py:43
 msgid "Compact (large)"
-msgstr ""
+msgstr "Compact (large)"
 
 #: tags/models.py:44
 msgid "List"
-msgstr ""
+msgstr "Liste"
 
 #: tags/templates/tags/404.html:4
 msgid "404 Error"
@@ -464,7 +467,7 @@ msgstr "Affichage des entrées"
 
 #: tags/templates/tags/base_tree.html:134
 msgid "Remove from saved"
-msgstr "Enlever des groupes sauvegardées"
+msgstr "Enlever des groupes sauvegardés"
 
 #: tags/templates/tags/base_tree.html:139
 msgid "Save Group"
@@ -513,7 +516,7 @@ msgstr "Voir le profile"
 msgid "View group info"
 msgstr "Voir les infos du groupe"
 
-#: tags/templates/tags/permission_error.html:3
+#: tags/templates/tags/permission_error.html:4
 msgid "Permission error"
 msgstr "Erreur de permission"
 
@@ -680,7 +683,7 @@ msgstr ""
 
 #: tags/templates/tags/view_group.html:48
 msgid "Invite a member:"
-msgstr "Invité un membre"
+msgstr "Inviter un membre"
 
 #: tags/templates/tags/view_groups.html:4
 msgid "Manage groups"
@@ -754,56 +757,59 @@ msgid "Read:"
 msgstr "Lus:"
 
 #: tags/templates/tags/view_notifications.html:30
-msgid "This group doesn\\'t exist anymore"
-msgstr "Ce groupe n\\'existe plus"
+msgid "This group doesn't exist anymore"
+msgstr "Ce groupe n'existe plus"
 
-#: tags/views/base_views.py:173
+#: tags/views/base_views.py:63 tags/views/views.py:102 tags/views/views.py:104
+#: tags/views/views.py:124
+#, python-format
+msgid "%(user)s invited you to join %(group)s"
+msgstr "%(user)s vous a invité à rejoindre %(group)s"
+
+#: tags/views/base_views.py:177
 msgid "You don't have permission to view this group's trees"
-msgstr ""
+msgstr "Vous n'avez pas la permission de voir les arbres de ce groupe"
 
-#: tags/views/base_views.py:244 tags/views/base_views.py:269
+#: tags/views/base_views.py:248 tags/views/base_views.py:273
 msgid "You don't have permission to edit in this group"
-msgstr ""
+msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 
-#: tags/views/base_views.py:289
+#: tags/views/base_views.py:293
 #, python-format
 msgid "Your group already contains a tree named %s(treename)s"
-msgstr ""
+msgstr "Votre groupe contient déjà un arbre nommé %s(treename)s"
 
-#: tags/views/views.py:203
+#: tags/views/views.py:207
 msgid "You don't have permission to edit this profile"
-msgstr ""
+msgstr "Vous n'avez pas la permission d'éditer ce profil"
 
-#: tags/views/views.py:295
+#: tags/views/views.py:299
 msgid "You don't have permission to delete this group"
-msgstr ""
+msgstr "Vous n'avez pas la permission de supprimer ce groupe"
 
-#: tags/views/views.py:298
+#: tags/views/views.py:302
 msgid "You can't delete this group"
-msgstr ""
+msgstr "Vous ne pouvez pas supprimer ce groupe"
 
-#: tags/views/views.py:317 tags/views/views.py:357
+#: tags/views/views.py:321 tags/views/views.py:361
 msgid "You don't have permission to edit this group"
-msgstr ""
+msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 
-#: tags/views/views.py:385
+#: tags/views/views.py:389
 msgid "You don't have permission to view this group"
-msgstr ""
+msgstr "Vous n'avez pas la permission de voir ce groupe"
 
-#: tags/views/views.py:411
+#: tags/views/views.py:415
 msgid "You don't have admin permission for this group"
-msgstr ""
+msgstr "Vous n'avez pas de permission admin pour ce groupe"
 
-#: tags/views/views.py:417
+#: tags/views/views.py:421
 msgid ""
 "The last member of the group can't be deleted (delete the group instead)"
 msgstr ""
+"Le dernier membre du groupe ne pas être supprimé (supprimez plutôt le groupe)"
 
-#: tags/views/views.py:440
-msgid "%s(user)s invited you to join %(group)s"
-msgstr ""
-
-#: tags/views/views.py:613
+#: tags/views/views.py:528 tags/views/views.py:617
 #, python-format
 msgid "You already have an entry named %(entryname)s"
-msgstr ""
+msgstr "Vous avez déjà une entrée nommée %(entryname)s"

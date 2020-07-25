@@ -27,7 +27,8 @@
         {% if target_group %}
 	  <a href="{% url 'tags:view_tree' group_name=target_group.name %}">{{ message }}</a><br/>
         {% else %}
-          <a v-click-outside="hide" @click.stop="showDialog('{% trans "This group doesn\'t exist anymore" %}')">{{ message }}</a><br/>
+	  {% trans "This group doesn't exist anymore" as dialog_message %}
+	  <a v-click-outside="hide" @click.stop="showDialog('{{ dialog_message|addslashes }}')">{{ message }}</a><br/>
         {% endif %}
       {% endfor %}
     </p>

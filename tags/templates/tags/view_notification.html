@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<p>{{ notification.verb }}</p>
+<p>{{ message }}</p>
 
 <form action="{% url "tags:view_notification" notification_id=notification.id %}" method="post">
   {% csrf_token %}

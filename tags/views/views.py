@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import translation
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 
 from notifications.signals import notify
 from notifications.models import Notification
@@ -98,9 +99,9 @@ class ViewNotificationsView(BaseView):
 
     def get_context_data(self, request, **kwargs):
 
-        unread_notifications = [(n.verb, n.id, n.target) for n in request.user.notifications.unread()]
+        unread_notifications = [(_("%(user)s invited you to join %(group)s") % {'user': n.recipient, 'group': n.target}, n.id, n.target) for n in request.user.notifications.unread()]
         unread_notification_count = len(unread_notifications)
-        read_notifications = [(n.verb, n.id, n.target) for n in request.user.notifications.read()]
+        read_notifications = [(_("%(user)s invited you to join %(group)s") % {'user': n.recipient, 'group': n.target}, n.id, n.target) for n in request.user.notifications.read()]
         read_notification_count = len(read_notifications)
 
         context = {
@@ -120,8 +121,11 @@ class ViewNotificationView(BaseView):
 
         notification = get_object_or_404(Notification, pk=notification_id)
 
+        message = _("%(user)s invited you to join %(group)s") % {'user': notification.recipient, 'group': notification.target}
+
         context = {
                          'notification': notification,
+                         'message': message,
                       }
         return context
 
@@ -414,7 +418,7 @@ class ViewGroupView(BaseView):
         if 'delete_member_id' in request.POST:
 
             if group.member_set.count() == 1:
-                raise UserError(_("The last member of the group can't be deleted (delete the group instead)", "group_error"))
+                raise UserError(_("The last member of the group can't be deleted (delete the group instead)"), "group_error")
 
             member = get_object_or_404(Member, pk=request.POST['delete_member_id'])
 
@@ -437,7 +441,7 @@ class ViewGroupView(BaseView):
                 target_user = get_object_or_404(User, username=member_name)
 
                 notify.send(request.user, recipient=target_user,
-                                  verb=_("%s(user)s invited you to join %(group)s") % {'user': request.user, 'group': group},
+                                  verb="",
                                   action_object=role,
                                   target=group)
             else:
@@ -521,7 +525,7 @@ class ViewTreeView(BaseTreeView):
 
                 # Check if an entry with the same name in the same tree already exists
                 if Entry.objects.filter(tree=self.current_tree).filter(name=entry_name).exists():
-                    raise UserError("You already have an entry named {}".format(entry_name), "entry_upsert_error")
+                    raise UserError(_("You already have an entry named %(entryname)s") % {'entryname': entry_name}, "entry_upsert_error")
 
                 entry = Entry.objects.create(name=entry_name, tree=self.current_tree, added_date=timezone.now(), group=self.group)
 

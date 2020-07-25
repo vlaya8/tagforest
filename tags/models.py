@@ -5,7 +5,7 @@ from django_dag.models import *
 
 from tagforest import settings
 
-from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as gettext
 
 INVITE = 'INV'
 USERS = 'USR'
