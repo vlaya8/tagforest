@@ -4,8 +4,8 @@ from .models import PUBLIC_CHOICES, PUBLIC_CHOICES_ORDER, PUBLIC_CHOICES_STR_SEN
 from .models import ENTRY_DISPLAY_CHOICES
 from django.contrib.auth.models import User
 
-from django.utils.translation import gettext_lazy as _
-from django.utils.translation import gettext
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from tagforest import settings
 
@@ -78,13 +78,13 @@ class ProfileForm(forms.Form):
 
         username = cleaned_data.get("username")
         if username != self.user.username and User.objects.filter(username=username).exists():
-            raise forms.ValidationError(gettext("%(username)s is already taken") % {'username': username})
+            raise forms.ValidationError(ugettext("%(username)s is already taken") % {'username': username})
 
         listed_to_public = cleaned_data.get("listed_to_public")
         visible_to_public = cleaned_data.get("visible_to_public")
 
         if PUBLIC_CHOICES_ORDER[listed_to_public] > PUBLIC_CHOICES_ORDER[visible_to_public]:
-            raise forms.ValidationError(gettext("You asked to list the group to %(listed_public)s but it is only visible to %(visible_public)s")
+            raise forms.ValidationError(ugettext("You asked to list the group to %(listed_public)s but it is only visible to %(visible_public)s")
                                         % {'listed_public':  PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
                                            'visible_public': PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]})
 
@@ -112,7 +112,7 @@ class GroupForm(forms.Form):
         visible_to_public = cleaned_data.get("visible_to_public")
 
         if PUBLIC_CHOICES_ORDER[listed_to_public] > PUBLIC_CHOICES_ORDER[visible_to_public]:
-            raise forms.ValidationError(gettext("You asked to list the group to %(listed_public)s but it is only visible to %(visible_public)s")
+            raise forms.ValidationError(ugettext("You asked to list the group to %(listed_public)s but it is only visible to %(visible_public)s")
                                         % {'listed_public':  PUBLIC_CHOICES_STR_SENTENCE[listed_to_public],
                                            'visible_public': PUBLIC_CHOICES_STR_SENTENCE[visible_to_public]})
         return cleaned_data
@@ -131,9 +131,9 @@ class MemberInvitationForm(forms.Form):
         cleaned_data = super().clean()
         name = cleaned_data.get("name")
         if not User.objects.filter(username=name).exists():
-            raise forms.ValidationError(gettext("There is no user named %(username)s") % {'username': name})
+            raise forms.ValidationError(ugettext("There is no user named %(username)s") % {'username': name})
         if self.group.member_set.filter(user__username=name).exists():
-            raise forms.ValidationError(gettext("%(username)s is already in %(group)s") % {'username': name, 'group': self.group})
+            raise forms.ValidationError(ugettext("%(username)s is already in %(group)s") % {'username': name, 'group': self.group})
 
         return cleaned_data
 
@@ -158,7 +158,7 @@ class ManipulateEntriesForm(forms.Form):
         try:
             entries_ids = list(map(lambda x: int(x), entries.split(";")))
         except ValueError:
-            raise forms.ValidationError(gettext("Error when selecting entries"))
+            raise forms.ValidationError(ugettext("Error when selecting entries"))
 
         return entries_ids
 

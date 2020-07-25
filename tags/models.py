@@ -5,23 +5,24 @@ from django_dag.models import *
 
 from tagforest import settings
 
-from django.utils.translation import gettext_lazy as gettext
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 INVITE = 'INV'
 USERS = 'USR'
 ALL = 'ALL'
 
 PUBLIC_CHOICES_STR = { 
-                        INVITE: gettext('Only invited users'),
-                        USERS:  gettext('Only users'),
-                        ALL:    gettext('Everyone'),
+                        INVITE: _('Only invited users'),
+                        USERS:  _('Only users'),
+                        ALL:    _('Everyone'),
                      }
 
 # String that can be integrated in a sentence
 PUBLIC_CHOICES_STR_SENTENCE = { 
-                        INVITE: gettext('invited users'),
-                        USERS:  gettext('users'),
-                        ALL:    gettext('everyone'),
+                        INVITE: _('invited users'),
+                        USERS:  _('users'),
+                        ALL:    _('everyone'),
                      }
 
 PUBLIC_CHOICES_ORDER = { 
@@ -38,10 +39,10 @@ ENTRY_DISPLAY_COMPACT_LARGE = 'CPL'
 ENTRY_DISPLAY_LIST = 'LST'
 
 ENTRY_DISPLAY_CHOICES_STR = {
-                        ENTRY_DISPLAY_COMPACT_SMALL: gettext("Compact (small)"),
-                        ENTRY_DISPLAY_COMPACT_MEDIUM: gettext("Compact (medium)"),
-                        ENTRY_DISPLAY_COMPACT_LARGE: gettext("Compact (large)"),
-                        ENTRY_DISPLAY_LIST: gettext("List"),
+                        ENTRY_DISPLAY_COMPACT_SMALL: _("Compact (small)"),
+                        ENTRY_DISPLAY_COMPACT_MEDIUM: _("Compact (medium)"),
+                        ENTRY_DISPLAY_COMPACT_LARGE: _("Compact (large)"),
+                        ENTRY_DISPLAY_LIST: _("List"),
 }
 
 ENTRY_DISPLAY_CHOICES = [(choice, ENTRY_DISPLAY_CHOICES_STR[choice]) for choice in ENTRY_DISPLAY_CHOICES_STR]
@@ -112,8 +113,17 @@ class TreeUserGroup(models.Model):
 
 # The role of a member in a group dictates its permissions in the group
 class Role(models.Model):
+
+    # Clunky way of implementing translation for roles
     def __str__(self):
-        return self.name
+        if self.name == "admin":
+            return ugettext("Admin")
+        elif self.name == "writer":
+            return ugettext("Writer")
+        elif self.name == "reader":
+            return ugettext("Reader")
+        else:
+            return self.name
 
     name = models.CharField('name', max_length=255)
 

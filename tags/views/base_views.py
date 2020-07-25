@@ -11,7 +11,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext as _
 
 from notifications.signals import notify
 from notifications.models import Notification

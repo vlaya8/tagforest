@@ -13,8 +13,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import translation
-from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy
+from django.utils.translation import ugettext as _
 
 from notifications.signals import notify
 from notifications.models import Notification
@@ -640,6 +639,9 @@ class UpsertEntryView(BaseTreeView):
                 self.redirect_kwargs['group_name'] = self.group.name
                 self.redirect_kwargs['tree_id'] = self.current_tree.id
                 self.redirect_kwargs['entry_id'] = entry.id
+
+            else:
+                raise FormError({'form': form})
 
 ## About
 

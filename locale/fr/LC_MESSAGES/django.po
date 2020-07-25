@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-25 03:29+0200\n"
+"POT-Creation-Date: 2020-07-25 14:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,45 +98,57 @@ msgstr "Affichage des entrées par défaut"
 msgid "Error when selecting entries"
 msgstr "Erreur en selectionnant les entrées"
 
-#: tags/models.py:15
+#: tags/models.py:16
 msgid "Only invited users"
 msgstr "Seulement les utilisateurs invités"
 
-#: tags/models.py:16
+#: tags/models.py:17
 msgid "Only users"
 msgstr "Seulement les utilisateurs"
 
-#: tags/models.py:17
+#: tags/models.py:18
 msgid "Everyone"
 msgstr "Tout le monde"
 
-#: tags/models.py:22
+#: tags/models.py:23
 msgid "invited users"
 msgstr "aux utilisateurs invités"
 
-#: tags/models.py:23
+#: tags/models.py:24
 msgid "users"
 msgstr "à tous les utilisateurs"
 
-#: tags/models.py:24
+#: tags/models.py:25
 msgid "everyone"
 msgstr "à tout le monde"
 
-#: tags/models.py:41
+#: tags/models.py:42
 msgid "Compact (small)"
 msgstr "Compact (petit)"
 
-#: tags/models.py:42
+#: tags/models.py:43
 msgid "Compact (medium)"
 msgstr "Compact (moyen)"
 
-#: tags/models.py:43
+#: tags/models.py:44
 msgid "Compact (large)"
 msgstr "Compact (large)"
 
-#: tags/models.py:44
+#: tags/models.py:45
 msgid "List"
 msgstr "Liste"
+
+#: tags/models.py:120
+msgid "Admin"
+msgstr "Admin"
+
+#: tags/models.py:122
+msgid "Writer"
+msgstr "Ecrivain·e"
+
+#: tags/models.py:124
+msgid "Reader"
+msgstr "Lecteur·ice"
 
 #: tags/templates/tags/404.html:4
 msgid "404 Error"
@@ -748,11 +760,11 @@ msgstr "Refuser"
 msgid "Notifications"
 msgstr "Notifications"
 
-#: tags/templates/tags/view_notifications.html:13
+#: tags/templates/tags/view_notifications.html:12
 msgid "Unread:"
 msgstr "Non lus"
 
-#: tags/templates/tags/view_notifications.html:25
+#: tags/templates/tags/view_notifications.html:24
 msgid "Read:"
 msgstr "Lus:"
 
@@ -760,8 +772,8 @@ msgstr "Lus:"
 msgid "This group doesn't exist anymore"
 msgstr "Ce groupe n'existe plus"
 
-#: tags/views/base_views.py:63 tags/views/views.py:102 tags/views/views.py:104
-#: tags/views/views.py:124
+#: tags/views/base_views.py:63 tags/views/views.py:101 tags/views/views.py:103
+#: tags/views/views.py:123
 #, python-format
 msgid "%(user)s invited you to join %(group)s"
 msgstr "%(user)s vous a invité à rejoindre %(group)s"
@@ -779,37 +791,37 @@ msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 msgid "Your group already contains a tree named %s(treename)s"
 msgstr "Votre groupe contient déjà un arbre nommé %s(treename)s"
 
-#: tags/views/views.py:207
+#: tags/views/views.py:206
 msgid "You don't have permission to edit this profile"
 msgstr "Vous n'avez pas la permission d'éditer ce profil"
 
-#: tags/views/views.py:299
+#: tags/views/views.py:298
 msgid "You don't have permission to delete this group"
 msgstr "Vous n'avez pas la permission de supprimer ce groupe"
 
-#: tags/views/views.py:302
+#: tags/views/views.py:301
 msgid "You can't delete this group"
 msgstr "Vous ne pouvez pas supprimer ce groupe"
 
-#: tags/views/views.py:321 tags/views/views.py:361
+#: tags/views/views.py:320 tags/views/views.py:360
 msgid "You don't have permission to edit this group"
 msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 
-#: tags/views/views.py:389
+#: tags/views/views.py:388
 msgid "You don't have permission to view this group"
 msgstr "Vous n'avez pas la permission de voir ce groupe"
 
-#: tags/views/views.py:415
+#: tags/views/views.py:414
 msgid "You don't have admin permission for this group"
 msgstr "Vous n'avez pas de permission admin pour ce groupe"
 
-#: tags/views/views.py:421
+#: tags/views/views.py:420
 msgid ""
 "The last member of the group can't be deleted (delete the group instead)"
 msgstr ""
 "Le dernier membre du groupe ne pas être supprimé (supprimez plutôt le groupe)"
 
-#: tags/views/views.py:528 tags/views/views.py:617
+#: tags/views/views.py:527 tags/views/views.py:616
 #, python-format
 msgid "You already have an entry named %(entryname)s"
 msgstr "Vous avez déjà une entrée nommée %(entryname)s"

@@ -9,29 +9,29 @@
   <h1>{% trans "Notifications" %}:</h1>
   <div id="view_notifications_app">
   {% if unread_notification_count %}
-    <p>
-    <b>{% trans "Unread:" %}</b><br/><br/>
+    <h2>{% trans "Unread:" %}</h2>
+      <ul class="notificationList" >
       {% for message, notification_id, target_group in unread_notifications %}
         {% if target_group %}
-	  <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a><br/>
+        <li><a class="buttonLink" href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a></li>
         {% else %}
-	  <a href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a><br/>
+        <li><a class="buttonLink" href="{% url 'tags:view_notification' notification_id=notification_id %}">{{ message }}</a></li>
         {% endif %}
       {% endfor %}
-    </p>
+      </ul>
   {% endif %}
   {% if read_notification_count %}
-    <p>
-    <b>{% trans "Read:" %}</b><br/><br/>
+    <h2>{% trans "Read:" %}</h2>
+      <ul class="notificationList" >
       {% for message, notification_id, target_group in read_notifications %}
         {% if target_group %}
-	  <a href="{% url 'tags:view_tree' group_name=target_group.name %}">{{ message }}</a><br/>
+        <li><a class="buttonLink" href="{% url 'tags:view_tree' group_name=target_group.name %}">{{ message }}</a></li>
         {% else %}
 	  {% trans "This group doesn't exist anymore" as dialog_message %}
-	  <a v-click-outside="hide" @click.stop="showDialog('{{ dialog_message|addslashes }}')">{{ message }}</a><br/>
+          <li><a class="buttonLink" v-click-outside="hide" @click.stop="showDialog('{{ dialog_message|addslashes }}')">{{ message }}</a></li>
         {% endif %}
       {% endfor %}
-    </p>
+      </ul>
   {% endif %}
 
     <div class="dialogBox" v-if="dialogVisible" >

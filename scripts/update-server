@@ -1,0 +1,56 @@
+#!/bin/bash
+# Abort in case of an error
+set -e
+
+# Abort if script not run as root
+if [ "$EUID" -ne 0 ]; then
+  echo "Script must be run as root";
+  exit
+fi
+
+home=/home/debian
+tagforest_dir="$home/tagforest"
+tagforest_git="$home/tagforest-git"
+sass="$home/dart-sass/sass"
+
+# Pull the repository
+cd $tagforest_git;
+git checkout master;
+git pull;
+
+# Update version info in templates
+scripts/add-version-info;
+
+# Update tag app
+rm -rf $tagforest_dir/tags;
+cp -r tags $tagforest_dir/;
+
+# Update static files
+rm -rf $tagforest_dir/static/tags;
+cp -r static/tags $tagforest_dir/static/;
+
+# Update settings.py
+rm -f $tagforest_dir/tagforest/settings.py;
+scripts/add-settings-info tagforest/server_settings.py;
+cp tagforest/server_settings.py $tagforest_dir/tagforest/settings.py;
+
+# Update locale
+rm -rf $tagforest_dir/locale;
+cp -r locale $tagforest_dir/;
+
+# Update urls.py
+rm -rf $tagforest_dir/tagforest/urls.py;
+cp tagforest/urls.py $tagforest_dir/tagforest/;
+
+# Compile scss to css
+$sass scss:$tagforest_dir/static/tags;
+
+git reset --hard;
+
+# Make migrations, compile messages
+cd $tagforest_dir;
+source $tagforest_dir/tagforestenv/bin/activate;
+python manage.py migrate;
+python manage.py compilemessages;
+
+sudo systemctl restart gunicorn

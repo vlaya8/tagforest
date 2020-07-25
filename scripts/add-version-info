@@ -1,0 +1,15 @@
+#!/bin/bash
+
+current_version=$(git describe --tags)
+current_date=$(date +%D)
+
+escaped_current_date=$(printf '%s\n' "$current_date" | sed -e 's/[\/&]/\\&/g')
+
+# Cut the string to avoid the script replacing itself
+version_placeholder="<!--""CURRENT_VERSION-->"
+date_placeholder="<!--""CURRENT_VERSION_DATE-->"
+
+cd ..;
+
+egrep -lRZ $version_placeholder . | xargs -0 -l sed -i -e "s/$version_placeholder/$current_version/g";
+egrep -lRZ $date_placeholder . | xargs -0 -l sed -i -e "s/$date_placeholder/$escaped_current_date/g"

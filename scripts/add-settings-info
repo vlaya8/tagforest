@@ -1,0 +1,35 @@
+#!/bin/bash
+
+usage() {
+  echo "$0 SETTINGS_FILE";
+  exit 1
+}
+
+if [ -z "$1" ]; then
+  usage
+fi
+
+settings_file=$1
+
+settings_dir="/etc/tagforest-settings-info"
+
+ipv4=$(cat "$settings_dir/ipv4")
+ipv6=$(cat "$settings_dir/ipv6")
+db_user=$(cat "$settings_dir/db-user")
+db_passwd=$(cat "$settings_dir/db-passwd")
+
+# Escape antislashs and esperluettes for sed
+escaped_ipv4=$(printf '%s\n' "$ipv4" | sed -e 's/[\/&]/\\&/g')
+escaped_ipv6=$(printf '%s\n' "$ipv6" | sed -e 's/[\/&]/\\&/g')
+escaped_db_user=$(printf '%s\n' "$db_user" | sed -e 's/[\/&]/\\&/g')
+escaped_db_passwd=$(printf '%s\n' "$db_passwd" | sed -e 's/[\/&]/\\&/g')
+
+ipv4_placeholder="server-ipv4"
+ipv6_placeholder="server-ipv6"
+db_user_placeholder="server-db-user"
+db_passwd_placeholder="server-db-passwd"
+
+sed -i -e "s/$ipv4_placeholder/$escaped_ipv4/g" $settings_file;
+sed -i -e "s/$ipv6_placeholder/$escaped_ipv6/g" $settings_file;
+sed -i -e "s/$db_user_placeholder/$escaped_db_user/g" $settings_file;
+sed -i -e "s/$db_passwd_placeholder/$escaped_db_passwd/g" $settings_file

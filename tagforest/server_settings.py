@@ -1,14 +1,27 @@
-# local settings.py, not used for production so nothing sensitive here
+# settings.py used for the server, without the sensitive information
+
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'e6!fyjkux2-c&p3+96mg^41y5o&*j)8)mi2ox43+%%q#%!w2=b'
+# SECRET KEY
+with open('/etc/tagforest-settings-info/secret-key') as f:
+    SECRET_KEY = f.read().strip()
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['server-ipv4', 'server-ipv6', '.tagforest.fr', 'www.tagforest.fr', 'localhost']
+
+# SSL configuration
+
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_REFERRER_POLICY = "same-origin"
 
 # Application definition
 
@@ -54,20 +67,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tagforest.wsgi.application'
 
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'tagforest',
-        'USER': 'vlaya',
-        'PASSWORD': '',
+        'USER': 'server-db-user',
+        'PASSWORD': 'server-db-passwd',
         'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'read_default_file': '/etc/my.cnf',
-            },
+        'PORT': '',
     }
 }
 
@@ -119,4 +130,4 @@ LANGUAGES = [
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
