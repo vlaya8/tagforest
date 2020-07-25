@@ -98,9 +98,9 @@ class ViewNotificationsView(BaseView):
 
     def get_context_data(self, request, **kwargs):
 
-        unread_notifications = [(_("%(user)s invited you to join %(group)s") % {'user': n.recipient, 'group': n.target}, n.id, n.target) for n in request.user.notifications.unread()]
+        unread_notifications = [(get_notification_message(n), n.id, n.target) for n in request.user.notifications.unread()]
         unread_notification_count = len(unread_notifications)
-        read_notifications = [(_("%(user)s invited you to join %(group)s") % {'user': n.recipient, 'group': n.target}, n.id, n.target) for n in request.user.notifications.read()]
+        read_notifications = [(get_notification_message(n), n.id, n.target) for n in request.user.notifications.read()]
         read_notification_count = len(read_notifications)
 
         context = {
@@ -120,12 +120,20 @@ class ViewNotificationView(BaseView):
 
         notification = get_object_or_404(Notification, pk=notification_id)
 
-        message = _("%(user)s invited you to join %(group)s") % {'user': notification.recipient, 'group': notification.target}
+        if notification.target == None:
+            notification.mark_as_read()
+            return { 
+                         'deleted_group': True,
+                         'message': _("The group you were invited to got deleted"),
+            }
+
+        message = get_notification_message(notification)
 
         context = {
+                         'deleted_group': False,
                          'notification': notification,
                          'message': message,
-                      }
+        }
         return context
 
     # Process an invitation which has been accepted or declined
@@ -584,6 +592,9 @@ class UpsertEntryView(BaseTreeView):
 
             tags = ",".join([tag.name for tag in entry.tags.filter(group__id=self.group.id)])
             data = {"name": entry.name, "text": entry.text, "tags": tags, "entry_id": entry_id}
+
+            context.update({'entry': entry})
+
         # If user wants to add an entry
         else:
             data = {"entry_id": SpecialID['NEW_ID']}
@@ -611,17 +622,25 @@ class UpsertEntryView(BaseTreeView):
                 entry_text = form.cleaned_data['text']
                 entry_id = form.cleaned_data['entry_id']
 
-                # Check if an entry with the same name in the same tree already exists
-                if Entry.objects.filter(tree=self.current_tree).filter(name=entry_name).exists():
-                    raise UserError(_("You already have an entry named %(entryname)s") % {'entryname': entry_name}, "entry_upsert_error")
-
                 # If the entry has been edited
                 if entry_id != SpecialID['NEW_ID']:
+
                     entry = get_object_or_404(Entry, pk=entry_id)
+
+                    # Check if an entry with the same name in the same tree already exists
+                    if entry.name != entry_name:
+                        if Entry.objects.filter(tree=self.current_tree).filter(name=entry_name).exists():
+                            raise UserError(_("You already have an entry named %(entryname)s") % {'entryname': entry_name}, "entry_upsert_error")
+
                     entry.name = entry_name
                     entry.text = entry_text
                     entry.tags.clear()
                 else:
+
+                    # Check if an entry with the same name in the same tree already exists
+                    if Entry.objects.filter(tree=self.current_tree).filter(name=entry_name).exists():
+                        raise UserError(_("You already have an entry named %(entryname)s") % {'entryname': entry_name}, "entry_upsert_error")
+
                     entry = Entry.objects.create(name=entry_name, text=entry_text, tree=self.current_tree, added_date=timezone.now(), group=self.group)
 
                 tags_name = parse_tags(form.cleaned_data['tags'])

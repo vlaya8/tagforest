@@ -166,7 +166,7 @@
 	    <div class="select" >{{ tree_param_form.default_entry_display }}</div>
 	  </li>
 	  <br/>
-	  <li><button name="tree_param_form" >{% trans "Submit" %}</button></li>
+	  <li><button name="tree_param_form" @click="updateSessionParam" >{% trans "Submit" %}</button></li>
 	  <li><button @click="hideTreeParam" >{% trans "Cancel" %}</button></li>
 	</ul>
       </form>

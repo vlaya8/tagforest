@@ -60,7 +60,7 @@ class BaseView(View):
 
             new_notifications = []
             for n in request.user.notifications.unread():
-                message = _("%(user)s invited you to join %(group)s") % {'user': n.recipient, 'group': n.target}
+                message = get_notification_message(n)
                 new_notifications.append((message, n.id))
 
             new_notification_count = len(new_notifications)

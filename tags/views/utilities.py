@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django import forms
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 
 from ..models import Entry, Tag, Tree
 from ..forms import EntryForm, TreeForm
@@ -16,6 +17,14 @@ SpecialID = {
                 'NONE': -2,
                 'NEW_ID': -3,
             }
+
+def get_notification_message(notification):
+    if notification.target == None:
+        group_name = _("<Removed group>")
+    else:
+        group_name = notification.target.name
+
+    return _("%(user)s invited you to join %(group)s") % {'user': notification.recipient, 'group': group_name}
 
 def redirect_with_get_params(url_name, get_params={}, kwargs={}):
 

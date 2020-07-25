@@ -10,12 +10,12 @@
 
 <p>
 Entry text can be formatted in <a href="https://www.markdownguide.org/getting-started/" >markdown</a><br/>
-Here is an example to quickly understand what markdown means: <a href="https://www.tagforest.fr/group/Examples/tree/9/entry/173/view/?" class="buttonLink" >Markdown example</a>
+Here is an example to quickly understand what markdown means: <a href="https://www.tagforest.fr/fr/group/Examples/tree/9/entry/173/view/?" class="buttonLink" >Markdown example</a>
 </p>
 {% endblocktrans %}
 
 <div class="errorMessage">{{ entry_upsert_error }}</div>
-<form class="contentForm" action="{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree.id %}" method="post">
+<form class="contentForm" action="{% if entry %}{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree.id entry_id=entry.id %}{% else %}{% url 'tags:upsert_entry' group_name=group.name tree_id=current_tree.id %}{% endif %}" method="post">
   {% csrf_token %}
   <ul>
   {{ form.as_ul }}

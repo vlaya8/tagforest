@@ -34,7 +34,13 @@ var tree_bar_app = new Vue({
   },
   mounted() {
     if (sessionStorage.entryDisplay) {
-      this.entryDisplayShare.entryDisplay = sessionStorage.entryDisplay
+      if (sessionStorage.updateSessionStorage == "true") {
+        sessionStorage.entryDisplay = this.entryDisplayShare.entryDisplay;
+        sessionStorage.updateSessionStorage = false;
+      }
+      else {
+        this.entryDisplayShare.entryDisplay = sessionStorage.entryDisplay
+      }
     }
   },
   watch: {
@@ -47,6 +53,9 @@ var tree_bar_app = new Vue({
   },
   methods: {
 
+    updateSessionParam: function() {
+      sessionStorage.updateSessionStorage = true
+    },
     toggleTreeParamDropdown: function () {
     	this.treeParamDropdown = !this.treeParamDropdown
     },
