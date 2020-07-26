@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 02:45+0200\n"
+"POT-Creation-Date: 2020-07-26 03:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -457,7 +457,7 @@ msgstr ""
 "org/\" >PostgreSQL</a></li>\n"
 "</ul>\n"
 
-#: tags/templates/tags/base.html:25
+#: tags/templates/tags/base.html:25 tags/templates/tags/view_groups.html:4
 msgid "Groups"
 msgstr "Groupes"
 
@@ -558,7 +558,9 @@ msgstr "Vous pouvez ensuite importer ces entrées dans l'arbre que vous voulez"
 #: tags/templates/tags/import_entries.html:10
 msgid ""
 "Format for importing entries (you can export a tree to see more examples):"
-msgstr "Format pour importer des entrées (vous pouvez exporter un arbre pour voir plus d'exemples):"
+msgstr ""
+"Format pour importer des entrées (vous pouvez exporter un arbre pour voir "
+"plus d'exemples):"
 
 #: tags/templates/tags/import_entries.html:14
 msgid "Entry name"
@@ -753,10 +755,6 @@ msgstr ""
 msgid "Invite a member:"
 msgstr "Inviter un membre"
 
-#: tags/templates/tags/view_groups.html:4
-msgid "Manage groups"
-msgstr "Gérer les groupes"
-
 #: tags/templates/tags/view_groups.html:9
 msgid "Saved groups:"
 msgstr "Groupes sauvegardés"
@@ -890,3 +888,4 @@ msgstr ""
 #, python-format
 msgid "You already have an entry named %(entryname)s"
 msgstr "Vous avez déjà une entrée nommée %(entryname)s"
+
