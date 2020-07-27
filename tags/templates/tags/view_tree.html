@@ -29,6 +29,7 @@
     {% include "tags/blocks/entry_manipulation.html" with position="top" %}
 
     {{ entry_titles|json_script:"entryTitles"}}
+    {% if entry_list %}
     <ul v-bind:class="entryDisplayShare.entryDisplay" >
     {% for entry in entry_list %}
       <li>
@@ -44,6 +45,15 @@
       </li>
     {% endfor %}
     </ul>
+    {% else %}
+    <br/>
+    <p>
+      {% blocktrans %}
+      There are no entries in this tree, add one with the <b>Add</b> or <b>Quick Add</b> button
+      {% endblocktrans %}
+    </p>
+   <br/>
+    {% endif %}
 
     {% include "tags/blocks/entry_manipulation.html" with position="bottom" %}
 

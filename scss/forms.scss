@@ -2,24 +2,24 @@
 @use "sass:color";
 
 form ul {
-	margin:1rem;
-	max-width: 70%;
-	padding: 0.5rem 0.3rem 0.25rem 0.5rem;
-}
-form ul li {
-	padding: 0;
-	display: block;
-	list-style: none;
-	margin: 0.3rem 0 0 0;
-}
-form ul label{
-	margin:0 0 0.1rem 0;
-	padding: 0rem;
-	display: block;
-	font-weight: bold;
-}
+  margin:1rem;
+  max-width: 100%;
+  padding: 0.5rem 0.3rem 0.25rem 0.5rem;
 
-form ul {
+
+  li {
+    padding: 0;
+    display: block;
+    list-style: none;
+    margin: 0.3rem 0 0 0;
+  }
+  label {
+    margin:0 0 0.1rem 0;
+    padding: 0rem;
+    display: block;
+    font-weight: bold;
+  }
+
   input[type=submit], button, input[type=button]{
 
     position: relative;
@@ -37,6 +37,10 @@ form ul {
     margin: 0;
 
     margin-bottom: 30px;
+  }
+  ul {
+    margin-left: 0;
+    padding-left: 0;
   }
 }
 
@@ -82,6 +86,11 @@ form {
     box-shadow: 0 0 5px base.$light-highlight-color;
     border: 1px solid base.$light-highlight-color;
   }
+  textarea {
+    background: color.adjust(base.$background-color, $saturation: -3, $lightness: 3);
+    height: 23rem;
+    resize: vertical;
+  }
 }
 
 .inlineForm {
@@ -99,8 +108,8 @@ form.headerForm {
 }
 
 /* Custom select
-   Source: https://speckyboy.com/open-source-css-javascript-select-box-snippets/ (6 Pure CSS)
-*/
+Source: https://speckyboy.com/open-source-css-javascript-select-box-snippets/ (6 Pure CSS)
+ */
 
 .select {
   position: relative;

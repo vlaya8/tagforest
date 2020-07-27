@@ -58,6 +58,24 @@ a:hover {
   background-color: color.adjust(base.$highlight-color, $hue: 10);
 }
 
+.menuButtonLink {
+  @extend %link-block;
+  background-color: color.adjust(base.$header-color, $alpha: -0.15);
+}
+
+.menuButtonLink:active {
+  background-color: color.adjust(base.$highlight-color, $alpha: 0);
+}
+
+.tagButtonLink {
+  @extend %link-block;
+  background-color: color.mix(color.adjust(base.$background-color, $lightness: 5), base.$header-color, $weight: 60%);
+}
+
+.tagButtonLink:active {
+  background-color: color.adjust(base.$highlight-color, $hue: 10);
+}
+
 .inlineDeleteForm {
   display: inline;
 }
@@ -138,6 +156,10 @@ nav, .optionBar {
     padding-bottom: $nav-bar-padding - 2*$nav-bar-link-padding;
     padding-right: $nav-bar-button-padding - 2*$nav-bar-link-padding;
     padding-left: $nav-bar-button-padding - 2*$nav-bar-link-padding;
+
+    .titleIcon {
+      font-size: 80%;
+    }
   }
 
   h1 a, h1 a:hover {
@@ -391,9 +413,11 @@ $dropdown-width: 20rem;
     padding-left: 0.8rem;
     padding-right: 0rem;
     display: block;
-    font-size: 100%;
-    font-weight: normal;
+    font-size: 80%;
+    font-weight: bold;
     width: 10rem - 0.8rem;
+    border: 1px solid color.adjust(base.$header-color, $lightness: 5);
+    border-width: 1px 1px 2px;
   }
 }
 
@@ -511,7 +535,7 @@ $button-resize-padding: 0.5rem;
 }
 .disabledLink, .disabledLink:hover {
   cursor: default;
-  background-color: color.adjust(base.$background-color, $lightness: 2);
+  background-color: color.adjust(base.$header-color, $alpha: -0.7);
 }
 
 [v-cloak] {

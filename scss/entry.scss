@@ -53,62 +53,70 @@ ul.CPS, ul.CPM, ul.CPL {
 
 }
 
+$CPS-height: 2.3rem;
+
 ul.CPS {
 
   li {
 
     max-width: 13rem;
-    height: 2rem;
+    height: $CPS-height;
 
     a {
 
       max-width: 13rem;
-      height: 2rem;
-      line-height: 2em;
+      height: $CPS-height;
+      line-height: $CPS-height;
 
-      padding: 0rem 0.6rem 0rem 0.6rem;
+      padding: 0.2rem 0.6rem 0rem 0.6rem;
 
     }
   }
 }
+
+$CPM-height: 4rem;
 
 ul.CPM {
 
   li {
 
     max-width: 15rem;
-    height: 4rem;
+    height: $CPM-height;
 
     a {
 
       max-width: 15rem;
-      height: 4rem;
-      line-height: 4em;
+      height: $CPM-height;
+      line-height: $CPM-height;
 
       padding: 0rem 0.6rem 0rem 0.6rem;
 
     }
   }
 }
+
+$CPL-height: 5.7rem;
 
 ul.CPL {
 
   li {
 
     max-width: 19rem;
-    height: 5.7rem;
+    height: $CPL-height;
 
     a {
 
       max-width: 19rem;
-      height: 5.7rem;
-      line-height: 5.7em;
+      height: $CPL-height;
+      line-height: $CPL-height;
 
       padding: 0rem 0.6rem 0rem 0.6rem;
 
     }
   }
 }
+
+$LST-height: 2.3rem;
 
 ul.LST {
 
@@ -125,7 +133,7 @@ ul.LST {
 
     vertical-align: bottom;
     max-width: 60rem;
-    height: 2rem;
+    height: $LST-height;
 
     a {
 
@@ -138,10 +146,10 @@ ul.LST {
       border-width: 1px 1px 2px;
 
       max-width: 60rem;
-      height: 2rem;
-      line-height: 2em;
+      height: $LST-height;
+      line-height: $LST-height;
 
-      padding: 0rem 0.6rem 0rem 0.6rem;
+      padding: 0.2rem 0.6rem 0rem 0.6rem;
 
       span {
         display: inline-block;

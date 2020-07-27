@@ -20,7 +20,7 @@
       <div id="bodyWrap" >
         <nav>
           <ul>
-          <li><h1><a href="{% url 'tags:index' %}" >Tagforest</a></h1></li><!--
+            <li><h1><a href="{% url 'tags:index' %}" >Tagforest </a></h1></li><!--
           --><li><a href="{% url 'tags:view_groups' %}" {% if current_page == 'groups' %}class="activeLink" {% endif %}>
               {% trans "Groups" %}
           </a></li><!--
@@ -48,7 +48,7 @@
 
           --><div id="language_menu_app" class="dropdown">
               <button class="buttonResize" v-click-outside="hide" @click="toggle" >Language ({{ LANGUAGE_CODE }})</button>
-              <div v-if="showMenu" class="dropdown-content languageDropdown" >
+              <div v-cloak v-if="showMenu" class="dropdown-content languageDropdown" >
                 {% for language in languages %}
                     {% language language.code %}
                     <a href="{% url 'tags:index' %}" >{{ language.name_local }} ({{ language.code }})</a>
@@ -69,7 +69,7 @@
                   <i class="fa fa-bell"></i>
                 {% endif %}
               </button>
-              <div v-if="showMenu" class="dropdown-content notificationDropdown" >
+              <div v-cloak v-if="showMenu" class="dropdown-content notificationDropdown" >
                 {% if new_notification_count %}
                   <h1>Notifications:</h1>
                   {% for message, notification_id in new_notifications %}
