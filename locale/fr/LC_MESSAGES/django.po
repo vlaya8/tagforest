@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-26 03:07+0200\n"
+"POT-Creation-Date: 2020-07-30 21:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -590,13 +590,7 @@ msgstr ""
 msgid "Permission error"
 msgstr "Erreur de permission"
 
-#: tags/templates/tags/registration/login.html:9
-msgid "Your username and password didn't match. Please try again."
-msgstr ""
-"Votre nom d'utilisateur et mot de passe ne correspondent pas. Veuillez "
-"essayer à nouveau."
-
-#: tags/templates/tags/registration/login.html:15
+#: tags/templates/tags/registration/login.html:12
 msgid ""
 "Your account doesn't have access to this page. To proceed,\n"
 "    please login with an account that has access."
@@ -604,9 +598,15 @@ msgstr ""
 "Votre compte n'a pas accès à cette page. Pour continuer,\n"
 "    veuillez de vous connecter avec un compte qui a accès."
 
-#: tags/templates/tags/registration/login.html:18
+#: tags/templates/tags/registration/login.html:15
 msgid "Please login to see this page."
 msgstr "Veullez vous connecter pour voir cette page"
+
+#: tags/templates/tags/registration/login.html:23
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+"Votre nom d'utilisateur et mot de passe ne correspondent pas. Veuillez "
+"essayer à nouveau."
 
 #: tags/templates/tags/registration/login.html:31
 msgid "Sign Up"
@@ -826,6 +826,18 @@ msgstr "Lus:"
 msgid "This group doesn't exist anymore"
 msgstr "Ce groupe n'existe plus"
 
+#: tags/templates/tags/view_tree.html:51
+msgid ""
+"\n"
+"      There are no entries in this tree, add one with the <b>Add</b> or "
+"<b>Quick Add</b> button\n"
+"      "
+msgstr ""
+"\n"
+"      Il n'y a pas d'entrées dans cet arbre, ajoutez en avec le bouton <b>Ajouter</b> ou "
+"<b>Ajout rapide</b>\n"
+"      "
+
 #: tags/views/base_views.py:177
 msgid "You don't have permission to view this group's trees"
 msgstr "Vous n'avez pas la permission de voir les arbres de ce groupe"
@@ -888,4 +900,3 @@ msgstr ""
 #, python-format
 msgid "You already have an entry named %(entryname)s"
 msgstr "Vous avez déjà une entrée nommée %(entryname)s"
-
