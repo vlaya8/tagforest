@@ -22,6 +22,10 @@
     {% endfor %}
   </ul>
 
+  {% if tag_error %}
+  <div class="errorMessage"><p>{{ tag_error}}</p></div>
+  {% endif %}
+
   <!-- Entries -->
   <div id="entry_list_app" >
 

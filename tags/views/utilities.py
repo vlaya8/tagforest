@@ -7,6 +7,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
+from ..exceptions import UserError
 from ..models import Entry, Tag, Tree
 from ..forms import EntryForm, TreeForm
 from .utilities import *
@@ -44,33 +45,46 @@ def get_selected_tag_list(request):
     return selected_tags
 
 # Generate all the elements to be displayed in the tag list
-def get_tag_list(group, tree_id, selected_tags):
+def get_tag_entry_list(group, tree, selected_tags):
+
+    # Generate the entries to be displayed
+    if selected_tags:
+
+        entry_list = Entry.objects.all()
+        
+        for tag in selected_tags:
+            entry_list &= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=tree.id).filter(group__id=group.id)
+
+        entry_list = entry_list.distinct()
+
+        tag_set = set()
+        first_iter = True
+
+        for tag_name in selected_tags:
+            tag_query = Tag.objects.filter(tree__id=tree.id).filter(group__id=group.id).filter(name=tag_name)
+            current_tag_set = set()
+
+            if tag_query.exists():
+                tag = tag_query.first()
+                for entry in tag.entry_set.all():
+                    current_tag_set.update([entry_tag for entry_tag in entry.tags.all()])
+
+            if first_iter:
+                tag_set = current_tag_set
+                first_iter = False
+            else:
+                tag_set &= current_tag_set
+
+    else:
+        tag_set = [tag for tag in Tag.objects.filter(tree__id=tree.id).filter(group__id=group.id)]
+        entry_list = Entry.objects.filter(tree__id=tree.id).filter(group__id=group.id).distinct()
+
     tag_list = []
-    tag_set = set()
-    first_iter = True
-
-    for tag_name in selected_tags:
-        tag_query = Tag.objects.filter(tree__id=tree_id).filter(group__id=group.id).filter(name=tag_name)
-        current_tag_set = set()
-
-        if tag_query.exists():
-            tag = tag_query.first()
-            for entry in tag.entry_set.all():
-                current_tag_set.update([entry_tag for entry_tag in entry.tags.all()])
-
-        if first_iter:
-            tag_set = current_tag_set
-            first_iter = False
-        else:
-            tag_set &= current_tag_set
-
-    if len(selected_tags) == 0:
-        tag_set = [tag for tag in Tag.objects.filter(tree__id=tree_id).filter(group__id=group.id)]
 
     for tag in tag_set:
 
         tag_name = tag.name
-        tag_count = tag.entry_set.count()
+        tag_count = (tag.entry_set.distinct() & entry_list).count()
         tag_selected_tags = toggle_tag(selected_tags, tag_name)
 
         if tag_count > 0:
@@ -79,7 +93,7 @@ def get_tag_list(group, tree_id, selected_tags):
     tag_list.sort()
     tag_list.reverse()
 
-    return tag_list
+    return (tag_list, entry_list)
 
 # Should be moved client side
 def toggle_tag(selected_tags, tag):

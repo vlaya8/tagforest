@@ -45,14 +45,13 @@ class BaseView(View):
 
         self.redirect_get_params = {}
         self.redirect_kwargs = {}
+        self.error_context = {}
 
     def get_base_context(self, request, **kwargs):
 
         context = {
                     'current_page': 'index',
                   }
-
-        context.update(self.error_context)
 
         if request.user.is_authenticated:
 
@@ -100,6 +99,8 @@ class BaseView(View):
         except UserPermissionError as permission_error:
             context.update({'error_message': permission_error.message})
             return render(request, 'tags/permission_error.html', context)
+
+        context.update(self.error_context)
 
         if self.invalid_form != None:
             context.update(self.invalid_form)

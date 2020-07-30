@@ -454,6 +454,17 @@ class ViewTreeView(BaseTreeView):
 
     template_name = 'tags/view_tree.html'
 
+    def get_return(self, request, context, **kwargs):
+
+        if self.redirect_to_distinct_tags:
+            return redirect_with_get_params(
+                        'tags:view_tree',
+                        get_params={"selected_tags": ",".join(context['selected_tags'])},
+                        kwargs={"group_name": self.group.name, "tree_id": self.current_tree.id},
+                    )
+
+        return super().get_return(request, context, **kwargs)
+
     def get_context_data(self, request, **kwargs):
 
         context = super().get_context_data(request, **kwargs)
@@ -461,24 +472,29 @@ class ViewTreeView(BaseTreeView):
         if self.current_tree != None:
 
             # Get selected tags from GET url parameters
-            selected_tags = get_selected_tag_list(request)
+            selected_tags_dirty = get_selected_tag_list(request)
+            selected_tags = []
+
+            # Check if all the tags exist
+            for tag in selected_tags_dirty:
+                if not Tag.objects.filter(name__exact=tag).exists():
+                    self.error_context.update({"tag_error": _("The tag %(tagname)s does not exist") % {'tagname': tag}})
+                else:
+                    selected_tags.append(tag)
+
+            selected_tags_distinct = list(set(selected_tags))
+
+            self.redirect_to_distinct_tags = len(selected_tags_distinct) != len(selected_tags)
+            if self.redirect_to_distinct_tags:
+                return {'selected_tags': selected_tags_distinct}
+            selected_tags = selected_tags_distinct
+
             # Generate all the elements to be displayed in the tag list
-            tag_list = get_tag_list(self.group, self.current_tree.id, selected_tags)
+            tag_list, entry_list = get_tag_entry_list(self.group, self.current_tree, selected_tags)
 
-            # Generate the entries to be displayed
-            if len(selected_tags) > 0:
-                entry_list = Entry.objects.all()
-                
-                for tag in selected_tags:
-                    entry_list &= Entry.objects.filter(tags__name__exact=tag).filter(tree__id=self.current_tree.id).filter(group__id=self.group.id)
-
-                entry_list = entry_list.distinct()
-            else:
-                entry_list = Entry.objects.filter(tree__id=self.current_tree.id).filter(group__id=self.group.id)
         else:
 
-            entry_list = []
-            tag_list = []
+            tag_list, entry_list = [], []
             selected_tags = []
 
         entry_titles = {entry.pk: entry.name for entry in entry_list}
