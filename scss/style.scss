@@ -522,6 +522,10 @@ $button-resize-padding: 0.5rem;
 
   z-index: 999;
 
+  form ul li textarea {
+    height: 12rem;
+  }
+
 }
 
 .page-mask {
