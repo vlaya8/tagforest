@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% csrf_token %}
 
 <!doctype html>
 <html lang="fr">
@@ -107,7 +108,7 @@
 
     {% block script_includes %}
       <!-- VueJS scripts include !-->
-      <script src="{% static 'tags/vue.js' %}"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
       <script src="{% static 'tags/vue-click-outside.js' %}"></script>
       <script src="{% static 'tags/notification_menu.js' %}"></script>
       <script src="{% static 'tags/language_menu.js' %}"></script>
