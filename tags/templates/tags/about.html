@@ -1,11 +1,10 @@
 {% extends "tags/base.html" %}
+{% load static %}
 {% load i18n %}
 
 {% block title %}{% trans "About" %}{% endblock %}
 
 {% block content %}
-
-Axios test
 
 {% blocktrans %}
 <p>
@@ -123,3 +122,8 @@ Axios test
 
 {% endblock %}
 
+{% block script_includes %}
+  {{ block.super }}
+  <!-- VueJS Script include -->
+  <script src="{% static 'tags/axios_test.js' %}"></script>
+{% endblock %}

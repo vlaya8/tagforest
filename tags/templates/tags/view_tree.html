@@ -15,19 +15,22 @@
   <p><vue-markdown>{{ current_tree.description}}</vue-markdown></p>
   </div>
 
-  <!-- VueJS tag select app -->
-  <ul class="tagList" id="tag_select_app" >
-    {% for tag_count, tag_name, selected_tags in tag_list %}
-      {% include "tags/blocks/tag_block.html" with url_args=selected_tags %}
-    {% endfor %}
-  </ul>
-
-  {% if tag_error %}
-  <div class="errorMessage"><p>{{ tag_error}}</p></div>
-  {% endif %}
-
-  <!-- Entries -->
+  <!-- VueJS entry list app -->
   <div id="entry_list_app" >
+
+    <!-- Tags -->
+
+    <ul class="tagList" >
+      {% for tag_count, tag_name, selected_tags in tag_list %}
+        {% include "tags/blocks/tag_block.html" with url_args=selected_tags %}
+      {% endfor %}
+    </ul>
+  
+    {% if tag_error %}
+    <div class="errorMessage"><p>{{ tag_error}}</p></div>
+    {% endif %}
+
+    <!-- Entries -->
 
     <div class="errorMessage">{{ entry_upsert_error }}</div>
     {% include "tags/blocks/entry_manipulation.html" with position="top" %}
@@ -73,6 +76,5 @@
   <!-- VueJS Script include -->
   <script src="https://cdn.jsdelivr.net/npm/vue-markdown@2.2.4/dist/vue-markdown.min.js"></script>
   <script src="{% static 'tags/tree_description.js' %}"></script>
-  <script src="{% static 'tags/tag_select.js' %}"></script>
   <script src="{% static 'tags/entry_list.js' %}"></script>
 {% endblock %}

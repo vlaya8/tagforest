@@ -1,3 +1,23 @@
+/***********************************************************************************************************/
+/********** Tags *******************************************************************************************/
+/***********************************************************************************************************/
+
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+
+var selected_tags = urlParams.get('selected_tags')
+
+if (selected_tags === null) {
+  selected_tags = []
+}
+else {
+  selected_tags = selected_tags.split(",")
+}
+
+/***********************************************************************************************************/
+/********** Entries ****************************************************************************************/
+/***********************************************************************************************************/
+
 const fullEntryTitles = JSON.parse(JSON.parse(document.getElementById('entryTitles').textContent));
 
 /*
@@ -82,6 +102,7 @@ var entry_list_app = new Vue({
     selectMode: false,
     selectedEntriesIds: {},
     quickAdd: "None",
+    selected_tags: selected_tags
   },
 
   computed: {
@@ -96,6 +117,14 @@ var entry_list_app = new Vue({
   },
 
   methods: {
+    getTagBlockClass: function(primary_class, name) {
+      if(this.selected_tags.indexOf(name) >= 0) {
+        return primary_class + ' selected'
+      }
+      else {
+        return primary_class
+      }
+    },
     entryTitle: function(key) {
       if(entryDisplayShare.entryDisplay == "LST") {
         return ellipsisAndWrap(fullEntryTitles[key], 60, 1);

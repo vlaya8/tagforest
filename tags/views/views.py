@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, JsonResponse
 from django.views import generic,View
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, get_object_or_404
@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
+
 
 from notifications.signals import notify
 from notifications.models import Notification
@@ -450,6 +451,61 @@ class ViewGroupView(BaseView):
             else:
                 raise FormError({'invite_form': form})
 
+def apiTreeEntries(request):
+
+    if 'test' in request.GET:
+        data = {
+                'username': request.user.username,
+                'test': request.GET['test']
+        }
+    else:
+        data = {
+                'username': request.user.username,
+                'test': request.GET['test']
+        }
+    return JsonResponse(data)
+
+    if self.current_tree != None:
+
+        # Get selected tags from GET url parameters
+        selected_tags_dirty = get_selected_tag_list(request)
+        selected_tags = []
+
+        # Check if all the tags exist
+        for tag in selected_tags_dirty:
+            if not Tag.objects.filter(name__exact=tag).exists():
+                self.error_context.update({"tag_error": _("The tag %(tagname)s does not exist") % {'tagname': tag}})
+            else:
+                selected_tags.append(tag)
+
+        selected_tags_distinct = list(set(selected_tags))
+
+        self.redirect_to_distinct_tags = len(selected_tags_distinct) != len(selected_tags)
+        if self.redirect_to_distinct_tags:
+            return {'selected_tags': selected_tags_distinct}
+        selected_tags = selected_tags_distinct
+
+        # Generate all the elements to be displayed in the tag list
+        tag_list, entry_list = get_tag_entry_list(self.group, self.current_tree, selected_tags)
+
+    else:
+
+        tag_list, entry_list = [], []
+        selected_tags = []
+
+    entry_titles = {entry.pk: entry.name for entry in entry_list}
+
+    context.update({
+                'entry_list': entry_list,
+                'entry_titles': json.dumps(entry_titles),
+                'tag_list': tag_list,
+                'selected_tags': ",".join(selected_tags),
+                'selected_entries_form': ManipulateEntriesForm(initial={"entries": ""}),
+                'quick_add_form': EntryForm(initial={"entry_id": SpecialID['NEW_ID']}),
+              })
+
+
+
 class ViewTreeView(BaseTreeView):
 
     template_name = 'tags/view_tree.html'
@@ -773,7 +829,6 @@ class ExportEntriesView(BaseTreeView):
         })
 
         return context
-
 
 ## About
 

@@ -29,6 +29,7 @@ login_view = auth_views.LoginView.as_view(
 )
 
 urlpatterns = [
+        path('apiTreeEntries', views.apiTreeEntries, name="api_tree_entries"),
         path('', views.index, name="index"),
         path('group/<str:group_name>/', include(tree_urlpatterns)),
         path('user/<str:username>/', include([
