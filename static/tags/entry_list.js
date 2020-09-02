@@ -5,13 +5,13 @@
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 
-var selected_tags = urlParams.get('selected_tags')
+var selectedTags = urlParams.get('selectedTags')
 
-if (selected_tags === null) {
-  selected_tags = []
+if (selectedTags === null) {
+  selectedTags = []
 }
 else {
-  selected_tags = selected_tags.split(",")
+  selectedTags = selectedTags.split(",")
 }
 
 /***********************************************************************************************************/
@@ -102,7 +102,9 @@ var entry_list_app = new Vue({
     selectMode: false,
     selectedEntriesIds: {},
     quickAdd: "None",
-    selected_tags: selected_tags
+    selectedTags: selectedTags,
+    tagList: [{"count": 4, "name": "ha", "selectedTags":["ha"]}, {"count": 2, "name": "haa", "selectedTags":["haa"]}, {"count": 2, "name": "haa", "selectedTags":[]}],
+    entry_list: ["aaaaaaaaaaaaaaaaah", "okkkkkkkkkkkkkkkkkkkkkkkkkk", "blllllllllllllblblbl"]
   },
 
   computed: {
@@ -117,8 +119,15 @@ var entry_list_app = new Vue({
   },
 
   methods: {
+
+    getSelectedTagsUrl: function(url, tag) {
+      return url + "?selected_tags=" + tag.selectedTags.join(',')
+    },
+
+    loadTagEntries: function(selectedTags) {
+    },
     getTagBlockClass: function(primary_class, name) {
-      if(this.selected_tags.indexOf(name) >= 0) {
+      if(this.selectedTags.indexOf(name) >= 0) {
         return primary_class + ' selected'
       }
       else {

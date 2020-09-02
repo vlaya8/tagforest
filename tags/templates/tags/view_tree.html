@@ -21,11 +21,35 @@
     <!-- Tags -->
 
     <ul class="tagList" >
-      {% for tag_count, tag_name, selected_tags in tag_list %}
-        {% include "tags/blocks/tag_block.html" with url_args=selected_tags %}
-      {% endfor %}
+	<li v-for="tag in tagList" class="tagBlock">
+	  <a v-if="!tag.selectedTags.length" href="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" v-bind:class='getTagBlockClass("tagButtonLink", "[[ tag.name ]]")' >[[ tag.name ]] ([[ tag.count ]])</a>
+	  <a v-else v-bind:href='getSelectedTagsUrl("{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}", tag)' v-bind:class='getTagBlockClass("tagButtonLink", "[[ tag.name ]]")' >[[ tag.name ]] ([[ tag.count ]])</a>
+	</li>
     </ul>
-  
+
+    <!-- Entries -->
+
+    <ul v-if="entryList.length" v-bind:class="entryDisplayShare.entryDisplay" >
+      <li v-for="entry in entryList" >
+	<a v-cloak v-if="selectMode" @click="toggleEntry({{entry.id}})" v-bind:class="entryClass({{entry.id}})" >
+          <span v-html="entryTitle({{ entry.id }})" ></span>
+	</a>
+	<a v-cloak v-if="!selectMode" href="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree.id entry_id=entry.id %}" class="buttonLink" >
+          <span v-html="entryTitle({{ entry.id }})" ></span>
+	</a>
+	<a v-if="hideAfterLoad" href="{% url 'tags:view_entry' group_name=group.name tree_id=current_tree.id entry_id=entry.id %}" class="buttonLink" >
+          {{ entry.name }}
+	</a>
+      </li>
+    </ul>
+    <br/>
+    <p v-else>
+      {% blocktrans %}
+      There are no entries in this tree, add one with the <b>Add</b> or <b>Quick Add</b> button
+      {% endblocktrans %}
+    </p>
+   <br/>
+
     {% if tag_error %}
     <div class="errorMessage"><p>{{ tag_error}}</p></div>
     {% endif %}

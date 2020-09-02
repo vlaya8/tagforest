@@ -453,19 +453,16 @@ class ViewGroupView(BaseView):
 
 def apiTreeEntries(request):
 
-    if 'test' in request.GET:
-        data = {
-                'username': request.user.username,
-                'test': request.GET['test']
-        }
-    else:
-        data = {
-                'username': request.user.username,
-                'test': request.GET['test']
-        }
-    return JsonResponse(data)
 
-    if self.current_tree != None:
+    tree_name = request.GET.get( 'tree', '' )
+    tree = get_object_or_404(Tree, name=tree_name)
+    group_name = request.GET.get( 'group', '' )
+    group = get_object_or_404(Tree, name=group_name)
+
+    if not group.is_visible_to(request.user):
+        return JsonResponse({'error': "You don't have permission to view this group's trees"})
+
+    if tree != None:
 
         # Get selected tags from GET url parameters
         selected_tags_dirty = get_selected_tag_list(request)
@@ -504,6 +501,7 @@ def apiTreeEntries(request):
                 'quick_add_form': EntryForm(initial={"entry_id": SpecialID['NEW_ID']}),
               })
 
+    return JsonResponse(data)
 
 
 class ViewTreeView(BaseTreeView):

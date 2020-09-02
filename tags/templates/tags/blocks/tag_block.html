@@ -1,7 +1,0 @@
-<li class="tagBlock">
-  {% if url_args == "" %}
-  <a href="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}" v-bind:class='getTagBlockClass("tagButtonLink", "{{tag_name }}")' >{{ tag_name }} ({{ tag_count }})</a>
-  {% else %}
-  <a href="{% url 'tags:view_tree' group_name=group.name tree_id=current_tree.id %}?selected_tags={{ url_args }}" v-bind:class='getTagBlockClass("tagButtonLink", "{{ tag_name }}")' >{{ tag_name }} ({{ tag_count }})</a>
-  {% endif %}
-</li>
