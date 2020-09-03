@@ -276,6 +276,7 @@ ul.entryList, ul.tagList, ul.groupList, ul.notificationList {
 /* Headers */
 
 h1, footer {
+
   background-color: base.$header-color;
   padding: 0.7rem;
   padding-left: 1rem;
@@ -288,8 +289,18 @@ h1, footer {
     display: inline;
     border-left: 1px solid color.adjust(base.$header-color, $lightness: 10);
     margin: 1rem;
-    padding-top: 1rem;
+    padding-top: 0.8rem;
     padding-bottom: 1rem;
+    height: 1rem;
+    line-height: 1rem;
+  }
+}
+
+nav {
+  h1, footer {
+
+    .separator {
+    }
   }
 }
 

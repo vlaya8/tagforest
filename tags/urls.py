@@ -33,6 +33,8 @@ urlpatterns = [
         path('group/<str:group_name>/', include(tree_urlpatterns)),
         path('user/<str:username>/', include([
             path('profile/', views.ProfileView.as_view(), name="profile"),
+            path('taskGroups/', views.ViewTaskGroupsView.as_view(), name="view_task_groups"),
+            path('tasks/<str:group_name>/', views.ViewTasksView.as_view(), name="view_tasks"),
         ])),
         path('notifications/', views.ViewNotificationsView.as_view(), name="view_notifications"),
         path('notification/<int:notification_id>/', views.ViewNotificationView.as_view(), name="view_notification"),

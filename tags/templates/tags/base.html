@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'tags/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'tags/forms.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'tags/entry.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'tags/tasks.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'tags/markdown.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
@@ -29,6 +30,7 @@
                 {% trans "Personal Trees" %}
           </a></li><!--
             --><li><a href="{% url 'tags:profile' username=username %}" {% if current_page == 'profile' %}class="activeLink" {% endif %}>{{ username }}</a></li><!--
+            --><li><a href="{% url 'tags:view_task_groups' username=username %}" {% if current_page == 'view_task_groups' %}class="activeLink" {% endif %}>Checklist</a></li><!--
           {% else %}
             --><li><a href="{% url 'tags:login' %}?next={% url 'tags:post_login' %}" {% if current_page == 'login' %}class="activeLink" {% endif %}>
                 {% trans "Login" %}

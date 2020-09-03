@@ -9,6 +9,10 @@ from .exceptions import EntryParseError
 
 import re
 
+TASK_COMPLETED = 2
+TASK_INPROGRESS = 1
+TASK_TOSTART = 0
+
 INVITE = 'INV'
 USERS = 'USR'
 ALL = 'ALL'
@@ -280,3 +284,58 @@ def get_saved_groups(user):
 User.add_to_class('get_user_group', get_user_group)
 User.add_to_class('get_joined_groups', get_joined_groups)
 User.add_to_class('get_saved_groups', get_saved_groups)
+
+## Apps
+
+class TaskGroup(models.Model):
+    def __str__(self):
+        return self.name
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField('name', max_length=255, unique=True)
+
+    def total_tasks(self):
+        return Task.objects.filter(group=self).count()
+    def total_completed_tasks(self):
+        return Task.objects.filter(group=self).filter(state=TASK_COMPLETED).count()
+    def total_inprogress_tasks(self):
+        return Task.objects.filter(group=self).filter(state=TASK_INPROGRESS).count()
+
+    def get_stats(self):
+        total_completed_tasks = self.total_completed_tasks()
+        total_inprogress_tasks = self.total_inprogress_tasks() + total_completed_tasks
+        total_tasks = self.total_tasks()
+        if total_tasks > 0:
+            total_inprogress_prc = 100 * total_inprogress_tasks / total_tasks
+            total_completed_prc = 100 * total_completed_tasks / total_tasks
+        else:
+            total_inprogress_prc = 0
+            total_completed_prc = 0
+
+        return (
+                  total_inprogress_tasks,
+                  total_completed_tasks,
+                  total_tasks,
+                  "{:05.2f}".format(total_inprogress_prc),
+                  "{:05.2f}".format(total_completed_prc),
+        )
+
+class Task(models.Model):
+    def __str__(self):
+        return self.name
+
+    name = models.CharField('name', max_length=255)
+    added_date = models.DateTimeField('date added')
+    description = models.TextField('description', null=True)
+
+    group = models.ForeignKey(TaskGroup, on_delete=models.CASCADE, null=True)
+
+    state = models.IntegerField('state', default=TASK_TOSTART)
+
+    def statusClass(self):
+        if self.state == TASK_COMPLETED:
+            return "green"
+        if self.state == TASK_INPROGRESS:
+            return "orange"
+        if self.state == TASK_TOSTART:
+            return "red"

@@ -180,3 +180,13 @@ class ImportForm(forms.Form):
             raise forms.ValidationError(ugettext("Parsing failed starting from line %(linenumber)s") % {'linenumber': e.line_number})
 
         return entries
+
+class TaskGroupForm(forms.Form):
+
+    name = forms.CharField(label = _("Name"), max_length=255)
+    group_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class TaskForm(forms.Form):
+
+    name = forms.CharField(label = _("Name"), max_length=255)
+    task_id = forms.IntegerField(widget=forms.HiddenInput())
