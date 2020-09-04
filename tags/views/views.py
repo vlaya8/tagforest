@@ -456,6 +456,7 @@ class ViewGroupView(BaseView):
 class ViewTreeView(BaseTreeView):
 
     template_name = 'tags/view_tree.html'
+    redirect_to_distinct_tags = False
 
     def get_return(self, request, context, **kwargs):
 
