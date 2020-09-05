@@ -10,6 +10,10 @@
 
     <h1>{% trans "List of task groups" %}</h1>
 
+  {% if group_error %}
+  <div class="errorMessage">{{ group_error }}</div>
+  {% endif %}
+
   <!-- Groups -->
   <ul class="taskGroupList" >
     {% for group, total_inprogress_tasks, total_completed_tasks, total_tasks, total_inprogress_prc, total_completed_prc, edit_form in groups %}

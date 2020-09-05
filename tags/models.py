@@ -292,7 +292,10 @@ class TaskGroup(models.Model):
         return self.name
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField('name', max_length=255, unique=True)
+    name = models.CharField('name', max_length=255)
+
+    class Meta:
+        unique_together = ('user', 'name')
 
     def total_tasks(self):
         return Task.objects.filter(group=self).count()
