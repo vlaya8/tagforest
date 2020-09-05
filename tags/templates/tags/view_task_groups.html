@@ -14,9 +14,18 @@
   <ul class="taskGroupList" >
     {% for group, total_inprogress_tasks, total_completed_tasks, total_tasks, total_inprogress_prc, total_completed_prc, edit_form in groups %}
       <li class="groupBlock">
-        <a v-if="!editGroup({{ group.id }})" href="{% url 'tags:view_tasks' username=user.username group_name=group.name %}" >
+	<a v-if="!editGroup({{ group.id }})" href="{% url 'tags:view_tasks' username=user.username group_name=group.name %}" >
 	  {{ group.name }}
-          <span class="alignRight">{{ total_completed_tasks }}/{{ total_tasks }} - <span class="greenText">{{ total_completed_prc }}%</span>, <span class="orangeText">{{ total_inprogress_prc }}%</span></span></a>
+	</a><!--
+	--><span class="separator noMarginLeft" ></span>
+          <span class="alignRight">
+	    {{ total_completed_tasks }}/{{ total_tasks }}
+            <span class="separator" ></span>
+	    <span class="greenText">{{ total_completed_prc }}%</span>
+            <span class="separator" ></span>
+	    <span class="orangeText">{{ total_inprogress_prc }}%</span>
+            <span class="separator" ></span>
+	  </span>
         <form v-if="editGroup({{ group.id }})" class="contentForm" method="post" >
           {% csrf_token %}
 	  {{ edit_form.non_field_errors}}

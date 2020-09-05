@@ -9,9 +9,10 @@
   <div id="tasks_app">
 
   <h1>
-    {% trans "Tasks in " %}{{ group.name }}, <span class="separator"></span>
+    {% trans "Tasks in " %}{{ group.name }} <span class="separator"></span>
     <span class="alignRight">{{ total_completed_tasks }}/{{ total_tasks }}<span class="separator"></span>
-    <span class="greenText">{{ total_completed_prc }}%</span>, <span class="orangeText">{{ total_inprogress_prc }}%</span></span></a>
+    <span class="greenText">{{ total_completed_prc }}%</span><span class="separator"></span>
+    <span class="orangeText">{{ total_inprogress_prc }}%</span></span></a>
   </h1>
 
   <a href="{% url 'tags:view_task_groups' username=user.username %}" class="buttonLink" >{% trans "Go back to task groups list" %}</a>

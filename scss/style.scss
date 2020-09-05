@@ -284,6 +284,9 @@ h1, footer {
   border: 1px solid color.adjust(base.$header-color, $lightness: 10);
   border-width: 1px 1px 3px;
   font-size: 125%;
+}
+
+li, h1, footer {
 
   .separator {
     display: inline;
@@ -298,9 +301,19 @@ h1, footer {
 
 nav {
   h1, footer {
-
     .separator {
+      padding-top: 1rem;
     }
+  }
+}
+
+li {
+  .separator {
+    padding-top: 0.8rem;
+    padding-bottom: 0.4rem;
+  }
+  .noMarginLeft {
+    margin-left: 0rem;
   }
 }
 
