@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-05 00:23+0200\n"
+"POT-Creation-Date: 2020-09-05 20:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,8 +168,8 @@ msgstr "Erreur 404"
 msgid "500 error"
 msgstr "Erreur 500"
 
-#: tags/templates/tags/about.html:4 tags/templates/tags/base.html:41
-#: tags/templates/tags/base.html:104
+#: tags/templates/tags/about.html:4 tags/templates/tags/base.html:42
+#: tags/templates/tags/base.html:105
 msgid "About"
 msgstr "A propos"
 
@@ -466,17 +466,17 @@ msgstr "Groupes"
 msgid "Personal Trees"
 msgstr "Arbres personels"
 
-#: tags/templates/tags/base.html:35
+#: tags/templates/tags/base.html:36
 #: tags/templates/tags/registration/login.html:4
 #: tags/templates/tags/registration/login.html:26
 msgid "Login"
 msgstr "Se connecter"
 
-#: tags/templates/tags/base.html:80
+#: tags/templates/tags/base.html:81
 msgid "No new notifications"
 msgstr "Aucune nouvelle notification"
 
-#: tags/templates/tags/base.html:82
+#: tags/templates/tags/base.html:83
 msgid "View all notifications"
 msgstr "Voir toutes les notifications"
 
@@ -505,11 +505,11 @@ msgstr "Paramètres de l'arbre"
 #: tags/templates/tags/import_entries.html:30
 #: tags/templates/tags/registration/password_change.html:20
 #: tags/templates/tags/registration/profile.html:55
+#: tags/templates/tags/tasks/view_task_groups.html:63
+#: tags/templates/tags/tasks/view_tasks.html:71
 #: tags/templates/tags/upsert_entry.html:22
 #: tags/templates/tags/upsert_group.html:30
 #: tags/templates/tags/view_group.html:64
-#: tags/templates/tags/view_task_groups.html:50
-#: tags/templates/tags/view_tasks.html:70
 msgid "Submit"
 msgstr "Soumettre"
 
@@ -518,8 +518,8 @@ msgid "Cancel"
 msgstr "Annuler"
 
 #: tags/templates/tags/blocks/entry_manipulation.html:6
-#: tags/templates/tags/view_task_groups.html:41
-#: tags/templates/tags/view_tasks.html:61
+#: tags/templates/tags/tasks/view_task_groups.html:54
+#: tags/templates/tags/tasks/view_tasks.html:62
 msgid "Add"
 msgstr "Ajouter"
 
@@ -690,6 +690,27 @@ msgstr ""
 "Inscription réussie, vous pouvez maintenant <a href=\"%(login_url)s?next="
 "%(post_login_url)s\" >vous connecter</a>."
 
+#: tags/templates/tags/tasks/view_task_groups.html:5
+#: tags/templates/tags/tasks/view_tasks.html:5
+msgid "Apps"
+msgstr "Apps"
+
+#: tags/templates/tags/tasks/view_task_groups.html:11
+msgid "List of task groups"
+msgstr "Liste des groupes de tâches"
+
+#: tags/templates/tags/tasks/view_tasks.html:12
+msgid "Tasks in "
+msgstr "Tâches dans "
+
+#: tags/templates/tags/tasks/view_tasks.html:18
+msgid "Go back to task groups list"
+msgstr "Retourner a la liste des groupes de tâches"
+
+#: tags/templates/tags/tasks/view_tasks.html:41
+msgid "Status"
+msgstr "Statut"
+
 #: tags/templates/tags/upsert_entry.html:4
 msgid "Add entry"
 msgstr "Ajouter une entrée"
@@ -831,27 +852,6 @@ msgstr "Lus:"
 msgid "This group doesn't exist anymore"
 msgstr "Ce groupe n'existe plus"
 
-#: tags/templates/tags/view_task_groups.html:5
-#: tags/templates/tags/view_tasks.html:5
-msgid "Apps"
-msgstr "Apps"
-
-#: tags/templates/tags/view_task_groups.html:11
-msgid "List of task groups"
-msgstr "Liste des groupes de tâches"
-
-#: tags/templates/tags/view_tasks.html:12
-msgid "Tasks in "
-msgstr "Tâches dans "
-
-#: tags/templates/tags/view_tasks.html:17
-msgid "Go back to task groups list"
-msgstr "Retourner a la liste des groupes de tâches"
-
-#: tags/templates/tags/view_tasks.html:40
-msgid "Status"
-msgstr "Statut"
-
 #: tags/templates/tags/view_tree.html:55
 msgid ""
 "\n"
@@ -877,6 +877,10 @@ msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 msgid "Your group already contains a tree named %s(treename)s"
 msgstr "Votre groupe contient déjà un arbre nommé %s(treename)s"
 
+#: tags/views/task_views.py:75 tags/views/task_views.py:82
+msgid "You already have a group named %(group_name)s "
+msgstr "Vous avez déjà un group nommé %(group_name)s "
+
 #: tags/views/utilities.py:24
 msgid "<Removed group>"
 msgstr "<Groupe supprimé>"
@@ -886,48 +890,48 @@ msgstr "<Groupe supprimé>"
 msgid "%(user)s invited you to join %(group)s"
 msgstr "%(user)s vous a invité à rejoindre %(group)s"
 
-#: tags/views/views.py:126
+#: tags/views/views.py:123
 msgid "The group you were invited to got deleted"
 msgstr "Le groupe auquel vous aviez été invité a été supprimé"
 
-#: tags/views/views.py:213
+#: tags/views/views.py:210
 msgid "You don't have permission to edit this profile"
 msgstr "Vous n'avez pas la permission d'éditer ce profil"
 
-#: tags/views/views.py:305
+#: tags/views/views.py:302
 msgid "You don't have permission to delete this group"
 msgstr "Vous n'avez pas la permission de supprimer ce groupe"
 
-#: tags/views/views.py:308
+#: tags/views/views.py:305
 msgid "You can't delete this group"
 msgstr "Vous ne pouvez pas supprimer ce groupe"
 
-#: tags/views/views.py:327 tags/views/views.py:367
+#: tags/views/views.py:324 tags/views/views.py:364
 msgid "You don't have permission to edit this group"
 msgstr "Vous n'avez pas la permission d'éditer ce groupe"
 
-#: tags/views/views.py:395
+#: tags/views/views.py:392
 msgid "You don't have permission to view this group"
 msgstr "Vous n'avez pas la permission de voir ce groupe"
 
-#: tags/views/views.py:421
+#: tags/views/views.py:418
 msgid "You don't have admin permission for this group"
 msgstr "Vous n'avez pas de permission admin pour ce groupe"
 
-#: tags/views/views.py:427
+#: tags/views/views.py:424
 msgid ""
 "The last member of the group can't be deleted (delete the group instead)"
 msgstr ""
 "Le dernier membre du groupe ne peut pas être supprimé (supprimez plutôt le "
 "groupe)"
 
-#: tags/views/views.py:484
+#: tags/views/views.py:482
 #, python-format
 msgid "The tag %(tagname)s does not exist"
 msgstr "Le tag %(tagname)s n'existe pas"
 
-#: tags/views/views.py:552 tags/views/views.py:650 tags/views/views.py:659
-#: tags/views/views.py:715
+#: tags/views/views.py:550 tags/views/views.py:648 tags/views/views.py:657
+#: tags/views/views.py:713
 #, python-format
 msgid "You already have an entry named %(entryname)s"
 msgstr "Vous avez déjà une entrée nommée %(entryname)s"
